@@ -1,6 +1,7 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
 import "./config/databse"
+import authAPI from "./routes/auth"
 import { Users } from "./models/Users";
 import { Categories } from "./models/Categories";
 import { Produtcs } from "./models/Products";
@@ -22,6 +23,7 @@ app.get("/",async(req:Request,res:Response)=>{
     res.send("App is listening on port 3000");
 })
 
+app.use("/auth",authAPI)
 app.listen(port,(error)=>{
     if(!error){
         console.log("App is listening on port 3000.")

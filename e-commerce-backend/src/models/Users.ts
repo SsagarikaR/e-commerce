@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/databse";
 
 export const Users=sequelize.define("Users",{
-    UserID:{
+    userID:{
         type:DataTypes.INTEGER,
         allowNull:false,
         primaryKey:true,
@@ -12,6 +12,10 @@ export const Users=sequelize.define("Users",{
         type:DataTypes.STRING,
         allowNull:false,
     },
+    email:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
     contactNo:{
         type:DataTypes.STRING,
         allowNull:false
@@ -20,10 +24,14 @@ export const Users=sequelize.define("Users",{
         type:DataTypes.STRING,
         allowNull:false
         
+    },
+    password:{
+        type:DataTypes.STRING,
+        allowNull:false
     }
 },
 {
     timestamps:false
 }
 )
-console.log(Users==sequelize.model("Users"));
+// console.log(Users==sequelize.model("Users"));

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 require("./config/databse");
+const auth_1 = __importDefault(require("./routes/auth"));
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
@@ -28,6 +29,7 @@ app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("App is listening on port 3000");
 }));
+app.use("/auth", auth_1.default);
 app.listen(port, (error) => {
     if (!error) {
         console.log("App is listening on port 3000.");
