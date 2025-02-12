@@ -1,23 +1,23 @@
 import { Router,Request,Response } from "express";
 import { checkToken, isAdmin } from "../config/authorization";
-import { createCategories, deletecategories, getCategories, updateCategories } from "../controllers/categoriesController";
+import { createProduct, deleteProducts, getProducts, updateProduct } from "../controllers/productController";
 
 const router=Router();
 
 router.post("/",checkToken,isAdmin,async(req:Request,res:Response)=>{
-   createCategories(req,res)
-});
+    createProduct(req,res);
+})
 
 router.get("/",async(req:Request,res:Response)=>{
-   getCategories(req,res);
+   getProducts(req,res);;
 });
 
 router.delete("/",checkToken,isAdmin,async(req:Request,res:Response)=>{
-   deletecategories(req,res);
+   deleteProducts(req,res);
 });
 
 router.patch("/",checkToken,isAdmin,async(req:Request,res:Response)=>{
-   updateCategories(req,res)
+   updateProduct(req,res);
 })
 
 export default router;

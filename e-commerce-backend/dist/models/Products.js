@@ -11,11 +11,15 @@ exports.Produtcs = databse_1.sequelize.define("Products", {
         primaryKey: true,
         autoIncrement: true
     },
-    productName: {
+    name: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
-    ProdutThumbnail: {
+    description: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
+    },
+    thumbnail: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },

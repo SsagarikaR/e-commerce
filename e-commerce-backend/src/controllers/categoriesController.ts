@@ -1,5 +1,4 @@
-import { sequelize } from "config/databse";
-import { error } from "console";
+import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 
@@ -30,7 +29,7 @@ export const createCategories=async(req:Request,res:Response)=>{
 }
 
 export const getCategories=async(req:Request,res:Response)=>{
-    const {categoryName}=req.params
+    const {categoryName}=req.params;
     console.log(categoryName);
     try{
         if(categoryName){

@@ -9,11 +9,15 @@ export const Produtcs=sequelize.define("Products",{
         primaryKey:true,
         autoIncrement:true
     },
-    productName:{
+    name:{
         type:DataTypes.STRING,
         allowNull:false
     },
-    ProdutThumbnail:{
+    description:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    thumbnail:{
         type:DataTypes.STRING,
         allowNull:false
     },

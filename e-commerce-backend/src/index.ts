@@ -1,12 +1,16 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
-import "./config/databse"
-import authAPIs from "./routes/auth"
-import userAPIs from "./routes/users"
-import { Users } from "./models/Users";
-import { Categories } from "./models/Categories";
-import { Produtcs } from "./models/Products";
-import { CartItems } from "./models/CartItems";
+import "./config/databse";
+import authAPIs from "./routes/auth";
+import userAPIs from "./routes/users";
+import categoriesAPIs from "./routes/categories";
+import productAPIs from "./routes/products";
+import cartAPIs from "./routes/cart";
+
+// import { Users } from "./models/Users";
+// import { Categories } from "./models/Categories";
+// import { Produtcs } from "./models/Products";
+// import { CartItems } from "./models/CartItems";
 
 const app=express();
 const port=3000
@@ -23,10 +27,13 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.get("/",async(req:Request,res:Response)=>{
     res.send("App is listening on port 3000");
-})
+});
 
-app.use("/auth",authAPIs)
+app.use("/auth",authAPIs);
 app.use("/users",userAPIs);
+app.use("/categories",categoriesAPIs);
+app.use("/products",productAPIs);
+app.use("/cart",cartAPIs);
 
 app.listen(port,(error)=>{
     if(!error){
@@ -35,4 +42,4 @@ app.listen(port,(error)=>{
     else{
         console.log("Error occured during server connection: ",error);
     }
-})
+});

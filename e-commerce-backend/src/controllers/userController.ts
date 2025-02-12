@@ -2,7 +2,6 @@ import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 import bcrypt from "bcrypt";
-import { error } from "console";
 
 export const deleteUser=async(req:Request,res:Response)=>{
     const id=req.body.user.identifire;

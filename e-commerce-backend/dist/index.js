@@ -17,6 +17,13 @@ const body_parser_1 = __importDefault(require("body-parser"));
 require("./config/databse");
 const auth_1 = __importDefault(require("./routes/auth"));
 const users_1 = __importDefault(require("./routes/users"));
+const categories_1 = __importDefault(require("./routes/categories"));
+const products_1 = __importDefault(require("./routes/products"));
+const cart_1 = __importDefault(require("./routes/cart"));
+// import { Users } from "./models/Users";
+// import { Categories } from "./models/Categories";
+// import { Produtcs } from "./models/Products";
+// import { CartItems } from "./models/CartItems";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
@@ -32,6 +39,9 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.use("/auth", auth_1.default);
 app.use("/users", users_1.default);
+app.use("/categories", categories_1.default);
+app.use("/products", products_1.default);
+app.use("/cart", cart_1.default);
 app.listen(port, (error) => {
     if (!error) {
         console.log("App is listening on port 3000.");
