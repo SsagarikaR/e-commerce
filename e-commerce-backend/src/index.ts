@@ -1,7 +1,8 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
 import "./config/databse"
-import authAPI from "./routes/auth"
+import authAPIs from "./routes/auth"
+import userAPIs from "./routes/users"
 import { Users } from "./models/Users";
 import { Categories } from "./models/Categories";
 import { Produtcs } from "./models/Products";
@@ -19,11 +20,14 @@ app.use(bodyParser.urlencoded({extended:true}));
     // await Produtcs.sync({alter:true})
     // await CartItems.sync({alter:true});
 })();
+
 app.get("/",async(req:Request,res:Response)=>{
     res.send("App is listening on port 3000");
 })
 
-app.use("/auth",authAPI)
+app.use("/auth",authAPIs)
+app.use("/users",userAPIs);
+
 app.listen(port,(error)=>{
     if(!error){
         console.log("App is listening on port 3000.")

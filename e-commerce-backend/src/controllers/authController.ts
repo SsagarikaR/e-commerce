@@ -23,15 +23,25 @@ export const createUser=async(req:Request,res:Response)=>{
             return res.status(404).json({error:"User's role can't be empty."});
         }
 
-        const ifUserExist=await sequelize.query(`SELECT * FROM Users WHERE name=? AND email=?`,
+        const ifUserExistWithName=await sequelize.query(`SELECT * FROM Users WHERE name=? `,
             {
-                replacements:[name,email],
+                replacements:[name],
                 type:QueryTypes.SELECT
             }
         );
-        if(ifUserExist.length!==0){
-            return res.status(403).json({error:"This user is already registered"});
+        if(ifUserExistWithName.length!==0){
+            return res.status(403).json({error:"This user name is already registered"});
         }
+        const ifUserExistWithEmail=await sequelize.query(`SELECT * FROM Users WHERE email=?`,
+            {
+                replacements:[email],
+                type:QueryTypes.SELECT
+            }
+        );
+        if(ifUserExistWithEmail.length!==0){
+            return res.status(403).json({error:"This user email is already registered"});
+        }
+      
         const hashedPassword=await bcrypt.hash(password,10);
         const [result,metaData]=await sequelize.query(`INSERT INTO Users (name,email,contactNo,role,password) VALUES
             (?,?,?,?,?)`,{
@@ -43,7 +53,7 @@ export const createUser=async(req:Request,res:Response)=>{
             return res.status(202).json(token);
         }
         else{
-            return res.status(403).json({error:"Error creating a new user."});
+            return res.status(409).json({error:"Error creating a new user."});
         }
     }
     catch(error){
@@ -77,9 +87,11 @@ export const getUser=async(req:Request,res:Response)=>{
         );
        
         if(user.length!==0){
-            const isPasswordValid=await bcrypt.compare(password,user[0].password)
-            if(!isPasswordValid){
-                return res.status(403).json({message:"Invalid password."})
+            if(user[0].password){
+                const isPasswordValid=await bcrypt.compare(password,user[0].password)
+                if(!isPasswordValid){
+                    return res.status(403).json({message:"Invalid password."})
+                }
             }
             // console.log(user)
             // console.log(user[0].userID)
@@ -87,6 +99,7 @@ export const getUser=async(req:Request,res:Response)=>{
             console.log(token,"token")
             const userToReturn=user[0]
             userToReturn.token=token
+            delete userToReturn.password;
             return res.status(200).json(userToReturn);
         }
         else{

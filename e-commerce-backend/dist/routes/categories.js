@@ -11,15 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const authorization_1 = require("../config/authorization");
-const userController_1 = require("../controllers/userController");
+const categoriesController_1 = require("../controllers/categoriesController");
 const router = (0, express_1.Router)();
-router.get("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.getAllUser)(req, res);
+router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.createCategories)(req, res);
 }));
-router.delete("/", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.deleteUser)(req, res);
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.getCategories)(req, res);
 }));
-router.patch("/", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.updateUserPassword)(req, res);
+router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.deletecategories)(req, res);
+}));
+router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.updateCategories)(req, res);
 }));
 exports.default = router;

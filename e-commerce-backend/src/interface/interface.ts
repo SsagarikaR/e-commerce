@@ -4,6 +4,6 @@ interface forUser{
     email:string,
     contactNo:string,
     role:string,
-    password:string,
+    password?:string,
     token?:string
 }

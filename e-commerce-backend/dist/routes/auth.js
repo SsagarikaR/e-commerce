@@ -15,7 +15,7 @@ const router = (0, express_1.Router)();
 router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     (0, authController_1.createUser)(req, res);
 }));
-router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     (0, authController_1.getUser)(req, res);
 }));
 exports.default = router;
