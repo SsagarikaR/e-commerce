@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../db/databse";
+import { sequelize } from "../config/databse";
 import { Produtcs } from "./product";
 import { Users } from "./user";
 

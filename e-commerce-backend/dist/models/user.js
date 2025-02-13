@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Users = void 0;
 const sequelize_1 = require("sequelize");
-const databse_1 = require("../db/databse");
+const databse_1 = require("../config/databse");
 exports.Users = databse_1.sequelize.define("Users", {
     userID: {
         type: sequelize_1.DataTypes.INTEGER,

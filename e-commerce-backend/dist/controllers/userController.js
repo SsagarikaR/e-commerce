@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllUser = exports.updateUserPassword = exports.deleteUser = void 0;
-const databse_1 = require("../db/databse");
+const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

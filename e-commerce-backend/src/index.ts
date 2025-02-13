@@ -1,13 +1,13 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
-import "./db/databse";
+import "./config/databse";
 import authAPIs from "./routes/auth";
 import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";
 import productAPIs from "./routes/products";
 import cartAPIs from "./routes/cart";
 
-import { errorHandler } from "./middlewear/errorHandler";
+import { errorHandler } from "./config/errorHandler";
 
 // import { Users } from "./models/Users";
 // import { Categories } from "./models/category";

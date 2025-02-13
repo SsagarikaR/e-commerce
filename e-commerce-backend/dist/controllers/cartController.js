@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateCartItemQuantity = exports.deleteCartItem = exports.getCartItems = exports.addCartItem = void 0;
-const databse_1 = require("../db/databse");
+const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const addCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID, quantity } = req.body;

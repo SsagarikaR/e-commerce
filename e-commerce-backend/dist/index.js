@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
-require("./db/databse");
+require("./config/databse");
 const auth_1 = __importDefault(require("./routes/auth"));
 const users_1 = __importDefault(require("./routes/users"));
 const categories_1 = __importDefault(require("./routes/categories"));
 const products_1 = __importDefault(require("./routes/products"));
 const cart_1 = __importDefault(require("./routes/cart"));
-const errorHandler_1 = require("./middlewear/errorHandler");
+const errorHandler_1 = require("./config/errorHandler");
 // import { Users } from "./models/Users";
 // import { Categories } from "./models/category";
 // import { Produtcs } from "./models/product";

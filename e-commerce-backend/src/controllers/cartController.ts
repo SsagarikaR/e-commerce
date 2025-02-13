@@ -1,5 +1,5 @@
 import { Request,Response } from "express";
-import { sequelize } from "../db/databse";
+import { sequelize } from "../config/databse";
 import { QueryTypes } from "sequelize";
 
 export const addCartItem = async (req: Request, res: Response) => {
