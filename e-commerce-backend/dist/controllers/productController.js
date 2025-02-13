@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
@@ -126,12 +126,7 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             replacements: [productName, productDescription, productThumbnail, productPrice, categoryID, productID],
             type: sequelize_1.QueryTypes.UPDATE
         });
-        if (updatedProduct[1] > 0) {
-            return res.status(200).json({ message: "Successfully updated the product." });
-        }
-        else {
-            return res.status(409).json({ error: "Error in updating product." });
-        }
+        return res.status(200).json({ message: "Successfully updated the product." });
     }
     catch (error) {
         console.log(error, "error");

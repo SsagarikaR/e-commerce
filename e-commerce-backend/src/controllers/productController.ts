@@ -1,4 +1,4 @@
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 
@@ -129,12 +129,7 @@ export const updateProduct=async(req:Request,res:Response)=>{
             replacements:[productName,productDescription,productThumbnail,productPrice,categoryID,productID],
             type:QueryTypes.UPDATE
         })
-        if(updatedProduct[1]>0){
             return res.status(200).json({message:"Successfully updated the product."})
-        }
-        else{
-            return res.status(409).json({error:"Error in updating product."})
-        }
     }
     catch(error){
         console.log(error,"error");

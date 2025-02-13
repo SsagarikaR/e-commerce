@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartItems = void 0;
 const sequelize_1 = require("sequelize");
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const product_1 = require("./product");
 const user_1 = require("./user");
 exports.CartItems = databse_1.sequelize.define("CartItems", {

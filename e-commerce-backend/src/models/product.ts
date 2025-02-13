@@ -1,4 +1,4 @@
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { DataTypes } from "sequelize";
 import { Categories } from "./category";
 

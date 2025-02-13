@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletecategories = exports.updateCategories = exports.getCategories = exports.createCategories = void 0;
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const createCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryName, categoryThumbnail } = req.body;

@@ -1,4 +1,4 @@
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 

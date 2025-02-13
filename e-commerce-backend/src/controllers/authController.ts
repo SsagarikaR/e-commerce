@@ -1,5 +1,5 @@
 import { generateToken } from "../config/authentication";
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";

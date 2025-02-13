@@ -1,6 +1,6 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
-import "./config/databse";
+import "./db/databse";
 import authAPIs from "./routes/auth";
 import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";

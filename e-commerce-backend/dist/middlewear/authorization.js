@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAdmin = exports.checkToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 dotenv_1.default.config();
 const checkToken = (req, res, next) => {
