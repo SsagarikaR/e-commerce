@@ -1,4 +1,4 @@
-import { generateToken } from "../config/authentication";
+import { generateToken } from "../middlewear/authentication";
 import { sequelize } from "../db/databse";
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";

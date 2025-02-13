@@ -8,7 +8,7 @@ export const generateToken=async(id:number)=>{
             const token=Jwt.sign(
                 {identifire:id},
                 process.env.JWT as string,
-                {expiresIn:'90d'}
+                {expiresIn:'7d'}
             )
             console.log(token,"generated token")
             return token

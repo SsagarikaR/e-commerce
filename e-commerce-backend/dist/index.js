@@ -26,6 +26,7 @@ const errorHandler_1 = require("./middlewear/errorHandler");
 // import { Categories } from "./models/category";
 // import { Produtcs } from "./models/product";
 // import { CartItems } from "./models/CartItems";
+// import { brands } from "./models/brand";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(errorHandler_1.errorHandler);
@@ -35,6 +36,7 @@ app.use((0, cors_1.default)());
 (() => __awaiter(void 0, void 0, void 0, function* () {
     // await Users.sync({alter:true});
     // await Categories.sync({alter:true});
+    // await brands.sync({force:true});
     // await Produtcs.sync({alter:true})
     // await CartItems.sync({alter:true});
 }))();

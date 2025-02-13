@@ -14,6 +14,7 @@ import { errorHandler } from "./middlewear/errorHandler";
 // import { Categories } from "./models/category";
 // import { Produtcs } from "./models/product";
 // import { CartItems } from "./models/CartItems";
+// import { brands } from "./models/brand";
 
 const app=express();
 const port=3000
@@ -27,6 +28,7 @@ app.use(cors());
 (async()=>{
     // await Users.sync({alter:true});
     // await Categories.sync({alter:true});
+    // await brands.sync({force:true});
     // await Produtcs.sync({alter:true})
     // await CartItems.sync({alter:true});
 })();

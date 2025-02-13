@@ -18,7 +18,7 @@ require('dotenv').config();
 const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
     // console.log(id,"authentication hit",process.env);
     try {
-        const token = jsonwebtoken_1.default.sign({ identifire: id }, process.env.JWT, { expiresIn: '90d' });
+        const token = jsonwebtoken_1.default.sign({ identifire: id }, process.env.JWT, { expiresIn: '7d' });
         console.log(token, "generated token");
         return token;
     }

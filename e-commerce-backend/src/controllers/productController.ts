@@ -2,91 +2,92 @@ import { sequelize } from "../db/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 
-export const createProduct=async(req:Request,res:Response)=>{
-    const {productName,productDescription,productThumbnail,productPrice,categoryID}=req.body;
-    try{
-        if( productName===""  || productName===undefined || !productName){
-            return res.status(404).json({error:"Product's name can't be empty"});
-        }
-        if(productDescription==="" || productDescription===undefined || !productDescription){
-            return res.status(404).json({error:"Product's description can't be empty"});
-        }
-        if(productThumbnail==="" || productThumbnail===undefined || !productThumbnail){
-            return res.status(404).json({error:"Product's thumbnail No. can't be empty."});
-        }
-        if(productPrice==="" || productPrice===undefined || !productPrice){
-            return res.status(404).json({error:"Product's price role can't be empty."});
-        }
-        if(categoryID==="" || categoryID===undefined || !categoryID){
-            return res.status(404).json({error:"Please choose a category role can't be empty."});
-        }
-
-        const isProductExist=await sequelize.query('SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=?',
-            {
-                replacements:[productName,productDescription,productPrice,categoryID],
-                type:QueryTypes.SELECT
-            }
-        )
-        if(isProductExist.length>0){
-            return res.status(403).json({error:"This product already exist."});
-        }
-        const [result,metaData]=await sequelize.query('INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID) VALUES (?,?,?,?,?)',{
-            replacements:[productName,productDescription,productThumbnail,productPrice,categoryID],
-            type:QueryTypes.INSERT
-        });
-        if(metaData>0){
-            return res.status(202).json({message:"Successfully added the product."})
-        }
-        else{
-            return res.status(409).json({error:"Error in adding a new product."})
-        }
-    }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"});
-    }
-}
-
-
-export const getProducts = async (req: Request, res: Response) => {
-  const { name, price } = req.query;  
+export const createProduct = async (req: Request, res: Response) => {
+    const { productName, productDescription, productThumbnail, productPrice, categoryID, brandID } = req.body;
   
-  try {
-    let query = `
-      SELECT p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, p.categoryID, c.categoryName
-      FROM Products p
-      LEFT JOIN Categories c ON p.categoryID = c.categoryID
-    `;
-    let replacements: Array<any> = [];
-
-    if (name) {
-      query += ` WHERE p.productName LIKE ?`;
-      replacements.push(`%${name}%`);
-    }
-
-    if (price) {
-      if (price === 'low-high') {
-        query += replacements.length > 0 ? ` AND p.productPrice ASC` : ` ORDER BY p.productPrice ASC`;
-      } else if (price === 'high-low') {
-        query += replacements.length > 0 ? ` AND p.productPrice DESC` : ` ORDER BY p.productPrice DESC`;
+    try {
+        if(!productName || !productDescription || !productThumbnail || !productPrice || !categoryID || !brandID){
+            return res.status(403).json({message:"Please enter the required files."})
+        }
+      const category = await sequelize.query('SELECT * FROM Categories WHERE categoryID = ?', {
+        replacements: [categoryID],
+        type: QueryTypes.SELECT,
+      });
+  
+      if (category.length === 0) {
+        return res.status(404).json({ error: "Category not found!" });
       }
+  
+      const brand = await sequelize.query('SELECT * FROM brands WHERE brandID = ?', {
+        replacements: [brandID],
+        type: QueryTypes.SELECT,
+      });
+  
+      if (brand.length === 0) {
+        return res.status(404).json({ error: "Brand not found!" });
+      }
+  
+      const [result, metadata] = await sequelize.query('INSERT INTO Products (productName, productDescription, productThumbnail, productPrice, categoryID, brandID) VALUES (?, ?, ?, ?, ?, ?)', {
+        replacements: [productName, productDescription, productThumbnail, productPrice, categoryID, brandID],
+      });
+  
+      if (metadata !== 0) {
+        return res.status(201).json({ message: "Product successfully added." });
+      } else {
+        return res.status(500).json({ error: "Failed to add product!" });
+      }
+    } catch (error) {
+      console.log(error, "error");
+      return res.status(500).json({ error: "Internal server error!" });
     }
+  };
 
-    const products = await sequelize.query(query, {
-      replacements: replacements,
-      type: QueryTypes.SELECT,
-    });
 
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
+  export const getProducts = async (req: Request, res: Response) => {
+    const { categoryID, brandID, productName } = req.query;  
+  
+    try {
+      let whereClause = [];
+      let replacements: string[] = [];
+  
+      if (categoryID) {
+        whereClause.push("categoryID = ?");
+        replacements.push(categoryID as string);
+      }
+  
+      if (brandID) {
+        whereClause.push("brandID = ?");
+        replacements.push(brandID as string);
+      }
+  
+      if (productName) {
+        whereClause.push("productName LIKE ?");
+        replacements.push(`%${productName}%`); 
+      }
+  
+      let whereQuery = whereClause.length > 0 ? "WHERE " + whereClause.join(" AND ") : "";
+  
+      const query = `
+        SELECT * FROM Products
+        ${whereQuery}
+        ORDER BY productName;  -- Optional: You can add ordering logic based on your needs
+      `;
+  
+      const products = await sequelize.query(query, {
+        replacements,
+        type: QueryTypes.SELECT,
+      });
+  
+      if (products.length === 0) {
+        return res.status(404).json({ message: "No products found." });
+      }
+  
+      return res.status(200).json(products);
+    } catch (error) {
+      console.log(error, "error");
+      return res.status(500).json({ error: "Please try again later!" });
     }
-
-    return res.status(200).json( products );
-  } catch (error) {
-    console.log(error, "error");
-    return res.status(500).json({ error: "Please try again after sometime!" });
-  }
-};
+  };
 
 
 export const deleteProducts=async(req:Request,res:Response)=>{
