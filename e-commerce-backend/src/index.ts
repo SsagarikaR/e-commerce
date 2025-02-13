@@ -6,8 +6,9 @@ import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";
 import productAPIs from "./routes/products";
 import cartAPIs from "./routes/cart";
+import cors from "cors";
 
-import { errorHandler } from "./config/errorHandler";
+import { errorHandler } from "./middlewear/errorHandler";
 
 // import { Users } from "./models/Users";
 // import { Categories } from "./models/category";
@@ -21,6 +22,7 @@ app.use(errorHandler);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(cors());
 
 (async()=>{
     // await Users.sync({alter:true});
