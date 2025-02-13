@@ -10,35 +10,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, description, thumbnail, price, categoryID } = req.body;
+    const { productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
     try {
-        if (name === "" || name === undefined || !name) {
-            return res.status(404).json({ error: "Name can't be empty" });
+        if (productName === "" || productName === undefined || !productName) {
+            return res.status(404).json({ error: "Product's name can't be empty" });
         }
-        if (description === "" || description === undefined || !description) {
-            return res.status(404).json({ error: "Description can't be empty" });
+        if (productDescription === "" || productDescription === undefined || !productDescription) {
+            return res.status(404).json({ error: "Product's description can't be empty" });
         }
-        if (thumbnail === "" || thumbnail === undefined || !thumbnail) {
-            return res.status(404).json({ error: "Thumbnail No. can't be empty." });
+        if (productThumbnail === "" || productThumbnail === undefined || !productThumbnail) {
+            return res.status(404).json({ error: "Product's thumbnail No. can't be empty." });
         }
-        if (price === "" || price === undefined || !price) {
-            return res.status(404).json({ error: "Price role can't be empty." });
+        if (productPrice === "" || productPrice === undefined || !productPrice) {
+            return res.status(404).json({ error: "Product's price role can't be empty." });
         }
         if (categoryID === "" || categoryID === undefined || !categoryID) {
             return res.status(404).json({ error: "Please choose a category role can't be empty." });
         }
-        const isProductExist = yield databse_1.sequelize.query('SELECT * FROM Products WHERE name=? AND description=?  AND price=? AND categoryID=?', {
-            replacements: [name, description, price, categoryID],
+        const isProductExist = yield databse_1.sequelize.query('SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=?', {
+            replacements: [productName, productDescription, productPrice, categoryID],
             type: sequelize_1.QueryTypes.SELECT
         });
         if (isProductExist.length > 0) {
             return res.status(403).json({ error: "This product already exist." });
         }
-        const [result, metaData] = yield databse_1.sequelize.query('INSERT INTO Products (name,description,thumbnail,price,categoryID) VALUES (?,?,?,?,?)', {
-            replacements: [name, description, thumbnail, price, categoryID],
+        const [result, metaData] = yield databse_1.sequelize.query('INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID) VALUES (?,?,?,?,?)', {
+            replacements: [productName, productDescription, productThumbnail, productPrice, categoryID],
             type: sequelize_1.QueryTypes.INSERT
         });
         if (metaData > 0) {
@@ -55,24 +55,24 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.createProduct = createProduct;
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, price, categories } = req.query;
+    const { name, price } = req.query;
     try {
         let query = `
-      SELECT p.productID, p.name, p.description, p.thumbnail, p.price, p.categoryID, c.categoryName
+      SELECT p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, p.categoryID, c.categoryName
       FROM Products p
       LEFT JOIN Categories c ON p.categoryID = c.categoryID
     `;
         let replacements = [];
         if (name) {
-            query += ` WHERE p.name LIKE ?`;
+            query += ` WHERE p.productName LIKE ?`;
             replacements.push(`%${name}%`);
         }
         if (price) {
-            if (price === 'low') {
-                query += replacements.length > 0 ? ` AND p.price ASC` : ` ORDER BY p.price ASC`;
+            if (price === 'low-high') {
+                query += replacements.length > 0 ? ` AND p.productPrice ASC` : ` ORDER BY p.productPrice ASC`;
             }
-            else if (price === 'high') {
-                query += replacements.length > 0 ? ` AND p.price DESC` : ` ORDER BY p.price DESC`;
+            else if (price === 'high-low') {
+                query += replacements.length > 0 ? ` AND p.productPrice DESC` : ` ORDER BY p.productPrice DESC`;
             }
         }
         const products = yield databse_1.sequelize.query(query, {
@@ -82,7 +82,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (products.length === 0) {
             return res.status(404).json({ message: "No products found" });
         }
-        return res.status(200).json({ products });
+        return res.status(200).json(products);
     }
     catch (error) {
         console.log(error, "error");
@@ -113,7 +113,7 @@ const deleteProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.deleteProducts = deleteProducts;
 const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productID, name, description, thumbnail, price, categoryID } = req.body;
+    const { productID, productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
     try {
         const isProductExist = yield databse_1.sequelize.query('SELECT * FROM Products WHERE productID=?', {
             replacements: [productID],
@@ -122,8 +122,8 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (isProductExist.length === 0) {
             return res.status(403).json({ error: "This product doesn't exist" });
         }
-        const updatedProduct = yield databse_1.sequelize.query('UPDATE Products SET name=? ,description=? ,thumbnail=? ,price=? ,categoryID=? WHERE productID=?', {
-            replacements: [name, description, thumbnail, price, categoryID, productID],
+        const updatedProduct = yield databse_1.sequelize.query('UPDATE Products SET productName=? ,productDescription=? ,productThumbnail=? ,productPrice=? ,categoryID=? WHERE productID=?', {
+            replacements: [productName, productDescription, productThumbnail, productPrice, categoryID, productID],
             type: sequelize_1.QueryTypes.UPDATE
         });
         if (updatedProduct[1] > 0) {

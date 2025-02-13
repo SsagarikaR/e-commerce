@@ -1,6 +1,6 @@
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { DataTypes } from "sequelize";
-import { Categories } from "./categories";
+import { Categories } from "./category";
 
 export const Produtcs=sequelize.define("Products",{
     productID:{
@@ -9,19 +9,19 @@ export const Produtcs=sequelize.define("Products",{
         primaryKey:true,
         autoIncrement:true
     },
-    name:{
+    productName:{
         type:DataTypes.STRING,
         allowNull:false
     },
-    description:{
-        type:DataTypes.STRING,
+    productDescription:{
+        type:DataTypes.TEXT,
         allowNull:false
     },
-    thumbnail:{
-        type:DataTypes.STRING,
+    ProductThumbnail:{
+        type:DataTypes.TEXT,
         allowNull:false
     },
-    price:{
+    productPrice:{
         type:DataTypes.INTEGER,
         allowNull:false
     },

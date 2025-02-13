@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Produtcs = void 0;
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
-const categories_1 = require("./categories");
+const category_1 = require("./category");
 exports.Produtcs = databse_1.sequelize.define("Products", {
     productID: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -20,7 +20,7 @@ exports.Produtcs = databse_1.sequelize.define("Products", {
         allowNull: false
     },
     ProductThumbnail: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.TEXT,
         allowNull: false
     },
     productPrice: {
@@ -31,7 +31,7 @@ exports.Produtcs = databse_1.sequelize.define("Products", {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: categories_1.Categories,
+            model: category_1.Categories,
             key: "categoryID"
         },
         onDelete: 'CASCADE'

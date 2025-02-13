@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletecategories = exports.updateCategories = exports.getCategories = exports.createCategories = void 0;
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const createCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryName, categoryThumbnail } = req.body;
@@ -73,16 +73,12 @@ exports.getCategories = getCategories;
 const updateCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryID, categoryName, categoryThumbnail } = req.body;
     try {
-        const updateThumbnail = yield databse_1.sequelize.query(`UPDATE Categories SET categoryName=?, categoryThumbnail=? where cateoryID=?`, {
+        const updateThumbnail = yield databse_1.sequelize.query(`UPDATE Categories SET categoryName=?, categoryThumbnail=? where categoryID=?`, {
             replacements: [categoryName, categoryThumbnail, categoryID],
             type: sequelize_1.QueryTypes.UPDATE
         });
-        if (updateThumbnail[1] !== 0) {
-            return res.status(200).json({ message: "Successfully updated the category." });
-        }
-        else {
-            return res.status(409).json({ error: "Error in updating the category." });
-        }
+        console.log(updateThumbnail);
+        return res.status(200).json({ message: "Successfully updated the category." });
     }
     catch (error) {
         console.log(error, "error");
@@ -100,11 +96,11 @@ const deletecategories = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (isCategoryExist.length === 0) {
             return res.status(404).json({ message: "This category not found" });
         }
-        const deletedCatgeory = yield databse_1.sequelize.query('DELETE FROM Categories WHERE categoryID=?', {
+        yield databse_1.sequelize.query('DELETE FROM Categories WHERE categoryID=?', {
             replacements: [categoryID],
-            type: sequelize_1.QueryTypes.SELECT
+            type: sequelize_1.QueryTypes.DELETE
         });
-        console.log(exports.deletecategories, "deleteCategory");
+        // console.log(deletecategories,"deleteCategory");
         return res.status(200).json({ message: "Successfully deleted the category." });
     }
     catch (error) {

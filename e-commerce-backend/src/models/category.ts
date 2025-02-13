@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 
 export const Categories=sequelize.define("Categories",{
     categoryID:{
@@ -13,7 +13,7 @@ export const Categories=sequelize.define("Categories",{
         allowNull:false
     },
     categoryThumbnail:{
-        type:DataTypes.STRING,
+        type:DataTypes.TEXT,
         allowNull:false
     },
 },
@@ -21,4 +21,4 @@ export const Categories=sequelize.define("Categories",{
     timestamps:false
 })
 
-console.log(Categories===sequelize.model("Categories"));
+// console.log(Categories===sequelize.model("Categories"));

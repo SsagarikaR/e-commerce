@@ -1,7 +1,7 @@
 import { Request,Response,NextFunction } from "express";
 import  Jwt  from "jsonwebtoken";
 import dotenv from "dotenv";
-import { sequelize } from "./databse";
+import { sequelize } from "../db/databse";
 import { QueryTypes } from "sequelize";
 dotenv.config();
 
@@ -40,12 +40,12 @@ export const isAdmin=async(req:Request,res:Response,next:NextFunction)=>{
         }
         else{
             if(user[0].role!=="Admin"){
-                 res.status(403).json({error:"You are not authorized for this action."})
+                 res.status(401).json({error:"You are not authorized for this action."})
             }
            next();
         }
     }
     catch(error){
-        res.status(500).json({errro:"Please try again after sometimes"})
+        res.status(500).json({error:"Please try again after sometimes"})
     }
 }

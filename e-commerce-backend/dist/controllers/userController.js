@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllUser = exports.updateUserPassword = exports.deleteUser = void 0;
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,12 +65,7 @@ const updateUserPassword = (req, res) => __awaiter(void 0, void 0, void 0, funct
             type: sequelize_1.QueryTypes.UPDATE
         });
         console.log(updateUser, "updateuser");
-        if (updateUser[1] !== 0) {
-            return res.status(200).json({ message: "User updated successfully" });
-        }
-        else {
-            return res.status(409).json({ error: "Error updating user" });
-        }
+        return res.status(200).json({ message: "User updated successfully" });
     }
     catch (error) {
         console.log(error, "error");

@@ -1,19 +1,23 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
-import "./config/databse";
+import "./db/databse";
 import authAPIs from "./routes/auth";
 import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";
 import productAPIs from "./routes/products";
 import cartAPIs from "./routes/cart";
 
+import { errorHandler } from "./middlewear/errorHandler";
+
 // import { Users } from "./models/Users";
-// import { Categories } from "./models/Categories";
-// import { Produtcs } from "./models/Products";
+// import { Categories } from "./models/category";
+// import { Produtcs } from "./models/product";
 // import { CartItems } from "./models/CartItems";
 
 const app=express();
 const port=3000
+
+app.use(errorHandler);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));

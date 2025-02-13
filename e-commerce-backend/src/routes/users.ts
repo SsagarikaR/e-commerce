@@ -1,5 +1,5 @@
 import { Router,Request,Response } from "express";
-import { checkToken, isAdmin } from "../config/authorization";
+import { checkToken, isAdmin } from "../middlewear/authorization";
 import { deleteUser, getAllUser, updateUserPassword } from "../controllers/userController";
 const router=Router();
 

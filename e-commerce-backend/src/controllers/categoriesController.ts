@@ -1,4 +1,4 @@
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 
@@ -63,18 +63,14 @@ export const getCategories=async(req:Request,res:Response)=>{
 export const updateCategories=async(req:Request,res:Response)=>{
     const {categoryID,categoryName,categoryThumbnail}=req.body;
     try{
-            const updateThumbnail=await sequelize.query(`UPDATE Categories SET categoryName=?, categoryThumbnail=? where cateoryID=?`,
+            const updateThumbnail=await sequelize.query(`UPDATE Categories SET categoryName=?, categoryThumbnail=? where categoryID=?`,
                 {
                     replacements:[categoryName,categoryThumbnail,categoryID],
                     type:QueryTypes.UPDATE
                 }
             )
-            if(updateThumbnail[1]!==0){
+            console.log(updateThumbnail);
                 return res.status(200).json({message:"Successfully updated the category."});
-            }
-            else{
-                return res.status(409).json({error:"Error in updating the category."});
-            }
     }
     catch(error){
         console.log(error,"error");
@@ -92,11 +88,11 @@ export const deletecategories=async(req:Request,res:Response)=>{
         if(isCategoryExist.length===0){
             return res.status(404).json({message:"This category not found"});
         }
-        const deletedCatgeory=await sequelize.query('DELETE FROM Categories WHERE categoryID=?',{
+        await sequelize.query('DELETE FROM Categories WHERE categoryID=?',{
             replacements:[categoryID],
-            type:QueryTypes.SELECT
+            type:QueryTypes.DELETE
         })
-        console.log(deletecategories,"deleteCategory");
+        // console.log(deletecategories,"deleteCategory");
         return res.status(200).json({message:"Successfully deleted the category."});
     }
     catch(error){

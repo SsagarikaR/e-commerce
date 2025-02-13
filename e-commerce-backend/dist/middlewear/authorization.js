@@ -51,7 +51,7 @@ const isAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         }
         else {
             if (user[0].role !== "Admin") {
-                res.status(403).json({ error: "You are not authorized for this action." });
+                res.status(401).json({ error: "You are not authorized for this action." });
             }
             next();
         }

@@ -1,5 +1,5 @@
 import { generateToken } from "../config/authentication";
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
@@ -30,7 +30,7 @@ export const createUser=async(req:Request,res:Response)=>{
             }
         );
         if(ifUserExistWithName.length!==0){
-            return res.status(403).json({error:"This user name is already registered"});
+            return res.status(403).json({error:"This user name is already taken"});
         }
         const ifUserExistWithEmail=await sequelize.query(`SELECT * FROM Users WHERE email=?`,
             {
@@ -59,6 +59,7 @@ export const createUser=async(req:Request,res:Response)=>{
     catch(error){
         console.log(error,"error creating  user")
         return res.status(500).json({message:"Please try again after sometimes!"});
+        // nextTick
     }
 }
 

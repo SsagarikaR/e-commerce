@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUser = exports.createUser = void 0;
 const authentication_1 = require("../config/authentication");
-const databse_1 = require("../config/databse");
+const databse_1 = require("../db/databse");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const sequelize_1 = require("sequelize");
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,7 +40,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             type: sequelize_1.QueryTypes.SELECT
         });
         if (ifUserExistWithName.length !== 0) {
-            return res.status(403).json({ error: "This user name is already registered" });
+            return res.status(403).json({ error: "This user name is already taken" });
         }
         const ifUserExistWithEmail = yield databse_1.sequelize.query(`SELECT * FROM Users WHERE email=?`, {
             replacements: [email],
@@ -66,6 +66,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         console.log(error, "error creating  user");
         return res.status(500).json({ message: "Please try again after sometimes!" });
+        // nextTick
     }
 });
 exports.createUser = createUser;

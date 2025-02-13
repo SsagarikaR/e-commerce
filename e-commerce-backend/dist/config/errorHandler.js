@@ -9,17 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const authorization_1 = require("../middlewear/authorization");
-const userController_1 = require("../controllers/userController");
-const router = (0, express_1.Router)();
-router.get("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.getAllUser)(req, res);
-}));
-router.delete("/", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.deleteUser)(req, res);
-}));
-router.patch("/", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.updateUserPassword)(req, res);
-}));
-exports.default = router;
+exports.errorHandler = errorHandler;
+function errorHandler(err, req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.error(err.stack);
+        console.log("kandni sagarika");
+        res.status(500).json({ error: 'Internal Server Error' });
+    });
+}

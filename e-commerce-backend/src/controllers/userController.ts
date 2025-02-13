@@ -1,4 +1,4 @@
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 import bcrypt from "bcrypt";
@@ -58,12 +58,7 @@ export const updateUserPassword=async(req:Request,res:Response)=>{
             }
         )
         console.log(updateUser,"updateuser");
-         if(updateUser[1]!==0){
-            return res.status(200).json({message:"User updated successfully"});
-         }
-         else{
-            return res.status(409).json({error:"Error updating user"})
-         }
+        return res.status(200).json({message:"User updated successfully"});
     }
     catch(error){
         console.log(error,"error");

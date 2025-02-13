@@ -1,10 +1,10 @@
 import { Request,Response } from "express";
-import { sequelize } from "../config/databse";
+import { sequelize } from "../db/databse";
 import { QueryTypes } from "sequelize";
 
 export const addCartItem = async (req: Request, res: Response) => {
     const {  productID, quantity } = req.body;
-     const userID=req.body.user.id;
+     const userID=req.body.user.identifire;
     try {
       const [product] = await sequelize.query(
         'SELECT * FROM Products WHERE productID = :productID',

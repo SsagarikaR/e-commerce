@@ -1,5 +1,5 @@
 import { Router,Request,Response } from "express";
-import { checkToken, isAdmin } from "../config/authorization";
+import { checkToken, isAdmin } from "../middlewear/authorization";
 import { createCategories, deletecategories, getCategories, updateCategories } from "../controllers/categoriesController";
 
 const router=Router();

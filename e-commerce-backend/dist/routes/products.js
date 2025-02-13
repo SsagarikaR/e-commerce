@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const authorization_1 = require("../config/authorization");
+const authorization_1 = require("../middlewear/authorization");
 const productController_1 = require("../controllers/productController");
 const router = (0, express_1.Router)();
 router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
