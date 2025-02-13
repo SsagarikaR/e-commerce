@@ -1,4 +1,3 @@
-import { error } from "console";
 import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
@@ -48,16 +47,47 @@ export const createProduct=async(req:Request,res:Response)=>{
     }
 }
 
-export const getProducts=async(req:Request,res:Response)=>{
-    const {name,price,categories}=req.params;
-    try{
 
+export const getProducts = async (req: Request, res: Response) => {
+  const { name, price, categories } = req.query;  
+  
+  try {
+    let query = `
+      SELECT p.productID, p.name, p.description, p.thumbnail, p.price, p.categoryID, c.categoryName
+      FROM Products p
+      LEFT JOIN Categories c ON p.categoryID = c.categoryID
+    `;
+    let replacements: Array<any> = [];
+
+    if (name) {
+      query += ` WHERE p.name LIKE ?`;
+      replacements.push(`%${name}%`);
     }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"});
+
+    if (price) {
+      if (price === 'low') {
+        query += replacements.length > 0 ? ` AND p.price ASC` : ` ORDER BY p.price ASC`;
+      } else if (price === 'high') {
+        query += replacements.length > 0 ? ` AND p.price DESC` : ` ORDER BY p.price DESC`;
+      }
     }
-}
+
+    const products = await sequelize.query(query, {
+      replacements: replacements,
+      type: QueryTypes.SELECT,
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    return res.status(200).json({ products });
+  } catch (error) {
+    console.log(error, "error");
+    return res.status(500).json({ error: "Please try again after sometime!" });
+  }
+};
+
 
 export const deleteProducts=async(req:Request,res:Response)=>{
     const {productID}=req.body;

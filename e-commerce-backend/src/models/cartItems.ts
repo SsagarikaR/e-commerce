@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/databse";
-import { Produtcs } from "./Products";
-import { Users } from "./Users";
+import { Produtcs } from "./products";
+import { Users } from "./users";
 
 export const CartItems=sequelize.define("CartItems",{
     cartItemID:{
@@ -34,4 +34,4 @@ export const CartItems=sequelize.define("CartItems",{
     timestamps:false
 })
 
-console.log(CartItems===sequelize.model("CartItems"))
+// console.log(CartItems===sequelize.model("CartItems"))

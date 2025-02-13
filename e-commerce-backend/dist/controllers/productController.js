@@ -55,12 +55,38 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.createProduct = createProduct;
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, price, categories } = req.params;
+    const { name, price, categories } = req.query;
     try {
+        let query = `
+      SELECT p.productID, p.name, p.description, p.thumbnail, p.price, p.categoryID, c.categoryName
+      FROM Products p
+      LEFT JOIN Categories c ON p.categoryID = c.categoryID
+    `;
+        let replacements = [];
+        if (name) {
+            query += ` WHERE p.name LIKE ?`;
+            replacements.push(`%${name}%`);
+        }
+        if (price) {
+            if (price === 'low') {
+                query += replacements.length > 0 ? ` AND p.price ASC` : ` ORDER BY p.price ASC`;
+            }
+            else if (price === 'high') {
+                query += replacements.length > 0 ? ` AND p.price DESC` : ` ORDER BY p.price DESC`;
+            }
+        }
+        const products = yield databse_1.sequelize.query(query, {
+            replacements: replacements,
+            type: sequelize_1.QueryTypes.SELECT,
+        });
+        if (products.length === 0) {
+            return res.status(404).json({ message: "No products found" });
+        }
+        return res.status(200).json({ products });
     }
     catch (error) {
         console.log(error, "error");
-        return res.status(500).json({ error: "Please try again after sometimes!" });
+        return res.status(500).json({ error: "Please try again after sometime!" });
     }
 });
 exports.getProducts = getProducts;

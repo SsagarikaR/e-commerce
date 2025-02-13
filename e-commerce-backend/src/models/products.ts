@@ -1,6 +1,6 @@
 import { sequelize } from "../config/databse";
 import { DataTypes } from "sequelize";
-import { Categories } from "./Categories";
+import { Categories } from "./categories";
 
 export const Produtcs=sequelize.define("Products",{
     productID:{

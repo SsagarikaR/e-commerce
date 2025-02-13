@@ -1,4 +1,3 @@
-import { error } from "console";
 import { Sequelize } from "sequelize";
 
 export const sequelize=new Sequelize('eCommerce','sagarika','Sagarika@%71',{
