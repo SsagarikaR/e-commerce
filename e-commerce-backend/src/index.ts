@@ -6,6 +6,7 @@ import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";
 import productAPIs from "./routes/products";
 import cartAPIs from "./routes/cart";
+import brandAPIs from "./routes/brands";
 import cors from "cors";
 
 import { errorHandler } from "./middlewear/errorHandler";
@@ -42,6 +43,7 @@ app.use("/users",userAPIs);
 app.use("/categories",categoriesAPIs);
 app.use("/products",productAPIs);
 app.use("/cart",cartAPIs);
+app.use("/brands",brandAPIs)
 
 app.listen(port,(error)=>{
     if(!error){
