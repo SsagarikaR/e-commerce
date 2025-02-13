@@ -3,10 +3,12 @@ import axios from "axios"
 export const makeUnAuthorizedPostRequest=async (route:string,data:object)=>{
     try{
         const resposne=await axios.post(`http://localhost:3000${route}`,data)
-        console.log(resposne);
+        // console.log(resposne);
+        return resposne
     }
     catch(error){
         console.log(error);
+
     }
 }
 

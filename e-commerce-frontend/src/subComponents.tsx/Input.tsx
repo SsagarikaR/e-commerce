@@ -1,13 +1,34 @@
 import { InputProps } from '../interface/interface'
+import { validations } from '../utils/validationRules';
 
-function Input({field,id,type,value,setValue,error,setError}:InputProps) {
+function Input({field, id, type, value, setValue, error, setError}: InputProps) {
+  function checkError(value: string, id: string) {
+    for (const key in validations[id]) {
+      if (validations[id][key].logic(value)) {
+        setError(validations[id][key].message);
+        break;
+      } else {
+        setError("");
+      }
+    }
+  }
+
   return (
     <div className='input_box_container'>
-        <label htmlFor='full_name'>{field} <span className="required text-red-800">*</span></label>
-        <input className='input_box' id={id} value={value} onChange={(e)=>{setValue(e.target.value)}} type={type}/>
-        <div className="error">{error}</div>
-      </div>
-  )
+      <input
+        className='input_box'
+        id={id}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          checkError(e.target.value, id);
+        }}
+        type={type}
+        placeholder={`Enter your ${field}`}
+      />
+      {error && <div className="error">{error}</div>} {/* Display the error only when there's an error */}
+    </div>
+  );
 }
 
-export default Input
+export default Input;

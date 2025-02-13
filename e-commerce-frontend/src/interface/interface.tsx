@@ -7,3 +7,12 @@ export interface InputProps {
     error: string;
     setError: (value:string)=>void;
 }
+
+export interface forValidations {
+    [key: string]: {
+        [key:string]: {
+        logic: (val: string) => boolean;
+        message: string;
+      };
+    };
+  }
