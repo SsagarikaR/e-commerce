@@ -3,11 +3,9 @@
 import "../styles/signup.css";
 import Input from "../subComponents.tsx/Input";
 import { useEffect, useState } from "react";
-import {
-  makeUnAuthorizedGetRequest,
-  makeUnAuthorizedPostRequest,
-} from "../services/unAuthorizedRequest";
-import { Link } from "react-router-dom";
+import {makeUnAuthorizedGetRequest,makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function Signup() {
   const [full_name, setFull_name] = useState<string>("");
@@ -19,6 +17,7 @@ function Signup() {
   const [email_error, setEmail_Error] = useState<string>("");
   const [contact_error, setContactError] = useState<string>("");
   const [password_error, setPasswordError] = useState<string>("");
+  const navigate=useNavigate();
 
   const inputField = [
     {
@@ -68,11 +67,16 @@ function Signup() {
       password: password,
     });
     console.log(resposne);
+    Cookies.set('token', resposne?.data, { expires: 7, secure: true });
+    if(Cookies.get('token') && Cookies.get('token')!==undefined){
+      navigate("/categories")
+    }
   };
 
   const getData = async () => {
     const resposnse = await makeUnAuthorizedGetRequest("/products");
     console.log(resposnse);
+
   };
 
   useEffect(() => {
@@ -119,14 +123,14 @@ function Signup() {
                   <option value="User">Standard User</option>
                 </select>
               </div>
-              <button
+             <button
                 className="btn"
                 onClick={(e) => {
                   e.preventDefault();
                   createUser();
                 }}
               >
-                Sign up
+                <Link to="/categories">Sign up</Link>
               </button>
             </div>
           </form>

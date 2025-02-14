@@ -2,18 +2,33 @@ import {Routes,Route} from "react-router-dom";
 import Signup from "../components/Signup";
 import Signin from "../components/Signin";
 import Categories from "../components/Categories";
-// import Cookies from "js-cookie";
+import Landing from "../components/Landing";
+import Cookies from "js-cookie";
+import Products from "../components/Products";
 
 function Home() {
-  console.log(document.cookie);
-  // const token=Cookies.get("token");
+  // console.log(document.cookie);
+  const token=Cookies.get("token");
+  console.log(token);
   return (
     <>
-        <Routes>
-            <Route path="/signup" element={<Signup/>}/>
-            <Route path="/signin" element={<Signin/>}/>
-            <Route path="/" element={<Categories/>}/>
-        </Routes>
+        
+          {
+            // token ?
+            <Routes>
+              <Route path="/categories" element={<Categories/>}/>
+              <Route path="/categories/:name" element={<Products/>}/>
+              <Route path="/products/:name" element={<Products/>}/>
+            {/* </Routes>: */}
+            {/* <Routes> */}
+              {/* <Route path="*" element={<Landing/>}/> */}
+              <Route path="/" element={<Landing/>}/>
+              <Route path="/signup" element={<Signup/>}/>
+              <Route path="/signin" element={<Signin/>}/>
+            </Routes>
+            
+          }
+            
     </>
   )
 }
