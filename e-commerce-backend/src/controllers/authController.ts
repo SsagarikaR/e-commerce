@@ -3,6 +3,7 @@ import { sequelize } from "../db/databse";
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
+import { forUser } from "interface/interface";
 
 export const createUser=async(req:Request,res:Response)=>{
     const {name,email,contactNo,role,password}=req.body
@@ -65,24 +66,21 @@ export const createUser=async(req:Request,res:Response)=>{
 
 
 export const getUser=async(req:Request,res:Response)=>{
-    const {name,email,contactNo,role,password}=req.body;
+    const {name,contactNo,password}=req.body;
     try{
         if( name===""  || name===undefined || !name){
             return res.status(404).json({error:"Name can't be empty"});
         }
-        if(email==="" || email===undefined || !email){
-            return res.status(404).json({error:"Email can't be empty"});
-        }
         if(contactNo==="" || contactNo===undefined || !contactNo){
             return res.status(404).json({error:"Contact No. can't be empty."});
         }
-        if(role==="" || role===undefined || !role){
+        if(password==="" || password==undefined || !password){
             return res.status(404).json({error:"User's role can't be empty."});
         }
 
-        const user:forUser[]=await sequelize.query(`SELECT * FROM Users WHERE name=? AND email=? AND contactNo=? AND role=? `,
+        const user:forUser[]=await sequelize.query(`SELECT * FROM Users WHERE name=? AND  contactNo=?  `,
             {
-                replacements:[name,email,contactNo,role],
+                replacements:[name,contactNo],
                 type:QueryTypes.SELECT
             }
         );

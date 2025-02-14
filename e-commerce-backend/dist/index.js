@@ -20,6 +20,7 @@ const users_1 = __importDefault(require("./routes/users"));
 const categories_1 = __importDefault(require("./routes/categories"));
 const products_1 = __importDefault(require("./routes/products"));
 const cart_1 = __importDefault(require("./routes/cart"));
+// import brandAPIs from "./routes/brands";
 const cors_1 = __importDefault(require("cors"));
 const errorHandler_1 = require("./middlewear/errorHandler");
 // import { Users } from "./models/Users";
@@ -48,6 +49,7 @@ app.use("/users", users_1.default);
 app.use("/categories", categories_1.default);
 app.use("/products", products_1.default);
 app.use("/cart", cart_1.default);
+// app.use("/brands",brandAPIs)
 app.listen(port, (error) => {
     if (!error) {
         console.log("App is listening on port 3000.");

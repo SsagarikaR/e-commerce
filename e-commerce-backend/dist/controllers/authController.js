@@ -71,22 +71,19 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.createUser = createUser;
 const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, contactNo, role, password } = req.body;
+    const { name, contactNo, password } = req.body;
     try {
         if (name === "" || name === undefined || !name) {
             return res.status(404).json({ error: "Name can't be empty" });
         }
-        if (email === "" || email === undefined || !email) {
-            return res.status(404).json({ error: "Email can't be empty" });
-        }
         if (contactNo === "" || contactNo === undefined || !contactNo) {
             return res.status(404).json({ error: "Contact No. can't be empty." });
         }
-        if (role === "" || role === undefined || !role) {
+        if (password === "" || password == undefined || !password) {
             return res.status(404).json({ error: "User's role can't be empty." });
         }
-        const user = yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? AND email=? AND contactNo=? AND role=? `, {
-            replacements: [name, email, contactNo, role],
+        const user = yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? AND  contactNo=?  `, {
+            replacements: [name, contactNo],
             type: sequelize_1.QueryTypes.SELECT
         });
         if (user.length !== 0) {

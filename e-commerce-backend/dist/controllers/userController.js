@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUser = exports.updateUserPassword = exports.deleteUser = void 0;
+exports.getUserByID = exports.getAllUser = exports.updateUserPassword = exports.deleteUser = void 0;
 const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -89,3 +89,23 @@ const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getAllUser = getAllUser;
+const getUserByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
+    const id = req.body.user.identifire;
+    try {
+        const users = yield databse_1.sequelize.query(`SELECT * FROM Users where userID=?`, {
+            replacements: [id],
+            type: sequelize_1.QueryTypes.SELECT,
+        });
+        if (users.length === 0) {
+            return res.status(404).json({ error: "Invalid user id" });
+        }
+        delete users[0].password;
+        return res.status(200).json(users[0]);
+    }
+    catch (error) {
+        console.log(error, "error");
+        return res.status(500).json({ error: "Please try again after sometimes!" });
+    }
+});
+exports.getUserByID = getUserByID;

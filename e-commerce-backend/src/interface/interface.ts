@@ -1,4 +1,4 @@
-interface forUser{
+export interface forUser{
     userID:number,
     name:string,
     email:string,

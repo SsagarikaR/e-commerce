@@ -2,6 +2,7 @@ import { sequelize } from "../db/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 import bcrypt from "bcrypt";
+import { forUser } from "interface/interface";
 
 export const deleteUser=async(req:Request,res:Response)=>{
     const id=req.body.user.identifire;
@@ -75,6 +76,28 @@ export const getAllUser=async(req:Request,res:Response)=>{
             return res.status(404).json({error:"No user found"});
         }
         return res.status(200).json(users)
+    }
+    catch(error){
+        console.log(error,"error");
+        return res.status(500).json({error:"Please try again after sometimes!"});
+    }
+}
+
+export const getUserByID=async(req:Request,res:Response)=>{
+    console.log(req.body)
+    const id=req.body.user.identifire;
+    try{
+        const users:forUser[]=await sequelize.query(`SELECT * FROM Users where userID=?`,{
+            replacements:[id],
+            type:QueryTypes.SELECT,
+
+        });
+
+        if(users.length===0){
+            return res.status(404).json({error:"Invalid user id"});
+        }
+        delete users[0].password;
+        return res.status(200).json(users[0])
     }
     catch(error){
         console.log(error,"error");

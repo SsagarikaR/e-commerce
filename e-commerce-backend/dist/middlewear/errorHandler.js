@@ -13,7 +13,11 @@ exports.errorHandler = errorHandler;
 function errorHandler(err, req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         console.error(err.stack);
-        console.log("kandni sagarika");
-        res.status(500).json({ error: 'Internal Server Error' });
+        if (err.status && err.message) {
+            res.status(err.status).json({ error: err.message });
+        }
+        else {
+            res.status(500).json({ error: "Internal Server Error" });
+        }
     });
 }
