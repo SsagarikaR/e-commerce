@@ -63,20 +63,20 @@ export const validations:forValidations = {
         message: "Contact no. format is invalid",
       },
     },
-    // password: {
-    //   require: {
-    //     logic: (val:string) => {
-    //       return val.trim() === "";
-    //     },
-    //     message: "Password can't be empty",
-    //   },
-    //   wrong_format: {
-    //     logic: (val:string) => {
-    //       const password_regexx = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-    //       return !(password_regexx.test(val));
-    //     },
-    //     message:
-    //       "Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters",
-    //   },
-    // },
+    password: {
+      require: {
+        logic: (val:string) => {
+          return val.trim() === "";
+        },
+        message: "Password can't be empty",
+      },
+      wrong_format: {
+        logic: (val:string) => {
+          const password_regexx = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+          return !(password_regexx.test(val));
+        },
+        message:
+          "Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters",
+      },
+    },
   };

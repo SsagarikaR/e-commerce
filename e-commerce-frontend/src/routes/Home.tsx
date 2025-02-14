@@ -5,6 +5,7 @@ import Categories from "../components/Categories";
 import Landing from "../components/Landing";
 import Cookies from "js-cookie";
 import Products from "../components/Products";
+import AdminDashboard from "../components/AdminDashboard";
 
 function Home() {
   // console.log(document.cookie);
@@ -19,6 +20,7 @@ function Home() {
               <Route path="/categories" element={<Categories/>}/>
               <Route path="/categories/:name" element={<Products/>}/>
               <Route path="/products/:name" element={<Products/>}/>
+              <Route path="/dashboard" element={<AdminDashboard/>}/>
             {/* </Routes>: */}
             {/* <Routes> */}
               {/* <Route path="*" element={<Landing/>}/> */}

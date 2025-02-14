@@ -45,6 +45,16 @@ export interface forProductbyName{
   productPrice:number
 }
 
+export  interface FormData {
+  full_name: string;
+  contact: string;
+  password: string;
+}
+
+export interface forSideBarProp{
+  setPage:(value:string)=>void
+  page:string
+}
 // export interface forProduct{
 //   productID: number,
 //   productName: string,

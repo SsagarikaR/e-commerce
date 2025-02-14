@@ -4,7 +4,7 @@ import { forUser } from "../interface/interface";
 import trolleyIcon from "../assets/trolley.png";
 import searchIcon from "../assets/search.png";
 import profileIcon from "../assets/account.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
     const [user,setUser]=useState<forUser|undefined>();
@@ -37,7 +37,7 @@ function Navbar() {
             <input className="outline-none text-lg font-normal" placeholder="Search by product name." onChange={(e)=>{setSearch(e.target.value)}}/>
             <img src={searchIcon} className="w-8 h-8" onClick={()=>{searchProduct();}}/>
         </div>
-        {user && user.role==="Admin"?<div className="flex items-center"><img src={profileIcon} className="w-8 h-8"/>Admin Dashboard</div>:<div className="flex items-center"><img src={profileIcon} className="w-8 h-8"/>Account</div>}
+        {user && user.role==="Admin"?<div className="flex items-center"><img src={profileIcon} className="w-8 h-8"/><Link to="/dashboard">Admin Dashboard</Link></div>:<div className="flex items-center"><img src={profileIcon} className="w-8 h-8"/>Account</div>}
         
     </div>
   )
