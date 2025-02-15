@@ -55,12 +55,13 @@ function Signin() {
         password: password,
       });
    
-      console.log(resposne,"signed in");
+      if(resposne && resposne.data){
+        console.log(resposne,"signed in");
       Cookies.set('token', resposne?.data.token, { expires: 7, secure: true });
       console.log(resposne);
-      if(Cookies.get('token') && !(Cookies.get('token')===undefined)){
-        navigate("/categories")
+        navigate("/")
       }
+      
   };
 
 

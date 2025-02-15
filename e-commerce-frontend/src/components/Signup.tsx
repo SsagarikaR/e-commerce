@@ -69,7 +69,7 @@ function Signup() {
     Cookies.set('token', resposne?.data, { expires: 7, secure: true });
     console.log(Cookies.get('token'),"Is token exist");
     if(Cookies.get('token') && !(Cookies.get('token')===undefined)){
-      navigate("/categories")
+      navigate("/")
     }
   };
 
@@ -86,6 +86,17 @@ function Signup() {
         if (validations["full_name"][key].logic(full_name)) {
           setFullNameError(validations["full_name"][key].message);
           console.log("Full name error:", validations["full_name"][key].message);
+          isValid = false;
+          break;
+        } else {
+          setFullNameError("");
+        }
+      }
+
+      for (const key in validations["email"]) {
+        if (validations["email"][key].logic(full_name)) {
+          setFullNameError(validations["email"][key].message);
+          console.log("Email name error:", validations["email"][key].message);
           isValid = false;
           break;
         } else {

@@ -1,9 +1,17 @@
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
-import { forProductbyName } from "../interface/interface";
+import {  forProductListProp } from "../interface/interface";
+import { makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
 
-
-function ProductList({data}:{data:forProductbyName[]}) {
+function ProductList({data,setListChange,listChange,setEditProduct,setToggleModal}:forProductListProp) {
+  const deleteProduct=async(productID:number)=>{
+    console.log(productID);
+    const response=await makeAuthorizedDeleteRequest(`/products/`,{productID:productID})
+    if(response?.data){
+      setListChange(!listChange);
+    }
+  }
+  
   return (
     <table className="w-full border-collapse border border-gray-400 text-lg text-gray-700">
             <thead>
@@ -31,8 +39,8 @@ function ProductList({data}:{data:forProductbyName[]}) {
                   </td>
                   <td className="border border-gray-400 p-2">
                     <div className="flex space-x-2">
-                      <img src={editIcon} className="w-10 h-10 p-1" />
-                      <img src={deleteIcon} className="w-10 h-10 p-1" />
+                      <img src={editIcon} className="w-10 h-10 p-1" onClick={()=>{setEditProduct(d); setToggleModal(true)}}/>
+                      <img src={deleteIcon} className="w-10 h-10 p-1" onClick={()=>{deleteProduct(d.productID)}}/>
                     </div>
                   </td>
                 </tr>

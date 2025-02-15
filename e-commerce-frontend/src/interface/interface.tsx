@@ -44,6 +44,47 @@ export interface forProductbyName{
   productName:string
   productPrice:number
 }
+ export interface forCartItem {
+  cartItemID:number
+  categoryName:string
+  productDescription:string
+  totalPrice:number
+  productID: number;
+  productName: string;
+  productPrice: number;
+  productThumbnail: string;
+  quantity: number;
+}
+ 
+export interface forCategoryModalProp {
+  setToggleModal:(value:boolean)=>void,
+  setListChange:(value:boolean)=>void,
+  listChange:boolean,
+  editCategory:forCategories
+}
+export interface forProductModalProp{
+  setToggleModal:(value:boolean)=>void,
+  setListChange:(value:boolean)=>void,
+  listChange:boolean,
+  editProduct:forProductbyName
+  
+}
+
+export interface forProductListProp{
+  data:forProductbyName[],
+  setListChange:(value:boolean)=>void,
+  listChange:boolean,
+  setEditProduct:(value:forProductbyName)=>void
+  setToggleModal:(value:boolean)=>void
+}
+
+export interface forCategoriesProp{
+  data:forCategories[],
+  setListChange:(value:boolean)=>void,
+  listChange:boolean
+  setEditCategory:(value:forCategories)=>void
+  setToggleModal:(value:boolean)=>void
+}
 
 export  interface FormData {
   full_name: string;
