@@ -14,7 +14,7 @@ import { errorHandler } from "./middlewear/errorHandler";
 // import { Users } from "./models/Users";
 // import { Categories } from "./models/category";
 // import { Produtcs } from "./models/product";
-// import { CartItems } from "./models/CartItems";
+// import { CartItems } from "./models/cartItem";
 // import { brands } from "./models/brand";
 
 const app=express();

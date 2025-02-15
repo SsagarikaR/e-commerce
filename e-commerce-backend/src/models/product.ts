@@ -1,7 +1,7 @@
 import { sequelize } from "../db/databse";
 import { DataTypes } from "sequelize";
 import { Categories } from "./category";
-import { brands } from "./brand";
+// import { brands } from "./brand";
 
 export const Produtcs=sequelize.define("Products",{
     productID:{
@@ -35,15 +35,15 @@ export const Produtcs=sequelize.define("Products",{
         },
         onDelete:'CASCADE'
     },
-    brandID:{
-        type:DataTypes.INTEGER,
-        allowNull:false,
-        references:{
-            model:brands,
-            key:"brandID"
-        },
-        onDelete:'CASCADE'
-    }
+    // brandID:{
+    //     type:DataTypes.INTEGER,
+    //     allowNull:false,
+    //     references:{
+    //         model:brands,
+    //         key:"brandID"
+    //     },
+    //     onDelete:'CASCADE'
+    // }
 },
 {
     timestamps:false

@@ -29,6 +29,10 @@ exports.CartItems = databse_1.sequelize.define("CartItems", {
             key: "userID"
         },
         onDelete: 'CASCADE'
+    },
+    quantity: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false
     }
 }, {
     timestamps: false

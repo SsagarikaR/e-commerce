@@ -39,22 +39,12 @@ const createCategories = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createCategories = createCategories;
 const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, price } = req.query;
-    console.log(req.query);
+    const { name } = req.query;
+    console.log(req.query, "query");
     console.log(name);
     try {
         if (name) {
-            let query = 'SELECT * from Categories join Products on Categories.CategoryID=Products.categoryID where categoryName=?';
-            let replacements = [name];
-            if (price) {
-                if (price === 'low-to-high') {
-                    query += ` order by Products.productPrice ASc`;
-                }
-                else if (price === 'high-to-low') {
-                    query += `order by Products.productPrice desc`;
-                }
-            }
-            const categoryWithThisName = yield databse_1.sequelize.query(query, {
+            const categoryWithThisName = yield databse_1.sequelize.query('SELECT * from Categories WHERE categoryName=?', {
                 replacements: [name],
                 type: sequelize_1.QueryTypes.SELECT
             });

@@ -55,25 +55,43 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.createProduct = createProduct;
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, price } = req.query;
+    const { name, price, categoryID, id } = req.query;
+    console.log(req.query);
     try {
         let query = `
-    SELECT *
-    FROM Products p
-    LEFT JOIN Categories c ON p.categoryID = c.categoryID
-  `;
+        SELECT *
+        FROM Products p
+        LEFT JOIN Categories c ON p.categoryID = c.categoryID
+      `;
         let replacements = [];
+        let conditions = [];
+        // Filter by categoryID if provided
+        if (categoryID) {
+            conditions.push(`p.categoryID = ?`);
+            replacements.push(categoryID);
+        }
+        // Filter by product name if provided
         if (name) {
-            query += ` WHERE p.productName LIKE ?`;
+            conditions.push(`p.productName LIKE ?`);
             replacements.push(`%${name}%`);
         }
+        // Add WHERE clause if there are conditions
+        if (conditions.length > 0) {
+            query += ` WHERE ` + conditions.join(" AND ");
+        }
+        // Sorting by price
         if (price) {
-            if (price === 'low-to-high') {
-                query += replacements.length > 0 ? ` AND p.productPrice ASC` : ` ORDER BY p.productPrice ASC`;
+            if (price === "low-to-high") {
+                query += ` ORDER BY p.productPrice ASC`;
             }
-            else if (price === 'high-to-low') {
-                query += replacements.length > 0 ? ` AND p.productPrice DESC` : ` ORDER BY p.productPrice DESC`;
+            else if (price === "high-to-low") {
+                query += ` ORDER BY p.productPrice DESC`;
             }
+        }
+        //Filter by ID
+        if (id) {
+            query += `WHERE productID=?`;
+            replacements.push(id);
         }
         const products = yield databse_1.sequelize.query(query, {
             replacements: replacements,
@@ -91,6 +109,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.getProducts = getProducts;
 const deleteProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("data", req.body);
     const { productID } = req.body;
     try {
         const isProductExist = yield databse_1.sequelize.query('SELECT * FROM Products WHERE productID=?', {
@@ -98,8 +117,9 @@ const deleteProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
             type: sequelize_1.QueryTypes.SELECT
         });
         if (isProductExist.length === 0) {
-            return res.status(403).json({ error: "This product doesn't exist" });
+            return res.status(404).json({ error: "This product doesn't exist" });
         }
+        console.log(req.body);
         const deleteProduct = yield databse_1.sequelize.query('DELETE FROM Products WHERE productID=?', {
             replacements: [productID],
             type: sequelize_1.QueryTypes.DELETE
@@ -107,6 +127,7 @@ const deleteProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(200).json({ message: "Successfully deletd the product" });
     }
     catch (error) {
+        console.log(req);
         console.log(error, "error");
         return res.status(500).json({ error: "Please try again after sometimes!" });
     }

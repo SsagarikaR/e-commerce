@@ -27,6 +27,10 @@ export const CartItems=sequelize.define("CartItems",{
             key:"userID"
         },
         onDelete:'CASCADE'
+    },
+    quantity:{
+        type:DataTypes.INTEGER,
+        allowNull:false
     }
   
 },

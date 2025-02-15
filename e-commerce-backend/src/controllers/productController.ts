@@ -49,47 +49,70 @@ export const createProduct=async(req:Request,res:Response)=>{
 
 
 export const getProducts = async (req: Request, res: Response) => {
-const { name, price } = req.query;  
+    const { name, price, categoryID,id } = req.query;  
+    console.log(req.query);
+    try {
+      let query = `
+        SELECT *
+        FROM Products p
+        LEFT JOIN Categories c ON p.categoryID = c.categoryID
+      `;
+      let replacements: Array<any> = [];
+  
+      let conditions = [];
 
-try {
-  let query = `
-    SELECT *
-    FROM Products p
-    LEFT JOIN Categories c ON p.categoryID = c.categoryID
-  `;
-  let replacements: Array<any> = [];
+      // Filter by categoryID if provided
+      if (categoryID) {
+        conditions.push(`p.categoryID = ?`);
+        replacements.push(categoryID);
+      }
+  
+      // Filter by product name if provided
+      if (name) {
+        conditions.push(`p.productName LIKE ?`);
+        replacements.push(`%${name}%`);
+      }
+  
+      // Add WHERE clause if there are conditions
+      if (conditions.length > 0) {
+        query += ` WHERE ` + conditions.join(" AND ");
+      }
+  
+      // Sorting by price
+      if (price) {
+        if (price === "low-to-high") {
+          query += ` ORDER BY p.productPrice ASC`;
+        } else if (price === "high-to-low") {
+          query += ` ORDER BY p.productPrice DESC`;
+        }
+      }
 
-  if (name) {
-    query += ` WHERE p.productName LIKE ?`;
-    replacements.push(`%${name}%`);
-  }
-
-  if (price) {
-    if (price === 'low-to-high') {
-      query += replacements.length > 0 ? ` AND p.productPrice ASC` : ` ORDER BY p.productPrice ASC`;
-    } else if (price === 'high-to-low') {
-      query += replacements.length > 0 ? ` AND p.productPrice DESC` : ` ORDER BY p.productPrice DESC`;
+      //Filter by ID
+      if(id){
+        query+=`WHERE productID=?`
+        replacements.push(id);
+      }
+  
+      const products = await sequelize.query(query, {
+        replacements: replacements,
+        type: QueryTypes.SELECT,
+      });
+  
+      if (products.length === 0) {
+        return res.status(404).json({ message: "No products found" });
+      }
+  
+      return res.status(200).json(products);
+    } catch (error) {
+      console.log(error, "error");
+      return res.status(500).json({ error: "Please try again after sometime!" });
     }
-  }
-  const products = await sequelize.query(query, {
-    replacements: replacements,
-    type: QueryTypes.SELECT,
-  });
-
-  if (products.length === 0) {
-    return res.status(404).json({ message: "No products found" });
-  }
-
-  return res.status(200).json( products );
-} catch (error) {
-  console.log(error, "error");
-  return res.status(500).json({ error: "Please try again after sometime!" });
-}
-};
-
+  };
+  
 
 
 export const deleteProducts=async(req:Request,res:Response)=>{
+    console.log("data",req.body)
     const {productID}=req.body;
     try{
         const isProductExist=await sequelize.query('SELECT * FROM Products WHERE productID=?',
@@ -99,8 +122,9 @@ export const deleteProducts=async(req:Request,res:Response)=>{
             }
         )
         if(isProductExist.length===0){
-            return res.status(403).json({error:"This product doesn't exist"});
+            return res.status(404).json({error:"This product doesn't exist"});
         }
+        console.log(req.body)
         const deleteProduct=await sequelize.query('DELETE FROM Products WHERE productID=?',{
             replacements:[productID],
             type:QueryTypes.DELETE
@@ -108,6 +132,7 @@ export const deleteProducts=async(req:Request,res:Response)=>{
         return res.status(200).json({message:"Successfully deletd the product"})
     }
     catch(error){
+        console.log(req)
         console.log(error,"error");
         return res.status(500).json({error:"Please try again after sometimes!"})
     }

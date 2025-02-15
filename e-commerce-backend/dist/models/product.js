@@ -4,7 +4,7 @@ exports.Produtcs = void 0;
 const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const category_1 = require("./category");
-const brand_1 = require("./brand");
+// import { brands } from "./brand";
 exports.Produtcs = databse_1.sequelize.define("Products", {
     productID: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -37,15 +37,15 @@ exports.Produtcs = databse_1.sequelize.define("Products", {
         },
         onDelete: 'CASCADE'
     },
-    brandID: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: brand_1.brands,
-            key: "brandID"
-        },
-        onDelete: 'CASCADE'
-    }
+    // brandID:{
+    //     type:DataTypes.INTEGER,
+    //     allowNull:false,
+    //     references:{
+    //         model:brands,
+    //         key:"brandID"
+    //     },
+    //     onDelete:'CASCADE'
+    // }
 }, {
     timestamps: false
 });

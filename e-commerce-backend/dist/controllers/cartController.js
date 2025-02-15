@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCartItemQuantity = exports.deleteCartItem = exports.getCartItems = exports.addCartItem = void 0;
+exports.updateCartItemQuantity = exports.deleteCartItem = exports.checkCart = exports.getCartItems = exports.addCartItem = void 0;
 const databse_1 = require("../db/databse");
 const sequelize_1 = require("sequelize");
 const addCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -23,12 +23,12 @@ const addCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
-        const [existingCartItem] = yield databse_1.sequelize.query('SELECT * FROM CartItems WHERE userID = :userID AND productID = :productID', {
-            replacements: { userID, productID },
+        const [existingCartItem] = yield databse_1.sequelize.query('SELECT * FROM CartItems WHERE userID = ? AND productID = ?', {
+            replacements: [userID, productID],
             type: sequelize_1.QueryTypes.SELECT,
         });
         if (existingCartItem) {
-            return res.status(400).json({ error: "Product is already in your cart" });
+            return res.status(403).json({ error: "Product is already in your cart" });
         }
         const [newCartItem] = yield databse_1.sequelize.query('INSERT INTO CartItems (userID, productID, quantity) VALUES (:userID, :productID, :quantity)', {
             replacements: { userID, productID, quantity: quantity || 1 },
@@ -46,23 +46,23 @@ const addCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.addCartItem = addCartItem;
 const getCartItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userID } = req.params;
+    const userID = req.body.user.identifire;
     try {
         const cartItems = yield databse_1.sequelize.query(`
-        SELECT ci.cartItemID, ci.quantity, p.productID, p.name, p.description, p.thumbnail, p.price, c.categoryName,
-               (ci.quantity * p.price) AS totalPrice
+        SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,
+        (SELECT SUM(ci2.quantity * p2.productPrice) 
+        FROM CartItems ci2 
+        JOIN Products p2 ON ci2.productID = p2.productID 
+        WHERE ci2.userID = ?) AS totalPrice
         FROM CartItems ci
         JOIN Products p ON ci.productID = p.productID
         JOIN Categories c ON p.categoryID = c.categoryID
-        WHERE ci.userID = :userID
+        WHERE ci.userID = ? 
       `, {
-            replacements: { userID: userID },
+            replacements: [userID, userID],
             type: sequelize_1.QueryTypes.SELECT,
         });
-        if (cartItems.length === 0) {
-            return res.status(404).json({ message: "No cart items found for this user." });
-        }
-        return res.status(200).json({ cartItems });
+        return res.status(200).json(cartItems);
     }
     catch (error) {
         console.log(error, "error");
@@ -70,14 +70,18 @@ const getCartItems = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getCartItems = getCartItems;
+const checkCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const Response = yield databse_1.sequelize.query(`SELECT *`);
+});
+exports.checkCart = checkCart;
 const deleteCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cartItemID } = req.params;
+    const { cartItemID } = req.body;
     try {
-        const [cartItem] = yield databse_1.sequelize.query('SELECT * FROM CartItems WHERE cartItemID = :cartItemID', {
-            replacements: { cartItemID },
+        const cartItem = yield databse_1.sequelize.query('SELECT * FROM CartItems WHERE cartItemID = ?', {
+            replacements: [cartItemID],
             type: sequelize_1.QueryTypes.SELECT,
         });
-        if (!cartItem) {
+        if (cartItem.length === 0) {
             return res.status(404).json({ error: "Cart item not found" });
         }
         yield databse_1.sequelize.query('DELETE FROM CartItems WHERE cartItemID = :cartItemID', {
@@ -93,8 +97,7 @@ const deleteCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.deleteCartItem = deleteCartItem;
 const updateCartItemQuantity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cartItemID } = req.params;
-    const { quantity } = req.body;
+    const { quantity, cartItemID } = req.body;
     try {
         const [cartItem] = yield databse_1.sequelize.query('SELECT * FROM CartItems WHERE cartItemID = :cartItemID', {
             replacements: { cartItemID },

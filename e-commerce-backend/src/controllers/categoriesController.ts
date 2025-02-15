@@ -29,21 +29,12 @@ export const createCategories=async(req:Request,res:Response)=>{
 }
 
 export const getCategories=async(req:Request,res:Response)=>{
-    const {name,price}=req.query;
-    console.log(req.query);
+    const {name}=req.query;
+    console.log(req.query,"query");
     console.log(name);
     try{
         if(name){
-            let query='SELECT * from Categories join Products on Categories.CategoryID=Products.categoryID where categoryName=?'
-            let replacements: Array<any> = [name];
-            if(price){
-                if (price === 'low-to-high') {
-                    query +=  ` order by Products.productPrice ASc`;
-                  } else if (price === 'high-to-low') {
-                    query += `order by Products.productPrice desc`;
-                  }
-            }
-            const categoryWithThisName=await sequelize.query(query,{
+            const categoryWithThisName=await sequelize.query('SELECT * from Categories WHERE categoryName=?',{
                 replacements:[name],
                 type:QueryTypes.SELECT
             })

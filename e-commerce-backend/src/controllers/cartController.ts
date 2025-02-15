@@ -19,15 +19,15 @@ export const addCartItem = async (req: Request, res: Response) => {
       }
   
       const [existingCartItem] = await sequelize.query(
-        'SELECT * FROM CartItems WHERE userID = :userID AND productID = :productID',
+        'SELECT * FROM CartItems WHERE userID = ? AND productID = ?',
         {
-          replacements: { userID, productID },
+          replacements: [userID, productID ],
           type: QueryTypes.SELECT,
         }
       );
   
       if (existingCartItem) {
-        return res.status(400).json({ error: "Product is already in your cart" });
+        return res.status(403).json({ error: "Product is already in your cart" });
       }
   
       const [newCartItem] = await sequelize.query(
@@ -49,46 +49,49 @@ export const addCartItem = async (req: Request, res: Response) => {
   };
 
 export const getCartItems = async (req: Request, res: Response) => {
-    const { userID } = req.params;  
+    const userID  = req.body.user.identifire;  
 
     try {
       const cartItems = await sequelize.query(`
-        SELECT ci.cartItemID, ci.quantity, p.productID, p.name, p.description, p.thumbnail, p.price, c.categoryName,
-               (ci.quantity * p.price) AS totalPrice
+        SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,
+        (SELECT SUM(ci2.quantity * p2.productPrice) 
+        FROM CartItems ci2 
+        JOIN Products p2 ON ci2.productID = p2.productID 
+        WHERE ci2.userID = ?) AS totalPrice
         FROM CartItems ci
         JOIN Products p ON ci.productID = p.productID
         JOIN Categories c ON p.categoryID = c.categoryID
-        WHERE ci.userID = :userID
+        WHERE ci.userID = ? 
       `, {
-        replacements: { userID: userID },
+        replacements: [ userID,userID ],
         type: QueryTypes.SELECT,
       });
   
-      if (cartItems.length === 0) {
-        return res.status(404).json({ message: "No cart items found for this user." });
-      }
   
-      return res.status(200).json({ cartItems });
+      return res.status(200).json(cartItems );
     } catch (error) {
       console.log(error, "error");
       return res.status(500).json({ error: "Please try again after sometime!" });
     }
   };
 
+  export const checkCart=async(req:Request,res:Response)=>{
+    const Response=await sequelize.query(`SELECT *`)
+  }
 
   export const deleteCartItem = async (req: Request, res: Response) => {
-    const { cartItemID } = req.params;
+    const { cartItemID } = req.body;
   
     try {
-      const [cartItem] = await sequelize.query(
-        'SELECT * FROM CartItems WHERE cartItemID = :cartItemID',
+      const cartItem = await sequelize.query(
+        'SELECT * FROM CartItems WHERE cartItemID = ?',
         {
-          replacements: { cartItemID },
+          replacements: [ cartItemID ],
           type: QueryTypes.SELECT,
         }
       );
   
-      if (!cartItem) {
+      if (cartItem.length===0) {
         return res.status(404).json({ error: "Cart item not found" });
       }
   
@@ -109,8 +112,7 @@ export const getCartItems = async (req: Request, res: Response) => {
 
 
   export const updateCartItemQuantity = async (req: Request, res: Response) => {
-    const { cartItemID } = req.params; 
-    const { quantity } = req.body;
+    const { quantity,cartItemID } = req.body;
   
     try {
       const [cartItem] = await sequelize.query(
