@@ -1,11 +1,10 @@
-// import React from 'react'
-// import { Link } from "react-router-dom";
 import "../styles/signup.css";
 import Input from "../subComponents.tsx/Input";
 import { useEffect, useState } from "react";
 import {makeUnAuthorizedGetRequest,makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { validations } from "../utils/validationRules";
 
 function Signup() {
   const [full_name, setFull_name] = useState<string>("");
@@ -68,7 +67,8 @@ function Signup() {
     });
     console.log(resposne);
     Cookies.set('token', resposne?.data, { expires: 7, secure: true });
-    if(Cookies.get('token') && Cookies.get('token')!==undefined){
+    console.log(Cookies.get('token'),"Is token exist");
+    if(Cookies.get('token') && !(Cookies.get('token')===undefined)){
       navigate("/categories")
     }
   };
@@ -78,6 +78,46 @@ function Signup() {
     console.log(resposnse);
 
   };
+
+  const checkError = (): boolean => {
+      let isValid = true;
+    
+      for (const key in validations["full_name"]) {
+        if (validations["full_name"][key].logic(full_name)) {
+          setFullNameError(validations["full_name"][key].message);
+          console.log("Full name error:", validations["full_name"][key].message);
+          isValid = false;
+          break;
+        } else {
+          setFullNameError("");
+        }
+      }
+    
+      for (const key in validations["contact"]) {
+        if (validations["contact"][key].logic(contact)) {
+          setContactError(validations["contact"][key].message);
+          console.log("Contact error:", validations["contact"][key].message);
+          isValid = false;
+          break;
+        } else {
+          setContactError("");
+        }
+      }
+    
+      for (const key in validations["password"]) {
+        if (validations["password"][key].logic(password)) {
+          setPasswordError(validations["password"][key].message);
+          console.log("Password error:", validations["password"][key].message);
+          isValid = false;
+          break;
+        } else {
+          setPasswordError("");
+        }
+      }
+    
+      console.log("Validation result:", isValid);
+      return isValid;
+    };
 
   useEffect(() => {
     getData();
@@ -127,10 +167,12 @@ function Signup() {
                 className="btn"
                 onClick={(e) => {
                   e.preventDefault();
-                  createUser();
+                  if (checkError()) {
+                    createUser();
+                  }
                 }}
               >
-                <Link to="/categories">Sign up</Link>
+               Sign up
               </button>
             </div>
           </form>

@@ -29,6 +29,7 @@
     color: #333;
     text-align: center;
     z-index: 1;
+    overflow: auto;
 }
 
 form{
@@ -62,6 +63,26 @@ form{
     font-weight: 400;
 }
   
+/* Keep existing styles intact */
+
+/* For password input: Expand container if error exists */
+.input_box_container.password-container {
+    margin-bottom: 15px; /* Increase space to prevent overlap */
+}
+
+/* Adjust error message for password only */
+.password-container .error {
+    position: static; /* Prevent overlap */
+    display: block;
+    margin-left: 20px;
+    margin-top: 5px; /* Space below input */
+    color: red;
+    font-size: 15px;
+    font-weight: 400;
+    text-align: left;
+    width: 100%;
+}
+
 .error {
     color: red;
     font-size: 15px;
@@ -106,7 +127,6 @@ form{
     position: absolute;
     width: 50%;
     height: 100%;
-    /* background: seagreen; */
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -125,14 +145,3 @@ form{
     border: 2px solid #fff;
     box-shadow: none;
 }
-/* .input_container{
-    width: 100%;
-}
-
-label{
-    width: 20%;
-    font-size: 1.3rem;
-    display: inline-block;
-}
-
-*/

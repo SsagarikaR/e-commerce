@@ -1,7 +1,7 @@
 import { InputProps } from '../interface/interface'
 import { validations } from '../utils/validationRules';
 
-function Input({field, id, type, value, setValue, error, setError}: InputProps) {
+function Input({ field, id, type, value, setValue, error, setError }: InputProps) {
   function checkError(value: string, id: string) {
     for (const key in validations[id]) {
       if (validations[id][key].logic(value)) {
@@ -14,9 +14,9 @@ function Input({field, id, type, value, setValue, error, setError}: InputProps) 
   }
 
   return (
-    <div className='input_box_container'>
+    <div className={`input_box_container ${id === "password" ? "password-container" : ""}`}>
       <input
-        className='input_box'
+        className="input_box"
         id={id}
         value={value}
         onChange={(e) => {
@@ -26,7 +26,7 @@ function Input({field, id, type, value, setValue, error, setError}: InputProps) 
         type={type}
         placeholder={`Enter your ${field}`}
       />
-      {error && <div className="error">{error}</div>} {/* Display the error only when there's an error */}
+      {error && <div className="error">{error}</div>}
     </div>
   );
 }
