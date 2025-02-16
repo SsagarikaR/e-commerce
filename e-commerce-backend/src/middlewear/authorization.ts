@@ -3,7 +3,6 @@ import  Jwt  from "jsonwebtoken";
 import dotenv from "dotenv";
 import { sequelize } from "../config/databse";
 import { QueryTypes } from "sequelize";
-import { forUser } from "interface/interface";
 dotenv.config();
 
 export const checkToken=(req:Request,res:Response,next:NextFunction)=>{
