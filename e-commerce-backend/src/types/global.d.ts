@@ -1,3 +1,4 @@
+declare global{
 export interface forUser{
     userID:number,
     name:string,
@@ -7,3 +8,5 @@ export interface forUser{
     password?:string,
     token?:string
 }
+}
+export {}

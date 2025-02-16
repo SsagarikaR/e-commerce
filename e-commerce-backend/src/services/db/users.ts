@@ -1,7 +1,5 @@
-import { forUser } from "interface/interface";
 import { sequelize } from "../../config/databse";
 import { QueryTypes } from "sequelize";
-import { isRegularExpressionLiteral } from "typescript";
 
 export const selectUserByID=async(id:number):Promise<forUser[]>=>{
     return await sequelize.query('SELECT * FROM Users WHERE userID=?',
@@ -19,6 +17,7 @@ export const selectUserByName=async(name:string)=>{
         }
     );
 }
+
 
 export const selectUserByEmail = async(email:string)=>{
     return await sequelize.query(`SELECT * FROM Users WHERE email=?`,
