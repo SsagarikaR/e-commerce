@@ -38,7 +38,7 @@ JWT (for authentication)
 Installation & Setup
 
 1.Clone the Repository
-git clone https://github.com/your-username/e-commerce-app.git
+git clone https://github.com/SsagarikaR/e-commerce
 
 Backend Setup
 
