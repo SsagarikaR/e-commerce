@@ -1,5 +1,5 @@
 declare global{
-export interface forUser{
+interface forUser{
     userID:number,
     name:string,
     email:string,

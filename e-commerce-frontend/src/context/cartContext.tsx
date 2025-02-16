@@ -1,20 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { forCartItem } from "../interface/interface";
 import { 
     makeAuthorizedGetRequest, 
     makeAuthorizedPostRequest, 
     makeAuthorizedPatchRequest, 
     makeAuthorizedDeleteRequest 
 } from "../services/authorizedRequests";
-
-
-interface CartContextType {
-    cart: forCartItem[];
-    addToCart: (productID: number) => void;
-    removeFromCart: (cartItemID: number) => void;
-    updateQuantity: (cartItemID: number, quantity: number) => void;
-    fetchCart: () => void;
-}
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
