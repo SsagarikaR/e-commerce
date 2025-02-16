@@ -39,7 +39,7 @@ app.get("/",async(req:Request,res:Response)=>{
 });
 
 app.use("/auth",authAPIs);
-app.use("/users",userAPIs);
+app.use("/",userAPIs);
 app.use("/categories",categoriesAPIs);
 app.use("/products",productAPIs);
 app.use("/cart",cartAPIs);

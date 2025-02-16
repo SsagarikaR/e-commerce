@@ -1,6 +1,5 @@
-import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
-import { QueryTypes } from "sequelize";
+import { selectProductWithAllMatch ,createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID,updateProducts} from "../services/db/products";
 
 export const createProduct=async(req:Request,res:Response)=>{
   const {productName,productDescription,productThumbnail,productPrice,categoryID}=req.body;
@@ -21,19 +20,11 @@ export const createProduct=async(req:Request,res:Response)=>{
           return res.status(404).json({error:"Please choose a category role can't be empty."});
       }
 
-      const isProductExist=await sequelize.query('SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=?',
-          {
-              replacements:[productName,productDescription,productPrice,categoryID],
-              type:QueryTypes.SELECT
-          }
-      )
+      const isProductExist=await selectProductWithAllMatch(productName,productDescription,productPrice,categoryID);
       if(isProductExist.length>0){
           return res.status(403).json({error:"This product already exist."});
       }
-      const [result,metaData]=await sequelize.query('INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID) VALUES (?,?,?,?,?)',{
-          replacements:[productName,productDescription,productThumbnail,productPrice,categoryID],
-          type:QueryTypes.INSERT
-      });
+      const [result,metaData]=await createNewProduct(productName,productDescription,productThumbnail,productPrice,categoryID)
       if(metaData>0){
           return res.status(202).json({message:"Successfully added the product."})
       }
@@ -53,44 +44,11 @@ export const getProducts = async (req: Request, res: Response) => {
   console.log(req.query);
 
   try {
-    let query = `
-      SELECT *
-      FROM Products p
-      LEFT JOIN Categories c ON p.categoryID = c.categoryID
-    `;
-    let replacements = [];
-    let conditions = [];
-
-    if (categoryID) {
-      conditions.push(`p.categoryID = ?`);
-      replacements.push(categoryID);
-    }
-
-    if (name) {
-      conditions.push(`p.productName LIKE ?`);
-      replacements.push(`%${name}%`);
-    }
-
-    if (id) {
-      conditions.push(`p.productID = ?`);
-      replacements.push(id);
-    }
-
-    if (conditions.length > 0) {
-      query += ` WHERE ` + conditions.join(" AND ");
-    }
-
-    if (price) {
-      if (price === "low-to-high") {
-        query += ` ORDER BY p.productPrice ASC`;
-      } else if (price === "high-to-low") {
-        query += ` ORDER BY p.productPrice DESC`;
-      }
-    }
-
-    const products = await sequelize.query(query, {
-      replacements: replacements,
-      type: QueryTypes.SELECT,
+    const products = await getProductWithCondition({
+      categoryID: categoryID ? String(categoryID) : undefined,
+      name: name ? String(name) : undefined,
+      id: id ? Number(id) : undefined, 
+      price: price === "low-to-high" || price === "high-to-low" ? (price as "low-to-high" | "high-to-low") : undefined,
     });
 
     if (products.length === 0) {
@@ -111,20 +69,12 @@ export const deleteProducts=async(req:Request,res:Response)=>{
     console.log("data",req.body)
     const {productID}=req.body;
     try{
-        const isProductExist=await sequelize.query('SELECT * FROM Products WHERE productID=?',
-            {
-                replacements:[productID],
-                type:QueryTypes.SELECT
-            }
-        )
+        const isProductExist=await selectByProductID(productID);
         if(isProductExist.length===0){
             return res.status(404).json({error:"This product doesn't exist"});
         }
         console.log(req.body)
-        const deleteProduct=await sequelize.query('DELETE FROM Products WHERE productID=?',{
-            replacements:[productID],
-            type:QueryTypes.DELETE
-        });
+        const deleteProduct=await deleteByProductID(productID)
         return res.status(200).json({message:"Successfully deletd the product"})
     }
     catch(error){
@@ -137,19 +87,12 @@ export const deleteProducts=async(req:Request,res:Response)=>{
 export const updateProduct=async(req:Request,res:Response)=>{
     const {productID,productName,productDescription,productThumbnail,productPrice,categoryID}=req.body;
     try{
-        const isProductExist=await sequelize.query('SELECT * FROM Products WHERE productID=?',
-            {
-                replacements:[productID],
-                type:QueryTypes.SELECT
-            }
-        )
+        const isProductExist=await selectByProductID(productID);
+
         if(isProductExist.length===0){
             return res.status(403).json({error:"This product doesn't exist"});
         }
-        const updatedProduct=await sequelize.query('UPDATE Products SET productName=? ,productDescription=? ,productThumbnail=? ,productPrice=? ,categoryID=? WHERE productID=?',{
-            replacements:[productName,productDescription,productThumbnail,productPrice,categoryID,productID],
-            type:QueryTypes.UPDATE
-        })
+        const updatedProduct=await updateProducts(productName,productDescription,productThumbnail,productPrice,categoryID,productID)
             return res.status(200).json({message:"Successfully updated the product."})
     }
     catch(error){

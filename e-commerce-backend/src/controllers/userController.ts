@@ -3,6 +3,7 @@ import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 import bcrypt from "bcrypt";
 import { forUser } from "interface/interface";
+import { deleteUserByID, selectUserByID ,updateUsersPassword} from "../services/db/users";
 
 export const deleteUser=async(req:Request,res:Response)=>{
     const id=req.body.user.identifire;
@@ -10,21 +11,13 @@ export const deleteUser=async(req:Request,res:Response)=>{
         if(!id){
             return res.status(404).json({error:"User id not found"})
         }
-        const IsUserExist=await sequelize.query('SELECT * FROM Users WHERE userID=?',
-            {
-                replacements:[id],
-                type:QueryTypes.SELECT
-            }
-        );
+
+        const IsUserExist=await selectUserByID(id);
+
         if(IsUserExist.length===0){
             return res.status(404).json({error:"User not found"})
         }
-        const deleteUser=await sequelize.query('DELETE FROM Users WHERE userID=?',
-            {
-                replacements:[id],
-                type:QueryTypes.DELETE
-            }
-        )
+        const deleteUser=await deleteUserByID(id);
         console.log("deleted user:",deleteUser);
         return res.status(200).json({message:"user dleted successfully"});
     }
@@ -38,10 +31,8 @@ export const updateUserPassword=async(req:Request,res:Response)=>{
     const {newPassword,oldPassword}=req.body;
     const id=req.body.user.identifire
     try{
-        const isUserExist:forUser[]=await sequelize.query('SELECT * FROM Users WHERE userID=?',{
-            replacements:[id],
-            type:QueryTypes.SELECT
-        })
+        const isUserExist:forUser[]=await selectUserByID(id);
+        
         if(isUserExist.length===0){
             return res.status(404).json({error:"User not found"});
         }
@@ -52,12 +43,7 @@ export const updateUserPassword=async(req:Request,res:Response)=>{
             }
         }
         const hashedPassword=await bcrypt.hash(newPassword,10);
-        const updateUser=await sequelize.query('UPDATE Users SET password=?',
-            {
-                replacements:[hashedPassword],
-                type:QueryTypes.UPDATE
-            }
-        )
+        const updateUser=await updateUsersPassword(hashedPassword);
         console.log(updateUser,"updateuser");
         return res.status(200).json({message:"User updated successfully"});
     }
@@ -87,11 +73,7 @@ export const getUserByID=async(req:Request,res:Response)=>{
     console.log(req.body)
     const id=req.body.user.identifire;
     try{
-        const users:forUser[]=await sequelize.query(`SELECT * FROM Users where userID=?`,{
-            replacements:[id],
-            type:QueryTypes.SELECT,
-
-        });
+        const users:forUser[]=await selectUserByID(id);
 
         if(users.length===0){
             return res.status(404).json({error:"Invalid user id"});

@@ -14,9 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUser = exports.createUser = void 0;
 const authentication_1 = require("../middlewear/authentication");
-const databse_1 = require("../config/databse");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const sequelize_1 = require("sequelize");
+const users_1 = require("../services/db/users");
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, contactNo, role, password } = req.body;
     try {
@@ -35,26 +34,16 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (password === "" || password === undefined || !password) {
             return res.status(404).json({ error: "User's role can't be empty." });
         }
-        const ifUserExistWithName = yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? `, {
-            replacements: [name],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const ifUserExistWithName = yield (0, users_1.selectUserByName)(name);
         if (ifUserExistWithName.length !== 0) {
             return res.status(403).json({ error: "This user name is already taken" });
         }
-        const ifUserExistWithEmail = yield databse_1.sequelize.query(`SELECT * FROM Users WHERE email=?`, {
-            replacements: [email],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const ifUserExistWithEmail = yield (0, users_1.selectUserByEmail)(email);
         if (ifUserExistWithEmail.length !== 0) {
             return res.status(403).json({ error: "This user email is already registered" });
         }
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const [result, metaData] = yield databse_1.sequelize.query(`INSERT INTO Users (name,email,contactNo,role,password) VALUES
-            (?,?,?,?,?)`, {
-            replacements: [name, email, contactNo, role, hashedPassword],
-            type: sequelize_1.QueryTypes.INSERT
-        });
+        const [result, metaData] = yield (0, users_1.createNewUser)(name, email, contactNo, role, hashedPassword);
         if (metaData !== 0) {
             const token = yield (0, authentication_1.generateToken)(result);
             return res.status(201).json(token);
@@ -82,10 +71,7 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (password === "" || password == undefined || !password) {
             return res.status(404).json({ error: "User's role can't be empty." });
         }
-        const user = yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? AND  contactNo=?  `, {
-            replacements: [name, contactNo],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const user = yield (0, users_1.selectUserByNameANDContact)(name, contactNo);
         if (user.length !== 0) {
             if (user[0].password) {
                 const isPasswordValid = yield bcrypt_1.default.compare(password, user[0].password);
@@ -93,8 +79,6 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     return res.status(403).json({ message: "Invalid password." });
                 }
             }
-            // console.log(user)
-            // console.log(user[0].userID)
             const token = yield (0, authentication_1.generateToken)(user[0].userID);
             console.log(token, "token");
             const userToReturn = user[0];

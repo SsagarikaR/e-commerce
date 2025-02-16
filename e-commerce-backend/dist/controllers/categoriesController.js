@@ -10,21 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletecategories = exports.updateCategories = exports.getCategories = exports.createCategories = void 0;
-const databse_1 = require("../config/databse");
-const sequelize_1 = require("sequelize");
+const categories_1 = require("../services/db/categories");
 const createCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryName, categoryThumbnail } = req.body;
     try {
-        const isCategoryExist = yield databse_1.sequelize.query(`SELECT * FROM Categories WHERE categoryName=?`, {
-            replacements: [categoryName],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const isCategoryExist = yield (0, categories_1.selectCatgeoryByName)(categoryName);
         if (isCategoryExist.length !== 0) {
             return res.status(404).json({ error: "This category already exist" });
         }
-        const [result, metaData] = yield databse_1.sequelize.query('INSERT INTO Categories (categoryName,categoryThumbnail) VALUES (?,?)', {
-            replacements: [categoryName, categoryThumbnail]
-        });
+        const [result, metaData] = yield (0, categories_1.createNewCategory)(categoryName, categoryThumbnail);
         if (metaData !== 0) {
             return res.status(202).json({ message: "Succesfully added a new category." });
         }
@@ -44,20 +38,17 @@ const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     console.log(name);
     try {
         if (name) {
-            const categoryWithThisName = yield databse_1.sequelize.query('SELECT * from Categories WHERE categoryName=?', {
-                replacements: [name],
-                type: sequelize_1.QueryTypes.SELECT
-            });
-            if (categoryWithThisName.length === 0) {
-                return res.status(404).json({ message: `No catgeory with name ${name} found.` });
-            }
-            else {
-                return res.status(200).json(categoryWithThisName);
+            if (typeof name === "string") {
+                const categoryWithThisName = yield (0, categories_1.selectCatgeoryByName)(name);
+                if (categoryWithThisName.length === 0) {
+                    return res.status(404).json({ message: `No catgeory with name ${name} found.` });
+                }
+                else {
+                    return res.status(200).json(categoryWithThisName);
+                }
             }
         }
-        const allCatgeories = yield databse_1.sequelize.query('SELECT * FROM Categories', {
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const allCatgeories = yield (0, categories_1.selectAllCatgeory)();
         if (allCatgeories.length === 0) {
             return res.status(404).json({ message: "No categories found." });
         }
@@ -74,10 +65,7 @@ exports.getCategories = getCategories;
 const updateCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryID, categoryName, categoryThumbnail } = req.body;
     try {
-        const updateThumbnail = yield databse_1.sequelize.query(`UPDATE Categories SET categoryName=?, categoryThumbnail=? where categoryID=?`, {
-            replacements: [categoryName, categoryThumbnail, categoryID],
-            type: sequelize_1.QueryTypes.UPDATE
-        });
+        const updateThumbnail = yield (0, categories_1.updateTheCatgeory)(categoryName, categoryThumbnail, categoryID);
         console.log(updateThumbnail);
         return res.status(200).json({ message: "Successfully updated the category." });
     }
@@ -90,17 +78,11 @@ exports.updateCategories = updateCategories;
 const deletecategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryID } = req.body;
     try {
-        const isCategoryExist = yield databse_1.sequelize.query('SELECT * FROM Categories WHERE categoryID=?', {
-            replacements: [categoryID],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const isCategoryExist = yield (0, categories_1.selectCatgeoryByID)(categoryID);
         if (isCategoryExist.length === 0) {
             return res.status(404).json({ message: "This category not found" });
         }
-        yield databse_1.sequelize.query('DELETE FROM Categories WHERE categoryID=?', {
-            replacements: [categoryID],
-            type: sequelize_1.QueryTypes.DELETE
-        });
+        yield (0, categories_1.deleteCatgeory)(categoryID);
         // console.log(deletecategories,"deleteCategory");
         return res.status(200).json({ message: "Successfully deleted the category." });
     }

@@ -46,7 +46,7 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("App is listening on port 3000");
 }));
 app.use("/auth", auth_1.default);
-app.use("/users", users_1.default);
+app.use("/", users_1.default);
 app.use("/categories", categories_1.default);
 app.use("/products", products_1.default);
 app.use("/cart", cart_1.default);

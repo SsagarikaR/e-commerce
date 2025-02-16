@@ -16,23 +16,18 @@ exports.getUserByID = exports.getAllUser = exports.updateUserPassword = exports.
 const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const users_1 = require("../services/db/users");
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.body.user.identifire;
     try {
         if (!id) {
             return res.status(404).json({ error: "User id not found" });
         }
-        const IsUserExist = yield databse_1.sequelize.query('SELECT * FROM Users WHERE userID=?', {
-            replacements: [id],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const IsUserExist = yield (0, users_1.selectUserByID)(id);
         if (IsUserExist.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }
-        const deleteUser = yield databse_1.sequelize.query('DELETE FROM Users WHERE userID=?', {
-            replacements: [id],
-            type: sequelize_1.QueryTypes.DELETE
-        });
+        const deleteUser = yield (0, users_1.deleteUserByID)(id);
         console.log("deleted user:", deleteUser);
         return res.status(200).json({ message: "user dleted successfully" });
     }
@@ -46,10 +41,7 @@ const updateUserPassword = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const { newPassword, oldPassword } = req.body;
     const id = req.body.user.identifire;
     try {
-        const isUserExist = yield databse_1.sequelize.query('SELECT * FROM Users WHERE userID=?', {
-            replacements: [id],
-            type: sequelize_1.QueryTypes.SELECT
-        });
+        const isUserExist = yield (0, users_1.selectUserByID)(id);
         if (isUserExist.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }
@@ -60,10 +52,7 @@ const updateUserPassword = (req, res) => __awaiter(void 0, void 0, void 0, funct
             }
         }
         const hashedPassword = yield bcrypt_1.default.hash(newPassword, 10);
-        const updateUser = yield databse_1.sequelize.query('UPDATE Users SET password=?', {
-            replacements: [hashedPassword],
-            type: sequelize_1.QueryTypes.UPDATE
-        });
+        const updateUser = yield (0, users_1.updateUsersPassword)(hashedPassword);
         console.log(updateUser, "updateuser");
         return res.status(200).json({ message: "User updated successfully" });
     }
@@ -93,10 +82,7 @@ const getUserByID = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     console.log(req.body);
     const id = req.body.user.identifire;
     try {
-        const users = yield databse_1.sequelize.query(`SELECT * FROM Users where userID=?`, {
-            replacements: [id],
-            type: sequelize_1.QueryTypes.SELECT,
-        });
+        const users = yield (0, users_1.selectUserByID)(id);
         if (users.length === 0) {
             return res.status(404).json({ error: "Invalid user id" });
         }
