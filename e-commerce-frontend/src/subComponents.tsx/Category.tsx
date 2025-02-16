@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom"
-import { forCategories } from "../interface/interface"
 
 function Category({category}:{category:forCategories}) {
   return (

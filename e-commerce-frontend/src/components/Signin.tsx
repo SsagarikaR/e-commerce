@@ -1,4 +1,3 @@
-
 import "../styles/signup.css";
 import Input from "../subComponents.tsx/Input";
 import {  useState } from "react";

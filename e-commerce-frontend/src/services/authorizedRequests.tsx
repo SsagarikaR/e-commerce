@@ -40,6 +40,7 @@ export const makeAuthorizedPatchRequest = async (
   route: string,
   data: object
 ) => {
+  console.log(data);
   try {
     const response = await axios.patch(`${port}${route}`, data, {
       headers: { ...getAuthHeaders(), "Content-Type": "application/json" },

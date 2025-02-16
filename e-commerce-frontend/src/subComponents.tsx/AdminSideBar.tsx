@@ -1,6 +1,5 @@
 import productIcons from "../assets/product.png"
 import customerIcon from "../assets/customers.png";
-import { forSideBarProp } from "../interface/interface";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 

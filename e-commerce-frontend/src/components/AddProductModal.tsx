@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { forCategories, forProductModalProp } from "../interface/interface";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";

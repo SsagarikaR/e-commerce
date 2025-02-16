@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { forProductProp } from '../interface/interface'
 import { useCart } from '../context/cartContext';
 
 function Product({product,setModalOpen}:forProductProp) {

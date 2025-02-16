@@ -1,5 +1,4 @@
 import { useCart } from "../context/cartContext";
-import { forCartItem } from "../interface/interface"; // Ensure this is correctly imported
 
 const Cart = () => {
     const { cart, updateQuantity, removeFromCart } = useCart();

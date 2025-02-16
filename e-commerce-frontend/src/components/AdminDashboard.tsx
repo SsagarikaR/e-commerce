@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminSideBar from "../subComponents.tsx/AdminSideBar";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
-import {forCategories,
-  forProductbyName,
-  forUser,
-} from "../interface/interface";
 import ProductList from "../subComponents.tsx/ProductList";
 import CategoryList from "../subComponents.tsx/CategoryList";
 import AddProductModal from "./AddProductModal";

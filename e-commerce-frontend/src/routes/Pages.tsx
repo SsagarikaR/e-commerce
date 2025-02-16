@@ -9,7 +9,7 @@ import AdminDashboard from "../components/AdminDashboard";
 import Cart from "../components/Cart";
 import ProductDetailPage from "../components/ProductDetailPage";
 
-function Home() {
+function Pages() {
   // console.log(document.cookie);
   const token=Cookies.get("token");
   console.log(token);
@@ -41,4 +41,4 @@ function Home() {
   )
 }
 
-export default Home
+export default Pages

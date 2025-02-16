@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
-import { forProductbyName } from "../interface/interface";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { useCart } from "../context/cartContext";
 import Container from "./Container";

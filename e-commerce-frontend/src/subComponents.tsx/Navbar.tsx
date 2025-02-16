@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { makeAuthorizedGetRequest } from "../services/authorizedRequests"
-import { forCategories, forUser } from "../interface/interface";
 import trolleyIcon from "../assets/trolley.png";
 import searchIcon from "../assets/search.png";
 import profileIcon from "../assets/account.png";
@@ -28,7 +27,7 @@ function Navbar() {
     };
 
     const getUser=async()=>{
-        const response= await makeAuthorizedGetRequest("/users/id");
+        const response= await makeAuthorizedGetRequest("/user");
         if(response && response.data){
          setUser(response.data);
         }

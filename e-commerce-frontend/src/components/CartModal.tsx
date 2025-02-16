@@ -1,6 +1,5 @@
 import { useCart } from "../context/cartContext"
 import crossIcon from "../assets/cross.png"
-import { forCartItem } from "../interface/interface";
 import { useNavigate } from "react-router-dom";
 
 function CartModal({setModalOpen}:{setModalOpen:(value:boolean)=>void}) {

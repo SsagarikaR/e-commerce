@@ -1,4 +1,3 @@
-import { InputProps } from '../interface/interface'
 import { validations } from '../utils/validationRules';
 
 function Input({ field, id, type, value, setValue, error, setError }: InputProps) {

@@ -3,7 +3,6 @@ import Container from "./Container";
 import { useEffect, useState } from "react";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import {  useSearchParams } from "react-router-dom";
-import { forProductbyName } from "../interface/interface";
 import CartModal from "./CartModal";
 
 function Products() {

@@ -1,4 +1,3 @@
-import {  forCategoriesProp } from "../interface/interface"
 import { makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";

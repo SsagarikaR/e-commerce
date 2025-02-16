@@ -1,6 +1,5 @@
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
-import {  forProductListProp } from "../interface/interface";
 import { makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
 
 function ProductList({data,setListChange,listChange,setEditProduct,setToggleModal}:forProductListProp) {

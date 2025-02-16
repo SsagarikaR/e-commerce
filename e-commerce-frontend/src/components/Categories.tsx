@@ -4,7 +4,6 @@ import Category from '../subComponents.tsx/Category';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { makeAuthorizedGetRequest } from '../services/authorizedRequests';
-import { forCategories } from '../interface/interface';
 
 function Categories() {
   const [categories,setCategories]=useState<forCategories[]|undefined>();

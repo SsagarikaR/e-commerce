@@ -1,5 +1,3 @@
-import React from 'react'
-import { forUser } from '../interface/interface'
 
 function CustomerList({data}:{data:forUser[]}) {
   return (

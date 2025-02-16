@@ -1,6 +1,6 @@
 import './App.css'
 import { CartProvider } from './context/cartContext'
-import Home from './routes/Home'
+import Pages from './routes/Pages'
 import { BrowserRouter } from 'react-router-dom'
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
     <>
     <CartProvider>
       <BrowserRouter>
-      <Home/>
+      <Pages/>
       </BrowserRouter>
       </CartProvider>
     </>

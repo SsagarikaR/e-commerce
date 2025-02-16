@@ -1,6 +1,5 @@
 
 import {   useState } from "react"
-import {  forCategoryModalProp } from "../interface/interface";
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 
