@@ -14,14 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
-require("./db/databse");
+require("./config/databse");
 const auth_1 = __importDefault(require("./routes/auth"));
 const users_1 = __importDefault(require("./routes/users"));
 const categories_1 = __importDefault(require("./routes/categories"));
 const products_1 = __importDefault(require("./routes/products"));
 const cart_1 = __importDefault(require("./routes/cart"));
-// import brandAPIs from "./routes/brands";
 const cors_1 = __importDefault(require("cors"));
+const swaggerConfig_1 = __importDefault(require("./config/swaggerConfig"));
 const errorHandler_1 = require("./middlewear/errorHandler");
 // import { Users } from "./models/Users";
 // import { Categories } from "./models/category";
@@ -34,6 +34,7 @@ app.use(errorHandler_1.errorHandler);
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)());
+(0, swaggerConfig_1.default)(app);
 (() => __awaiter(void 0, void 0, void 0, function* () {
     // await Users.sync({alter:true});
     // await Categories.sync({alter:true});

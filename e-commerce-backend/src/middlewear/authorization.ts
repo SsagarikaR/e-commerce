@@ -1,7 +1,7 @@
 import { Request,Response,NextFunction } from "express";
 import  Jwt  from "jsonwebtoken";
 import dotenv from "dotenv";
-import { sequelize } from "../db/databse";
+import { sequelize } from "../config/databse";
 import { QueryTypes } from "sequelize";
 import { forUser } from "interface/interface";
 dotenv.config();

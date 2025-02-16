@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Produtcs = void 0;
-const databse_1 = require("../db/databse");
+const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const category_1 = require("./category");
 // import { brands } from "./brand";

@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
-const databse_1 = require("../db/databse");
+const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
@@ -59,27 +59,27 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     console.log(req.query);
     try {
         let query = `
-        SELECT *
-        FROM Products p
-        LEFT JOIN Categories c ON p.categoryID = c.categoryID
-      `;
+      SELECT *
+      FROM Products p
+      LEFT JOIN Categories c ON p.categoryID = c.categoryID
+    `;
         let replacements = [];
         let conditions = [];
-        // Filter by categoryID if provided
         if (categoryID) {
             conditions.push(`p.categoryID = ?`);
             replacements.push(categoryID);
         }
-        // Filter by product name if provided
         if (name) {
             conditions.push(`p.productName LIKE ?`);
             replacements.push(`%${name}%`);
         }
-        // Add WHERE clause if there are conditions
+        if (id) {
+            conditions.push(`p.productID = ?`);
+            replacements.push(id);
+        }
         if (conditions.length > 0) {
             query += ` WHERE ` + conditions.join(" AND ");
         }
-        // Sorting by price
         if (price) {
             if (price === "low-to-high") {
                 query += ` ORDER BY p.productPrice ASC`;
@@ -87,11 +87,6 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             else if (price === "high-to-low") {
                 query += ` ORDER BY p.productPrice DESC`;
             }
-        }
-        //Filter by ID
-        if (id) {
-            query += `WHERE productID=?`;
-            replacements.push(id);
         }
         const products = yield databse_1.sequelize.query(query, {
             replacements: replacements,

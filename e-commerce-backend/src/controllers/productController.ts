@@ -1,4 +1,4 @@
-import { sequelize } from "../db/databse";
+import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 
@@ -49,65 +49,61 @@ export const createProduct=async(req:Request,res:Response)=>{
 
 
 export const getProducts = async (req: Request, res: Response) => {
-    const { name, price, categoryID,id } = req.query;  
-    console.log(req.query);
-    try {
-      let query = `
-        SELECT *
-        FROM Products p
-        LEFT JOIN Categories c ON p.categoryID = c.categoryID
-      `;
-      let replacements: Array<any> = [];
-  
-      let conditions = [];
+  const { name, price, categoryID, id } = req.query;
+  console.log(req.query);
 
-      // Filter by categoryID if provided
-      if (categoryID) {
-        conditions.push(`p.categoryID = ?`);
-        replacements.push(categoryID);
-      }
-  
-      // Filter by product name if provided
-      if (name) {
-        conditions.push(`p.productName LIKE ?`);
-        replacements.push(`%${name}%`);
-      }
-  
-      // Add WHERE clause if there are conditions
-      if (conditions.length > 0) {
-        query += ` WHERE ` + conditions.join(" AND ");
-      }
-  
-      // Sorting by price
-      if (price) {
-        if (price === "low-to-high") {
-          query += ` ORDER BY p.productPrice ASC`;
-        } else if (price === "high-to-low") {
-          query += ` ORDER BY p.productPrice DESC`;
-        }
-      }
+  try {
+    let query = `
+      SELECT *
+      FROM Products p
+      LEFT JOIN Categories c ON p.categoryID = c.categoryID
+    `;
+    let replacements = [];
+    let conditions = [];
 
-      //Filter by ID
-      if(id){
-        query+=`WHERE productID=?`
-        replacements.push(id);
-      }
-  
-      const products = await sequelize.query(query, {
-        replacements: replacements,
-        type: QueryTypes.SELECT,
-      });
-  
-      if (products.length === 0) {
-        return res.status(404).json({ message: "No products found" });
-      }
-  
-      return res.status(200).json(products);
-    } catch (error) {
-      console.log(error, "error");
-      return res.status(500).json({ error: "Please try again after sometime!" });
+    if (categoryID) {
+      conditions.push(`p.categoryID = ?`);
+      replacements.push(categoryID);
     }
-  };
+
+    if (name) {
+      conditions.push(`p.productName LIKE ?`);
+      replacements.push(`%${name}%`);
+    }
+
+    if (id) {
+      conditions.push(`p.productID = ?`);
+      replacements.push(id);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(" AND ");
+    }
+
+    if (price) {
+      if (price === "low-to-high") {
+        query += ` ORDER BY p.productPrice ASC`;
+      } else if (price === "high-to-low") {
+        query += ` ORDER BY p.productPrice DESC`;
+      }
+    }
+
+    const products = await sequelize.query(query, {
+      replacements: replacements,
+      type: QueryTypes.SELECT,
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.log(error, "error");
+    return res.status(500).json({ error: "Please try again after sometime!" });
+  }
+};
+
   
 
 

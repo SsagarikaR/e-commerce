@@ -1,14 +1,13 @@
 import express,{Request,Response} from "express";
 import bodyParser from "body-parser";
-import "./db/databse";
+import "./config/databse";
 import authAPIs from "./routes/auth";
 import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";
 import productAPIs from "./routes/products";
 import cartAPIs from "./routes/cart";
-// import brandAPIs from "./routes/brands";
 import cors from "cors";
-
+import swaggerDocs  from "./config/swaggerConfig";
 import { errorHandler } from "./middlewear/errorHandler";
 
 // import { Users } from "./models/Users";
@@ -25,6 +24,7 @@ app.use(errorHandler);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors());
+swaggerDocs(app);
 
 (async()=>{
     // await Users.sync({alter:true});

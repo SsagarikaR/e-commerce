@@ -1,5 +1,5 @@
 import { generateToken } from "../middlewear/authentication";
-import { sequelize } from "../db/databse";
+import { sequelize } from "../config/databse";
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
@@ -51,7 +51,7 @@ export const createUser=async(req:Request,res:Response)=>{
             })
         if(metaData!==0){
             const token=await generateToken(result);
-            return res.status(202).json(token);
+            return res.status(201).json(token);
         }
         else{
             return res.status(409).json({error:"Error creating a new user."});

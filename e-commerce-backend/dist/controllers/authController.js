@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUser = exports.createUser = void 0;
 const authentication_1 = require("../middlewear/authentication");
-const databse_1 = require("../db/databse");
+const databse_1 = require("../config/databse");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const sequelize_1 = require("sequelize");
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,7 +57,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
         if (metaData !== 0) {
             const token = yield (0, authentication_1.generateToken)(result);
-            return res.status(202).json(token);
+            return res.status(201).json(token);
         }
         else {
             return res.status(409).json({ error: "Error creating a new user." });
