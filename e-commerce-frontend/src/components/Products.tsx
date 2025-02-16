@@ -4,49 +4,38 @@ import { useEffect, useState } from "react";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import {  useSearchParams } from "react-router-dom";
 import { forProductbyName } from "../interface/interface";
+import CartModal from "./CartModal";
 
 function Products() {
     // const [Name,setName]=useState<string>();
     const [products,setProducts]=useState<forProductbyName[]|undefined>();
     const [price,setPrice]=useState("");
     const [searchParams] = useSearchParams();
+    const [isModalOpen,setModalOpen]=useState(false);
     const name=searchParams.get("name");
     const categoryID=searchParams.get("categoryID");
 
     const getData = async () => {
-        // console.log(name)
-      if(categoryID && price!==""){
-        const resposnse = await makeUnAuthorizedGetRequest(`/products?categoryID=${categoryID}&price=${price}`);
-        // console.log(resposnse,"product by name and price");
-        setProducts(resposnse?.data)
-      }
-      else if(categoryID ){
-        const resposnse = await makeUnAuthorizedGetRequest(`/products?categoryID=${categoryID}`);
-        // console.log(resposnse,"product by name and price");
-        setProducts(resposnse?.data)
-      }
-      if(name && price!==""){
-        const resposnse = await makeUnAuthorizedGetRequest(`/products?name=${name}&price=${price}`);
-        // console.log(resposnse,"product by name and price");
-        setProducts(resposnse?.data)
-      }
-      else if(name){
-        // console.log(name);
-        const resposnse = await makeUnAuthorizedGetRequest(`/products?name=${name}`);
-        // console.log(resposnse,"product by product name");
-        setProducts(resposnse?.data)
-      }
-      else{
-        const resposnse = await makeUnAuthorizedGetRequest(`/products`);
-        // console.log(resposnse,"product");
-        setProducts(resposnse?.data)
+      const queryParams = [];
+    
+      if (categoryID) queryParams.push(`categoryID=${categoryID}`);
+      if (name) queryParams.push(`name=${name}`);
+      if (price) queryParams.push(`price=${price}`);
+    
+      const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
+      
+      try {
+        const response = await makeUnAuthorizedGetRequest(`/products${queryString}`);
+        setProducts(response?.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
       }
     };
-    
+
     useEffect(() => {
       getData();
       console.log(price)
-    }, [name,price]);
+    }, [name,price,categoryID]);
     
   return (
     <Container>
@@ -65,10 +54,11 @@ function Products() {
             <div className="grid grid-cols-4 gap-10">
                 {products&& products.map((product)=>{
                     console.log(product.ProductThumbnail,"product thumbnail");
-                    return <Product product={product} key={product.productID}/>
+                    return <Product product={product} key={product.productID} setModalOpen={setModalOpen}/>
                 })}
           </div>
         </div>
+        {isModalOpen && <CartModal setModalOpen={setModalOpen}/>}
     </div>
     </Container>
   );

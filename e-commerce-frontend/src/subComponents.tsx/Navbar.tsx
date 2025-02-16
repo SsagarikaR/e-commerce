@@ -77,11 +77,11 @@ function Navbar() {
             </div>
         </Link>
         {user &&(user.role==="Admin"?
-        <div className="flex items-center gap-1 cursor-pointer">
-            <Link to="/dashboard">
-            <img src={profileIcon} className="w-8 h-8"/>{user.name}
-            </Link>
-        </div>
+        <Link to="/dashboard" >
+            <div className="flex items-center gap-1 cursor-pointer"> 
+                <img src={profileIcon} className="w-8 h-8"/><div>{user.name}</div>
+            </div>
+        </Link>
         :<div className="flex flex-col relative cursor-pointer" >
             <div className="flex items-center gap-1" onClick={()=>{setOpenProfile(true)}}>
                 <img src={profileIcon} className="w-8 h-8"/>

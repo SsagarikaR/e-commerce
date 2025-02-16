@@ -15,8 +15,12 @@ export interface forValidations {
         message: string;
       };
     };
-  }
+}
 
+export interface forProductProp{
+  product:forProductbyName
+  setModalOpen:(value:boolean)=>void
+}
 export  interface forUser{
     userID:number,
     name:string,

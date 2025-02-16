@@ -154,7 +154,7 @@ function AddProductModal({
             Cancel
           </button>
           <button className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer" 
-          onClick={handleSubmit}>
+            onClick={handleSubmit}>
             {editProduct ? "Update" : "Add"}
           </button>
         </div>
