@@ -69,12 +69,13 @@ const deleteCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.deleteCartItem = deleteCartItem;
 const updateCartItemQuantity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { quantity, cartItemID } = req.body;
+    console.log(req.body);
     try {
         const [cartItem] = yield (0, carts_1.selectFromCartItemCartID)(cartItemID);
         if (!cartItem) {
             return res.status(404).json({ error: "Cart item not found" });
         }
-        yield (0, exports.updateCartItemQuantity)(quantity, cartItemID);
+        yield (0, carts_1.updateCartItemsQuantity)(quantity, cartItemID);
         return res.status(200).json({
             message: "Cart item quantity updated successfully",
         });

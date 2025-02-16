@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCartItemQuantity = exports.deleteFromCart = exports.selectFromCartItemCartID = exports.getCartByUserID = exports.addNewCartItem = exports.updateQuantityIfAlreadyExist = exports.selectFromCartByUserANDProduct = void 0;
+exports.updateCartItemsQuantity = exports.deleteFromCart = exports.selectFromCartItemCartID = exports.getCartByUserID = exports.addNewCartItem = exports.updateQuantityIfAlreadyExist = exports.selectFromCartByUserANDProduct = void 0;
 const databse_1 = require("../../config/databse");
 const sequelize_1 = require("sequelize");
 const selectFromCartByUserANDProduct = (userID, productID) => __awaiter(void 0, void 0, void 0, function* () {
@@ -64,10 +64,11 @@ const deleteFromCart = (cartItemID) => __awaiter(void 0, void 0, void 0, functio
     });
 });
 exports.deleteFromCart = deleteFromCart;
-const updateCartItemQuantity = (quantity, cartItemID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("UPDATE CartItems SET quantity = :quantity WHERE cartItemID = :cartItemID", {
-        replacements: { quantity, cartItemID },
+const updateCartItemsQuantity = (quantity, cartItemID) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(quantity);
+    return yield databse_1.sequelize.query("UPDATE CartItems SET quantity =? WHERE cartItemID =?", {
+        replacements: [quantity, cartItemID],
         type: sequelize_1.QueryTypes.UPDATE,
     });
 });
-exports.updateCartItemQuantity = updateCartItemQuantity;
+exports.updateCartItemsQuantity = updateCartItemsQuantity;

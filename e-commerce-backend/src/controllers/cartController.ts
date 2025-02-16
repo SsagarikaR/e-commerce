@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { sequelize } from "../config/databse";
 import { QueryTypes } from "sequelize";
 import { selectByProductID } from "../services/db/products";
-import { updateQuantityIfAlreadyExist,addNewCartItem, getCartByUserID, selectFromCartItemCartID, deleteFromCart,selectFromCartByUserANDProduct } from "../services/db/carts";
+import { updateQuantityIfAlreadyExist,addNewCartItem, getCartByUserID, selectFromCartItemCartID, deleteFromCart,selectFromCartByUserANDProduct ,updateCartItemsQuantity} from "../services/db/carts";
 
 export const addCartItem = async (req: Request, res: Response) => {
   const { productID, quantity } = req.body;
@@ -68,15 +68,15 @@ export const deleteCartItem = async (req: Request, res: Response) => {
 };
 
 export const updateCartItemQuantity = async (req: Request, res: Response) => {
-  const { quantity, cartItemID } = req.body;
-
+  const {quantity, cartItemID } = req.body;
+  console.log(req.body);
   try {
     const [cartItem] = await selectFromCartItemCartID(cartItemID)
     if (!cartItem) {
       return res.status(404).json({ error: "Cart item not found" });
     }
 
-    await updateCartItemQuantity(quantity,cartItemID);
+    await updateCartItemsQuantity(quantity,cartItemID);
 
     return res.status(200).json({
       message: "Cart item quantity updated successfully",

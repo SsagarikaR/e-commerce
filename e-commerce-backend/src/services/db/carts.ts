@@ -73,11 +73,12 @@ export const deleteFromCart=async(cartItemID:number)=>{
     );
 }
 
-export const updateCartItemQuantity=async(quantity:number,cartItemID:number)=>{
+export const updateCartItemsQuantity=async(quantity:number,cartItemID:number)=>{
+  console.log(quantity);
     return await sequelize.query(
-      "UPDATE CartItems SET quantity = :quantity WHERE cartItemID = :cartItemID",
+      "UPDATE CartItems SET quantity =? WHERE cartItemID =?",
       {
-        replacements: { quantity, cartItemID },
+        replacements: [ quantity, cartItemID ],
         type: QueryTypes.UPDATE,
       }
     );
