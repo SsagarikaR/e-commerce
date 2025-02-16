@@ -1,4 +1,3 @@
-import { forValidations } from "../interface/interface";
 
 export const validations:forValidations = {
     full_name: {
