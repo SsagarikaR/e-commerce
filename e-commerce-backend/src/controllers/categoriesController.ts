@@ -1,6 +1,4 @@
-import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
-import { QueryTypes } from "sequelize";
 import { createNewCategory, deleteCatgeory, selectAllCatgeory, selectCatgeoryByID, selectCatgeoryByName, updateTheCatgeory } from "../services/db/categories";
 
 export const createCategories=async(req:Request,res:Response)=>{

@@ -2,8 +2,7 @@ import { sequelize } from "../config/databse";
 import { Request,Response } from "express";
 import { QueryTypes } from "sequelize";
 import bcrypt from "bcrypt";
-import { forUser } from "interface/interface";
-import { deleteUserByID, selectUserByID ,updateUsersPassword} from "../services/db/users";
+import { deleteUserByID, selectAllUsers, selectUserByID ,updateUsersPassword} from "../services/db/users";
 
 export const deleteUser=async(req:Request,res:Response)=>{
     const id=req.body.user.identifire;
@@ -55,9 +54,7 @@ export const updateUserPassword=async(req:Request,res:Response)=>{
 
 export const getAllUser=async(req:Request,res:Response)=>{
     try{
-        const users=await sequelize.query(`SELECT * FROM Users`,{
-            type:QueryTypes.SELECT
-        })
+        const users=await selectAllUsers();
         if(users.length===0){
             return res.status(404).json({error:"No user found"});
         }

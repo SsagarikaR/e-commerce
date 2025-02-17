@@ -1,6 +1,12 @@
 import { sequelize } from "../../config/databse";
 import { QueryTypes } from "sequelize";
 
+
+export const selectAllUsers=async()=>{
+    return await sequelize.query(`SELECT * FROM Users`,{
+        type:QueryTypes.SELECT
+    })
+}
 export const selectUserByID=async(id:number):Promise<forUser[]>=>{
     return await sequelize.query('SELECT * FROM Users WHERE userID=?',
         {

@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { sequelize } from "../config/databse";
-import { QueryTypes } from "sequelize";
 import { selectByProductID } from "../services/db/products";
 import { updateQuantityIfAlreadyExist,addNewCartItem, getCartByUserID, selectFromCartItemCartID, deleteFromCart,selectFromCartByUserANDProduct ,updateCartItemsQuantity} from "../services/db/carts";
 

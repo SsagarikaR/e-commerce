@@ -1,8 +1,6 @@
 import { generateToken } from "../middlewear/authentication";
-import { sequelize } from "../config/databse";
 import bcrypt from "bcrypt"
 import { Request,Response } from "express";
-import { QueryTypes } from "sequelize";
 import { createNewUser, selectUserByEmail, selectUserByName, selectUserByNameANDContact } from "../services/db/users";
 
 export const createUser=async(req:Request,res:Response)=>{
