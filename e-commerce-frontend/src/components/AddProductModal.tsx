@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
+import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
 
 function AddProductModal({
   setToggleModal,
@@ -12,10 +13,11 @@ function AddProductModal({
   const [productName, setProductName] = useState(editProduct?.productName || "");
   const [productDescription, setProductDescription] = useState(editProduct?.productDescription || "");
   const [productThumbnail, setProductThumbnail] = useState(editProduct?.ProductThumbnail || "");
+  const [uploadedFileName, setUploadedFileName] = useState(""); 
   const [productPrice, setProductPrice] = useState(editProduct?.productPrice.toString() || "");
   const [categoryID, setCategoryID] = useState(editProduct?.categoryID || "");
   const [categories, setCategories] = useState<forCategories[]>();
-
+  console.log(uploadedFileName);
   const data = {
     productName: productName,
     productDescription: productDescription,
@@ -92,21 +94,17 @@ function AddProductModal({
             }}
           ></textarea>
         </div>
-        <div className="flex">
-          <label
+        <div className="flex ">
+           <label
             htmlFor="product_thumbnail"
             className="font-semibold text-xl  w-70 "
           >
-            Enter product thumbnail
+            Select product thumbnail
           </label>
-          <input
-            id="product_thumbnail"
-            className="border p-2  outline-none"
-            value={productThumbnail}
-            onChange={(e) => {
-              setProductThumbnail(e.target.value);
-            }}
-          />
+          <div>
+           <CloudinaryImageUpload seturl={setProductThumbnail} setName={setUploadedFileName} />
+           <div>{uploadedFileName}</div>
+           </div>
         </div>
         <div className="flex">
           <label

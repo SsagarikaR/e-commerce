@@ -49,14 +49,15 @@ function Products() {
           </div>
          
         </div>
-        <div className="flex flex-col p-5">
-            <div className="grid grid-cols-4 gap-10">
+        {products && products.length>0?<div className="flex flex-col p-5">
+           <div className="grid grid-cols-4 gap-10">
                 {products&& products.map((product)=>{
                     console.log(product.ProductThumbnail,"product thumbnail");
                     return <Product product={product} key={product.productID} setModalOpen={setModalOpen}/>
                 })}
-          </div>
-        </div>
+            </div>
+        </div>:
+        <div className='text-center w-400 mt-6 text-2xl font-medium text-red-800'>No item found</div>}
         {isModalOpen && <CartModal setModalOpen={setModalOpen}/>}
     </div>
     </Container>

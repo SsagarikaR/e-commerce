@@ -1,22 +1,13 @@
-import { makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
 
-function CategoryList({data,setListChange,listChange,setEditCategory,setToggleModal}:forCategoriesProp) {
-
-  const deleteCategories=async(categoryID:number)=>{
-      // console.log(categoryID);
-      const response=await makeAuthorizedDeleteRequest(`/categories/`,{categoryID:categoryID})
-      if(response?.data){
-        setListChange(!listChange);
-      }
-    }
+function CategoryList({data,setDeleteCatgeoryID,setEditCategory,setToggleModal,setIsDelete}:forCategoriesProp) {
 
   return (
     <table className="w-full border-collapse border border-gray-400 text-lg text-gray-700">
     <thead>
       <tr>
-        <th className="border border-gray-400 p-5">Product Name</th>
+        <th className="border border-gray-400 p-5">Category Name</th>
         <th className="border border-gray-400 p-5">Action</th>
       </tr>
     </thead>
@@ -31,8 +22,8 @@ function CategoryList({data,setListChange,listChange,setEditCategory,setToggleMo
           </td>
           <td className="border border-gray-400 p-2">
             <div className="flex space-x-2">
-              <img src={editIcon} className="w-10 h-10 p-1" onClick={()=>{setEditCategory(d); setToggleModal(true)}}/>
-              <img src={deleteIcon} className="w-10 h-10 p-1" onClick={()=>{deleteCategories(d.categoryID)}}/>
+              <img src={editIcon} className="w-10 h-10 p-1 cursor-pointer" onClick={()=>{setEditCategory(d); setToggleModal(true)}}/>
+              <img src={deleteIcon} className="w-10 h-10 p-1 cursor-pointer" onClick={()=>{setDeleteCatgeoryID(d.categoryID); setIsDelete(true)}}/>
             </div>
           </td>
         </tr>

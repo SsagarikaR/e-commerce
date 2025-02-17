@@ -75,18 +75,18 @@ declare global {
 
   interface forProductListProp {
     data: forProductbyName[];
-    setListChange: (value: boolean) => void;
-    listChange: boolean;
+    setDeleteProductID:(value:number)=>void
     setEditProduct: (value: forProductbyName) => void;
     setToggleModal: (value: boolean) => void;
+    setIsDelete:(value:boolean)=>void
   }
 
   interface forCategoriesProp {
     data: forCategories[];
-    setListChange: (value: boolean) => void;
-    listChange: boolean;
+    setDeleteCatgeoryID:(value:number)=>void
     setEditCategory: (value: forCategories) => void;
     setToggleModal: (value: boolean) => void;
+    setIsDelete:(value:boolean)=>void
   }
 
   interface FormData {
@@ -107,5 +107,30 @@ declare global {
     updateQuantity: (cartItemID: number, quantity: number) => void;
     fetchCart: () => void;
   }
+
+  interface CloudinaryWidget {
+    open: () => void;
+    close: () => void;
+    // Add any other methods or properties based on the Cloudinary documentation you need
+}
+
+// global.d.ts or custom.d.ts
+interface Cloudinary {
+  createUploadWidget: (
+      options: {
+          cloudName: string;
+          uploadPreset: string;
+          sources: string[];
+          clientAllowedFormats: string[];
+          maxFileSize: number;
+      },
+      callback: (error: Error | null, result: { event: string, info: { secure_url: string, original_filename: string } }) => void
+  ) => CloudinaryWidget;
+}
+
+interface Window {
+  cloudinary: Cloudinary;
+}
+
 }
 export {};

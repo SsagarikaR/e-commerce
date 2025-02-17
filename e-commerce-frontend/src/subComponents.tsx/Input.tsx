@@ -1,4 +1,4 @@
-import { validations } from '../utils/validationRules';
+import { validations } from '../utils/validations/validationRules';
 
 function Input({ field, id, type, value, setValue, error, setError }: InputProps) {
   function checkError(value: string, id: string) {

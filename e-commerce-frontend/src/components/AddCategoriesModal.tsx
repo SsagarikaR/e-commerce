@@ -2,10 +2,12 @@
 import {   useState } from "react"
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
+import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
 
 function AddCategoriesModal({setToggleModal,setListChange,listChange,editCategory}:forCategoryModalProp) {
   const [categoryName,setCategoryName]=useState<string>(editCategory?.categoryName || "");
   const [categoryThumbnail,setCategoryThumbnail]=useState<string>(editCategory?.categoryThumbnail || "");
+  const [uploadedFileName, setUploadedFileName] = useState(""); 
 
   const data={
    categoryName:categoryName,
@@ -38,9 +40,13 @@ function AddCategoriesModal({setToggleModal,setListChange,listChange,editCategor
           <input id="categroy_name " className="border p-2 outline-none" value={categoryName} onChange={(e)=>{setCategoryName(e.target.value)}}/>
         </div>
         <div className="flex">
-          <label htmlFor="category_thumbnail" className="font-semibold text-xl  w-70 ">Enter catgeory thumbnail</label>
-          <input id="category_thumbnail" className="border p-2  outline-none" value={categoryThumbnail} onChange={(e)=>{setCategoryThumbnail(e.target.value)}}/>
-        </div>
+           <label htmlFor="category_thumbnail" className="font-semibold text-xl  w-70 ">Enter catgeory thumbnail</label>
+          {/*<input id="category_thumbnail" className="border p-2  outline-none" value={categoryThumbnail} onChange={(e)=>{setCategoryThumbnail(e.target.value)}}/> */}
+           <div>
+                     <CloudinaryImageUpload seturl={setCategoryThumbnail} setName={setUploadedFileName} />
+                     <div>{uploadedFileName}</div>
+                     </div>
+           </div>
         <div className="flex justify-between p-4">
           <button className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer" 
             onClick={()=>{

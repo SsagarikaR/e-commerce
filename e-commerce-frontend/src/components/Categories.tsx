@@ -30,11 +30,11 @@ function Categories() {
     <Container>
     <div className='p-10 flex-col flex w-full '>
       <h1 className='text-center text-4xl font-bold font '>Choose a category</h1>
-      <div className='grid grid-cols-5 gap-x-5 pt-4 justify-center'>
+      {categories && categories?.length>0?<div className='grid grid-cols-5 gap-x-5 pt-4 justify-center'>
         {categories && categories.map((category)=>{
           return <Category category={category} key={category.categoryID}/>
         })}
-      </div>
+      </div>:<div className='text-center mt-6 text-2xl font-medium text-red-800'>No item found</div>}
     </div>
     </Container>
   )

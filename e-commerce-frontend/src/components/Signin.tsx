@@ -4,8 +4,7 @@ import {  useState } from "react";
 import Cookies from 'js-cookie';
 import {makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
 import { useNavigate ,Link} from "react-router-dom";
-import { validations } from "../utils/validationRules";
-
+import { validateInput } from "../utils/validations/validateInputs";
 
 function Signin() {
   const [full_name, setFull_name] = useState<string>("");
@@ -66,43 +65,14 @@ function Signin() {
 
   const checkError = (): boolean => {
     let isValid = true;
-  
-    for (const key in validations["full_name"]) {
-      if (validations["full_name"][key].logic(full_name)) {
-        setFullNameError(validations["full_name"][key].message);
-        console.log("Full name error:", validations["full_name"][key].message);
-        isValid = false;
-        break;
-      } else {
-        setFullNameError("");
-      }
-    }
-  
-    for (const key in validations["contact"]) {
-      if (validations["contact"][key].logic(contact)) {
-        setContactError(validations["contact"][key].message);
-        console.log("Contact error:", validations["contact"][key].message);
-        isValid = false;
-        break;
-      } else {
-        setContactError("");
-      }
-    }
-  
-    for (const key in validations["password"]) {
-      if (validations["password"][key].logic(password)) {
-        setPasswordError(validations["password"][key].message);
-        console.log("Password error:", validations["password"][key].message);
-        isValid = false;
-        break;
-      } else {
-        setPasswordError("");
-      }
-    }
-  
+    isValid = validateInput("full_name", full_name, setFullNameError) && isValid;
+    isValid = validateInput("contact", contact, setContactError) && isValid;
+    isValid = validateInput("password", password, setPasswordError) && isValid;
+
     console.log("Validation result:", isValid);
     return isValid;
   };
+  
   
   return (
     <div className="signup">

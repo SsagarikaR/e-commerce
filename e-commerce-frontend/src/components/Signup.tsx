@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {makeUnAuthorizedGetRequest,makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { validations } from "../utils/validationRules";
+import { validateInput } from "../utils/validations/validateInputs";
 
 function Signup() {
   const [full_name, setFull_name] = useState<string>("");
@@ -80,56 +80,18 @@ function Signup() {
   };
 
   const checkError = (): boolean => {
-      let isValid = true;
-    
-      for (const key in validations["full_name"]) {
-        if (validations["full_name"][key].logic(full_name)) {
-          setFullNameError(validations["full_name"][key].message);
-          console.log("Full name error:", validations["full_name"][key].message);
-          isValid = false;
-          break;
-        } else {
-          setFullNameError("");
-        }
-      }
+    let isValid = true;
 
-      for (const key in validations["email"]) {
-        if (validations["email"][key].logic(full_name)) {
-          setFullNameError(validations["email"][key].message);
-          console.log("Email name error:", validations["email"][key].message);
-          isValid = false;
-          break;
-        } else {
-          setFullNameError("");
-        }
-      }
-    
-      for (const key in validations["contact"]) {
-        if (validations["contact"][key].logic(contact)) {
-          setContactError(validations["contact"][key].message);
-          console.log("Contact error:", validations["contact"][key].message);
-          isValid = false;
-          break;
-        } else {
-          setContactError("");
-        }
-      }
-    
-      for (const key in validations["password"]) {
-        if (validations["password"][key].logic(password)) {
-          setPasswordError(validations["password"][key].message);
-          console.log("Password error:", validations["password"][key].message);
-          isValid = false;
-          break;
-        } else {
-          setPasswordError("");
-        }
-      }
-    
-      console.log("Validation result:", isValid);
-      return isValid;
-    };
+    // Validate each field using the validateInput function
+    isValid = validateInput("full_name", full_name, setFullNameError) && isValid;
+    isValid = validateInput("email", email, setEmail_Error) && isValid;
+    isValid = validateInput("contact", contact, setContactError) && isValid;
+    isValid = validateInput("password", password, setPasswordError) && isValid;
 
+    console.log("Validation result:", isValid);
+    return isValid;
+  };
+  
   useEffect(() => {
     getData();
   }, []);
