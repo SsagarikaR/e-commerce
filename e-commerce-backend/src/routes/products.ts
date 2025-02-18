@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { createProduct, deleteProducts, getProducts, updateProduct } from "../controllers/productController";
+import { createProduct, deleteProducts, getProducts, paginatedProduct, updateProduct } from "../controllers/productController";
 import { checkToken, isAdmin } from "../middlewear/authorization";
 
 const router = express.Router();
@@ -169,4 +169,8 @@ router.patch("/", checkToken, isAdmin, async (req: Request, res: Response) => {
    updateProduct(req, res);
 });
 
+
+router.get("/item",async(req:Request,res:Response)=>{
+   paginatedProduct(req,res);
+})
 export default router;

@@ -18,7 +18,7 @@ function Product({product,setModalOpen}:forProductProp) {
           <div className="text-center text-lg font-semibold text-gray-700 cursor-pointer">{product.productName}</div>
           <div className='text-center' >₹{product.productPrice}</div>
         </div>
-        <button className="btn_color w-full p-2  rounded rounded-lg "
+        <button className="btn_color w-full p-2  rounded rounded-lg cursor-pointer"
         onClick={() =>{
            addToCart(product.productID); 
            setModalOpen(true)}}

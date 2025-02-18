@@ -31,9 +31,9 @@ function ProductDetailPage() {
                         <img src={product[0].ProductThumbnail} className="shadow-[0_0_15px_5px_rgba(0,0,0,0.3)] w-150 h-150"/>
                     </div>
                     <div className="w-150 text-gray-700 gap-y-9 flex flex-col">
-                        <div className="flex gap-y-2 flex-col ">
+                        <div className="flex gap-y-4 flex-col ">
                             <div className="text-4xl font-semibold">{product[0].productName}</div>
-                            <div className="text-2xl font-normal">{product[0].productPrice}</div>
+                            <div className="text-2xl font-normal">₹{product[0].productPrice}</div>
                             <div className=" border-b  w-150 "></div>
                         </div>
                         <div className="text-justify text-lg">{product[0].productDescription}</div>

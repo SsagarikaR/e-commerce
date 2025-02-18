@@ -38,6 +38,15 @@ export const selectByProductID=async(productID:number)=>{
     )
 }
 
+export const selectProductPerPage=async(offset:number,limit:number)=>{
+  return await sequelize.query("SELECT * FROM Products LIMIT ? OFFSET ?",
+    {
+      replacements:[limit,offset],
+      type:QueryTypes.SELECT
+    }
+  )
+}
+
 export const createNewProduct = async (
   productName: string,
   productDescription: string,

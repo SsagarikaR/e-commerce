@@ -48,7 +48,7 @@ function AddProductModal({
   };
   useEffect(() => {
     getCatgeories();
-  });
+  },[]);
 
   return (
     <div className="fixed p-6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white z-10 w-200">
@@ -62,7 +62,7 @@ function AddProductModal({
         />
       </div>
       <div className="text-4xl p-6 text-center font-bold text-blue-500 ">
-        Add a new category
+        Add a new product
       </div>
       <div className="text-lg text-gray-600 p-2 flex flex-col gap-6">
         <div className="flex">
@@ -146,12 +146,13 @@ function AddProductModal({
             className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer"
             onClick={() => {
               setToggleModal(false);
+              setListChange(!listChange)
             }}
           >
             Cancel
           </button>
           <button className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer" 
-            onClick={handleSubmit}>
+            onClick={()=>{ handleSubmit(); setListChange(!listChange)}}>
             {editProduct ? "Update" : "Add"}
           </button>
         </div>

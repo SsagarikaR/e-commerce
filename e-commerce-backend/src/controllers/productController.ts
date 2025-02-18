@@ -1,5 +1,5 @@
 import { Request,Response } from "express";
-import { selectProductWithAllMatch ,createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID,updateProducts} from "../services/db/products";
+import { selectProductWithAllMatch ,createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID,updateProducts, selectProductPerPage} from "../services/db/products";
 
 export const createProduct=async(req:Request,res:Response)=>{
   const {productName,productDescription,productThumbnail,productPrice,categoryID}=req.body;
@@ -94,6 +94,20 @@ export const updateProduct=async(req:Request,res:Response)=>{
         }
         const updatedProduct=await updateProducts(productName,productDescription,productThumbnail,productPrice,categoryID,productID)
             return res.status(200).json({message:"Successfully updated the product."})
+    }
+    catch(error){
+        console.log(error,"error");
+        return res.status(500).json({error:"Please try again after sometimes!"})
+    }
+}
+
+export const paginatedProduct=async(req:Request,res:Response)=>{
+    const {page}=req.body
+    try{
+        let limit=12;
+        const offset= page>1?limit*page:1 ;
+        const products=await selectProductPerPage(offset,limit);
+        return res.status(200).json(products);
     }
     catch(error){
         console.log(error,"error");

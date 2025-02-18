@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProductWithCondition = exports.createNewProduct = exports.selectByProductID = exports.deleteByProductID = exports.updateProducts = exports.selectProductWithAllMatch = void 0;
+exports.getProductWithCondition = exports.createNewProduct = exports.selectProductPerPage = exports.selectByProductID = exports.deleteByProductID = exports.updateProducts = exports.selectProductWithAllMatch = void 0;
 const databse_1 = require("../../config/databse");
 const sequelize_1 = require("sequelize");
 const selectProductWithAllMatch = (productName, productDescription, productPrice, categoryID) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,6 +40,13 @@ const selectByProductID = (productID) => __awaiter(void 0, void 0, void 0, funct
     });
 });
 exports.selectByProductID = selectByProductID;
+const selectProductPerPage = (offset, limit) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databse_1.sequelize.query("SELECT * FROM Products LIMIT ? OFFSET ?", {
+        replacements: [limit, offset],
+        type: sequelize_1.QueryTypes.SELECT
+    });
+});
+exports.selectProductPerPage = selectProductPerPage;
 const createNewProduct = (productName, productDescription, productThumbnail, productPrice, categoryID) => __awaiter(void 0, void 0, void 0, function* () {
     return yield databse_1.sequelize.query("INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID) VALUES (?,?,?,?,?)", {
         replacements: [

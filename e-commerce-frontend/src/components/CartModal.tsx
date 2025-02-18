@@ -12,6 +12,7 @@ function CartModal({setModalOpen}:{setModalOpen:(value:boolean)=>void}) {
 
     return (
         <div className="h-240 bg-white w-100 absolute z-10 right-0 top-0">
+            <div className="text-4xl text-center underline font-bold text-blue-500">Cart</div>
             <img src={crossIcon} className="w-8 h-8 absolute right-2 top-2 cursor-pointer" onClick={()=>{setModalOpen(false)}}/>
              <div className="grid gap-4 w-4/5 top-10 absolute">
                                 {cart.map((item: forCartItem) => (

@@ -176,4 +176,7 @@ router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, re
 router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     (0, productController_1.updateProduct)(req, res);
 }));
+router.get("/item", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, productController_1.paginatedProduct)(req, res);
+}));
 exports.default = router;

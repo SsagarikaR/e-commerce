@@ -26,7 +26,7 @@ function ProductList({data,setEditProduct,setToggleModal,setIsDelete,setDeletePr
                     {d.categoryName}
                   </td>
                   <td className="border border-gray-400 p-2">
-                    {d.productPrice}
+                  ₹{d.productPrice}
                   </td>
                   <td className="border border-gray-400 p-2">
                     <div className="flex space-x-2">

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
+exports.paginatedProduct = exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
 const products_1 = require("../services/db/products");
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
@@ -103,3 +103,17 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.updateProduct = updateProduct;
+const paginatedProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page } = req.body;
+    try {
+        let limit = 12;
+        const offset = page > 1 ? limit * page : 1;
+        const products = yield (0, products_1.selectProductPerPage)(offset, limit);
+        return res.status(200).json(products);
+    }
+    catch (error) {
+        console.log(error, "error");
+        return res.status(500).json({ error: "Please try again after sometimes!" });
+    }
+});
+exports.paginatedProduct = paginatedProduct;
