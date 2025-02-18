@@ -41,8 +41,8 @@ const router=Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/signup",async(req:Request,res:Response)=>{
-    createUser(req,res);
+router.post("/signup",async(req:Request,res:Response,next:NextFunction)=>{
+    createUser(req,res,next);
 })
 
 
@@ -78,8 +78,8 @@ router.post("/signup",async(req:Request,res:Response)=>{
  *       500:
  *         description: Internal server error
  */
-router.post("/login",async(req:Request,res:Response)=>{
-    getUser(req,res);
+router.post("/login",async(req:Request,res:Response,next:NextFunction)=>{
+    getUser(req,res,next);
 })
 
 export default router;

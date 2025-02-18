@@ -25,7 +25,7 @@ export const selectUserByName=async(name:string)=>{
 }
 
 
-export const selectUserByEmail = async(email:string)=>{
+export const selectUserByEmail = async(email:string):Promise<forUser[]>=>{
     return await sequelize.query(`SELECT * FROM Users WHERE email=?`,
         {
             replacements:[email],
@@ -34,18 +34,18 @@ export const selectUserByEmail = async(email:string)=>{
     );
 }
 
-export const createNewUser=async(name:string,email:string,contactNo:string,role:string,hashedPassword:string)=>{
+export const createNewUser=async(name:string,email:string,contactNo:string,hashedPassword:string)=>{
     return await sequelize.query(`INSERT INTO Users (name,email,contactNo,role,password) VALUES
                 (?,?,?,?,?)`,{
-                    replacements:[name,email,contactNo,role,hashedPassword],
+                    replacements:[name,email,contactNo,hashedPassword],
                     type:QueryTypes.INSERT
                 })
 }
 
-export const selectUserByNameANDContact=async(name:string,contactNo:string):Promise<forUser[]>=>{
-    return await sequelize.query(`SELECT * FROM Users WHERE name=? AND  contactNo=?  `,
+export const selectUserByNameOREmail=async(name:string,email:string):Promise<forUser[]>=>{
+    return await sequelize.query(`SELECT * FROM Users WHERE name=? AND  email=?  `,
                 {
-                    replacements:[name,contactNo],
+                    replacements:[name,email],
                     type:QueryTypes.SELECT
                 }
             );

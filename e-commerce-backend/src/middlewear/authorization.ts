@@ -16,6 +16,7 @@ export const checkToken=(req:Request,res:Response,next:NextFunction)=>{
         if(process.env.JWT){
             const decoded=Jwt.verify(token,process.env.JWT)
             req.body.user=decoded;
+            console.log(req.body);
             next();
         }
     }
@@ -27,25 +28,22 @@ export const checkToken=(req:Request,res:Response,next:NextFunction)=>{
 
 export const isAdmin=async(req:Request,res:Response,next:NextFunction)=>{
     const id=req.body.user.identifire;
-    console.log("route hit")
+    console.log(id,"route hit")
     try{
-        const user:forUser[]=await sequelize.query('SELECT * FROM Users WHERE userID=?',
+        const user:forUser[]=await sequelize.query('SELECT * FROM Admins WHERE userID=?',
             {
                 replacements:[id],
                 type:QueryTypes.SELECT
             }
         )
         if(user.length===0){
-            res.status(404).json({error:"User not found."})
+            res.status(404).json({error:"Invalid credentials."});
+            next();
         }
-        else{
-            if(user[0].role!=="Admin"){
-                 res.status(401).json({error:"You are not authorized for this action."})
-            }
-           next();
-        }
+        next();
     }
     catch(error){
         res.status(500).json({error:"Please try again after sometimes"})
     }
 }
+

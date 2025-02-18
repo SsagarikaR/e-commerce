@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProductWithCondition = exports.createNewProduct = exports.selectProductPerPage = exports.selectByProductID = exports.deleteByProductID = exports.updateProducts = exports.selectProductWithAllMatch = void 0;
+exports.getProductWithCondition = exports.createNewProduct = exports.selectByProductID = exports.deleteByProductID = exports.updateProducts = exports.selectProductWithAllMatch = void 0;
 const databse_1 = require("../../config/databse");
 const sequelize_1 = require("sequelize");
-const selectProductWithAllMatch = (productName, productDescription, productPrice, categoryID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=?", {
-        replacements: [productName, productDescription, productPrice, categoryID],
+const selectProductWithAllMatch = (productName, productDescription, productPrice, categoryID, brandID) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databse_1.sequelize.query("SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=? AND brandID=?", {
+        replacements: [productName, productDescription, productPrice, categoryID, brandID],
         type: sequelize_1.QueryTypes.SELECT,
     });
 });
@@ -40,21 +40,16 @@ const selectByProductID = (productID) => __awaiter(void 0, void 0, void 0, funct
     });
 });
 exports.selectByProductID = selectByProductID;
-const selectProductPerPage = (offset, limit) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Products LIMIT ? OFFSET ?", {
-        replacements: [limit, offset],
-        type: sequelize_1.QueryTypes.SELECT
-    });
-});
-exports.selectProductPerPage = selectProductPerPage;
-const createNewProduct = (productName, productDescription, productThumbnail, productPrice, categoryID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID) VALUES (?,?,?,?,?)", {
+const createNewProduct = (productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databse_1.sequelize.query("INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID,brandID,stock) VALUES (?,?,?,?,?,?,?)", {
         replacements: [
             productName,
             productDescription,
             productThumbnail,
             productPrice,
             categoryID,
+            brandID,
+            stock
         ],
         type: sequelize_1.QueryTypes.INSERT,
     });
@@ -62,10 +57,11 @@ const createNewProduct = (productName, productDescription, productThumbnail, pro
 exports.createNewProduct = createNewProduct;
 const getProductWithCondition = (_a) => __awaiter(void 0, [_a], void 0, function* ({ categoryID, name, id, price, }) {
     let query = `
-          SELECT *
-          FROM Products p
-          LEFT JOIN Categories c ON p.categoryID = c.categoryID
-        `;
+        SELECT p.*, c.*, b.*
+        FROM Products p
+        LEFT JOIN Categories c ON p.categoryID = c.categoryID
+        LEFT JOIN Brands b ON p.brandID = b.brandID
+      `;
     let replacements = [];
     let conditions = [];
     if (categoryID) {

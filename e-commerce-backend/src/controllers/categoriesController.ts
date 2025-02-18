@@ -1,84 +1,125 @@
-import { Request,Response } from "express";
-import { createNewCategory, deleteCatgeory, selectAllCatgeory, selectCatgeoryByID, selectCatgeoryByName, updateTheCatgeory } from "../services/db/categories";
+import { Request, Response, NextFunction } from "express";
+import {
+  createNewCategory,
+  deleteCatgeory,
+  selectAllCatgeory,
+  selectCatgeoryByID,
+  selectCatgeoryByName,
+  updateTheCatgeory,
+} from "../services/db/categories";
 
-export const createCategories=async(req:Request,res:Response)=>{
-    const {categoryName,categoryThumbnail}=req.body
-    try{
-        const isCategoryExist=await selectCatgeoryByName(categoryName)
-        if(isCategoryExist.length!==0){
-            return res.status(404).json({error:"This category already exist"})
-        }
-        const [result,metaData]=await createNewCategory(categoryName,categoryThumbnail);
-        if(metaData!==0){
-            return res.status(202).json({message:"Succesfully added a new category."})
-        }
-        else{
-            return res.status(409).json({message:"Error in adding a new category."})
-        }
-    }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes"})
-    }
-}
+/**
+ * Controller to create a new category
+ * */
+export const createCategories = async (req: Request, res: Response, next: NextFunction) => {
+  const { categoryName, categoryThumbnail } = req.body;
 
-export const getCategories=async(req:Request,res:Response)=>{
-    const {name}=req.query;
-    console.log(req.query,"query");
-    console.log(name);
-    try{
-        if(name){
-            if(typeof name==="string"){
-                const categoryWithThisName=await selectCatgeoryByName(name);
-                if(categoryWithThisName.length===0){
-                    return res.status(404).json({message:`No catgeory with name ${name} found.`});
-                }
-                else{
-                    return res.status(200).json(categoryWithThisName)
-                }
-            }
-        }
-        const allCatgeories=await selectAllCatgeory();
-        if(allCatgeories.length===0){
-            return res.status(404).json({message:"No categories found."});
-        }
-        else{
-            return res.status(200).json(allCatgeories);
-        }
+  try {
+    // Check if the category already exists
+    const isCategoryExist = await selectCatgeoryByName(categoryName);
+    if (isCategoryExist.length !== 0) {
+      return next({ statusCode: 409, message: "This category already exists" });
     }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"})
-    }
-}
 
-export const updateCategories=async(req:Request,res:Response)=>{
-    const {categoryID,categoryName,categoryThumbnail}=req.body;
-    try{
-            const updateThumbnail=await updateTheCatgeory(categoryName,categoryThumbnail,categoryID);
-            console.log(updateThumbnail);
-                return res.status(200).json({message:"Successfully updated the category."});
+    // Create a new category
+    const [result, metaData] = await createNewCategory(categoryName, categoryThumbnail);
+    if (metaData !== 0) {
+      return res.status(201).json({ message: "Successfully added a new category." });
+    } else {
+      return next({ statusCode: 400, message: "Error in adding a new category." });
     }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes."})
-    }
-}
+  } catch (error) {
+    console.error(error);
+    return next({ statusCode: 500, message: "Please try again after some time" });
+  }
+};
 
-export const deletecategories=async(req:Request,res:Response)=>{
-    const {categoryID}=req.body;
-    try{
-        const isCategoryExist=await selectCatgeoryByID(categoryID)
-        if(isCategoryExist.length===0){
-            return res.status(404).json({message:"This category not found"});
+
+
+
+
+
+/** 
+ * Controller to get categories (by name or all categories)
+ * */
+export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
+  const { name } = req.query;
+
+  try {
+    // If a name is provided, search for category by name
+    if (name) {
+      if (typeof name === "string") {
+        const categoryWithThisName = await selectCatgeoryByName(name);
+        if (categoryWithThisName.length === 0) {
+          return next({ statusCode: 404, message: `No category with name ${name} found.` });
+        } else {
+          return res.status(200).json(categoryWithThisName);
         }
-        await deleteCatgeory(categoryID);
-        // console.log(deletecategories,"deleteCategory");
-        return res.status(200).json({message:"Successfully deleted the category."});
+      }
     }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"})
-    }
-}
 
+    // If no name, fetch all categories
+    const allCategories = await selectAllCatgeory();
+    if (allCategories.length === 0) {
+      return next({ statusCode: 404, message: "No categories found." });
+    } else {
+      return res.status(200).json(allCategories);
+    }
+  } catch (error) {
+    console.error(error);
+    return next({ statusCode: 500, message: "Please try again after some time!" });
+  }
+};
+
+
+
+
+
+
+/**
+ * Controller to update an existing category
+ * */
+export const updateCategories = async (req: Request, res: Response, next: NextFunction) => {
+  const { categoryID, categoryName, categoryThumbnail } = req.body;
+
+  try {
+    // Ensure the category exists
+    const isCategoryExist = await selectCatgeoryByID(categoryID);
+    if (isCategoryExist.length === 0) {
+      return next({ statusCode: 404, message: "Category not found" });
+    }
+
+    // Update the category
+    const updateThumbnail = await updateTheCatgeory(categoryName, categoryThumbnail, categoryID);
+    return res.status(200).json({ message: "Successfully updated the category." });
+  } catch (error) {
+    console.error(error);
+    return next({ statusCode: 500, message: "Please try again after some time." });
+  }
+};
+
+
+
+
+
+/**
+ * Controller to delete an existing category
+ * */
+export const deleteCategories = async (req: Request, res: Response, next: NextFunction) => {
+  const { categoryID } = req.body;
+
+  try {
+    // Check if the category exists
+    const isCategoryExist = await selectCatgeoryByID(categoryID);
+    if (isCategoryExist.length === 0) {
+      return next({ statusCode: 404, message: "This category not found" });
+    }
+
+    // Delete the category
+    await deleteCatgeory(categoryID);
+    return res.status(200).json({ message: "Successfully deleted the category." });
+  } catch (error) {
+    console.error(error);
+    return next({ statusCode: 500, message: "Please try again after some time!" });
+  }
+};

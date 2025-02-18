@@ -1,6 +1,6 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { checkToken, isAdmin } from "../middlewear/authorization";
-import { createCategories, deletecategories, getCategories, updateCategories } from "../controllers/categoriesController";
+import { createCategories, deleteCategories, getCategories, updateCategories } from "../controllers/categoriesController";
 
 const router = Router();
 
@@ -49,8 +49,8 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.post("/", checkToken, isAdmin, async (req: Request, res: Response) => {
-    createCategories(req, res);
+router.post("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+    createCategories(req, res,next);
 });
 
 /**
@@ -74,8 +74,8 @@ router.post("/", checkToken, isAdmin, async (req: Request, res: Response) => {
  *         description: Server error
  */
 
-router.get("/", async (req: Request, res: Response) => {
-    getCategories(req, res);
+router.get("/", async (req: Request, res: Response,next:NextFunction) => {
+    getCategories(req, res,next);
 });
 
 /**
@@ -104,8 +104,8 @@ router.get("/", async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.delete("/", checkToken, isAdmin, async (req: Request, res: Response) => {
-    deletecategories(req, res);
+router.delete("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+    deleteCategories(req, res,next);
 });
 
 /**
@@ -136,8 +136,8 @@ router.delete("/", checkToken, isAdmin, async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.patch("/", checkToken, isAdmin, async (req: Request, res: Response) => {
-    updateCategories(req, res);
+router.patch("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+    updateCategories(req, res,next);
 });
 
 export default router;

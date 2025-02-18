@@ -50,8 +50,8 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Internal server error
  */
-router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, authController_1.createUser)(req, res);
+router.post("/signup", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, authController_1.createUser)(req, res, next);
 }));
 /**
  * @swagger
@@ -85,7 +85,7 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
  *       500:
  *         description: Internal server error
  */
-router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, authController_1.getUser)(req, res);
+router.post("/login", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, authController_1.getUser)(req, res, next);
 }));
 exports.default = router;

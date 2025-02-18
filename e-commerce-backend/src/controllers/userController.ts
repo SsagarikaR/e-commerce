@@ -1,85 +1,102 @@
-import { sequelize } from "../config/databse";
-import { Request,Response } from "express";
-import { QueryTypes } from "sequelize";
+import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
-import { deleteUserByID, selectAllUsers, selectUserByID ,updateUsersPassword} from "../services/db/users";
+import { deleteUserByID, selectAllUsers, selectUserByID, updateUsersPassword } from "../services/db/users";
 
-export const deleteUser=async(req:Request,res:Response)=>{
-    const id=req.body.user.identifire;
-    try{
-        if(!id){
-            return res.status(404).json({error:"User id not found"})
-        }
+// Delete a user by their ID
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.body.user.identifire;  // Extract the user ID from the request body
+  try {
+    // Check if the ID is provided
+    if (!id) {
+      return next({ statusCode: 400, message: "User ID not found" });
+    }
 
-        const IsUserExist=await selectUserByID(id);
+    // Check if the user exists in the database
+    const isUserExist = await selectUserByID(id);
+    if (isUserExist.length === 0) {
+      return next({ statusCode: 404, message: "User not found" });
+    }
 
-        if(IsUserExist.length===0){
-            return res.status(404).json({error:"User not found"})
-        }
-        const deleteUser=await deleteUserByID(id);
-        console.log("deleted user:",deleteUser);
-        return res.status(200).json({message:"user dleted successfully"});
-    }
-    catch(error){
-        console.log(error,"errro");
-        return res.status(500).json({errro:"Please try again after sometimes!"});
-    }
-}
+    // Proceed with deleting the user
+    const deleteUser = await deleteUserByID(id);
+    console.log("Deleted user:", deleteUser);
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    return next({ statusCode: 500, message: "An error occurred while deleting the user" });
+  }
+};
 
-export const updateUserPassword=async(req:Request,res:Response)=>{
-    const {newPassword,oldPassword}=req.body;
-    const id=req.body.user.identifire
-    try{
-        const isUserExist:forUser[]=await selectUserByID(id);
-        
-        if(isUserExist.length===0){
-            return res.status(404).json({error:"User not found"});
-        }
-        if(isUserExist[0].password){
-            const isPasswordValid=await bcrypt.compare(oldPassword,isUserExist[0].password)
-            if(!isPasswordValid){
-                return res.status(403).json({error:"Invalid password."})
-            }
-        }
-        const hashedPassword=await bcrypt.hash(newPassword,10);
-        const updateUser=await updateUsersPassword(hashedPassword);
-        console.log(updateUser,"updateuser");
-        return res.status(200).json({message:"User updated successfully"});
-    }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"})
-    }
-}
 
-export const getAllUser=async(req:Request,res:Response)=>{
-    try{
-        const users=await selectAllUsers();
-        if(users.length===0){
-            return res.status(404).json({error:"No user found"});
-        }
-        return res.status(200).json(users)
-    }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"});
-    }
-}
 
-export const getUserByID=async(req:Request,res:Response)=>{
-    console.log(req.body)
-    const id=req.body.user.identifire;
-    try{
-        const users:forUser[]=await selectUserByID(id);
 
-        if(users.length===0){
-            return res.status(404).json({error:"Invalid user id"});
-        }
-        delete users[0].password;
-        return res.status(200).json(users[0])
+// Update the user's password
+export const updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+  const { newPassword, oldPassword } = req.body;
+  const id = req.body.user.identifire;  // Extract user ID from the request body
+
+  try {
+    // Check if the user exists
+    const isUserExist = await selectUserByID(id);
+    if (isUserExist.length === 0) {
+      return next({ statusCode: 404, message: "User not found" });
     }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"});
+
+    // Verify the old password
+    if (isUserExist[0].password) {
+      const isPasswordValid = await bcrypt.compare(oldPassword, isUserExist[0].password);
+      if (!isPasswordValid) {
+        return next({ statusCode: 403, message: "Invalid old password" });
+      }
     }
-}
+
+    // Hash the new password and update it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const updateUser = await updateUsersPassword(hashedPassword);
+    console.log(updateUser);
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.log(error);
+    return next({ statusCode: 500, message: "An error occurred while updating the password" });
+  }
+};
+
+
+
+
+// Retrieve all users
+export const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Fetch all users from the database
+    const users = await selectAllUsers();
+    if (users.length === 0) {
+      return next({ statusCode: 404, message: "No users found" });
+    }
+    return res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+    return next({ statusCode: 500, message: "An error occurred while fetching users" });
+  }
+};
+
+
+
+
+// Get a user by their ID
+export const getUserByID = async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.body.user.identifire;  // Extract user ID from the request body
+  try {
+    // Check if the user exists
+    const users = await selectUserByID(id);
+    if (users.length === 0) {
+      return next({ statusCode: 404, message: "Invalid user ID" });
+    }
+
+    // Remove the password from the response before returning
+    delete users[0].password;
+    return res.status(200).json(users[0]);
+  } catch (error) {
+    console.log(error);
+    return next({ statusCode: 500, message: "An error occurred while fetching the user" });
+  }
+};

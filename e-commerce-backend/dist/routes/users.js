@@ -44,8 +44,8 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.get("/users", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.getAllUser)(req, res);
+router.get("/users", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, userController_1.getAllUser)(req, res, next);
 }));
 /**
  * @swagger
@@ -65,8 +65,8 @@ router.get("/users", authorization_1.checkToken, authorization_1.isAdmin, (req, 
  *       500:
  *         description: Server error
  */
-router.get("/user", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.getUserByID)(req, res);
+router.get("/user", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, userController_1.getUserByID)(req, res, next);
 }));
 /**
  * @swagger
@@ -96,8 +96,8 @@ router.get("/user", authorization_1.checkToken, (req, res) => __awaiter(void 0, 
  *       500:
  *         description: Server error
  */
-router.delete("/users", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.deleteUser)(req, res);
+router.delete("/users", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, userController_1.deleteUser)(req, res, next);
 }));
 /**
  * @swagger
@@ -130,7 +130,7 @@ router.delete("/users", authorization_1.checkToken, (req, res) => __awaiter(void
  *       500:
  *         description: Server error
  */
-router.patch("/users", authorization_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userController_1.updateUserPassword)(req, res);
+router.patch("/users", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, userController_1.updateUserPassword)(req, res, next);
 }));
 exports.default = router;

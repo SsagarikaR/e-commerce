@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { makeAuthorizedGetRequest } from "../services/authorizedRequests"
-import trolleyIcon from "../assets/trolley.png";
+import logoIcon from "../assets/logo.png";
 import searchIcon from "../assets/search.png";
 import profileIcon from "../assets/account.png";
 import cartIcon from "../assets/cart.png";
@@ -16,6 +16,7 @@ function Navbar() {
     const [search,setSearch]=useState<string>();
     const [categories,setCategories]=useState<forCategories[]>();
     const [openProfile,setOpenProfile]=useState(false);
+    const [isAdmin,setIsAdmin]=useState(false);
     const navigate=useNavigate();
 
     const searchProduct=async()=>{
@@ -40,7 +41,17 @@ function Navbar() {
         }
     }
 
+    const isUserIsAdmin=async()=>{
+        console.log("logged");
+        const response=await makeAuthorizedGetRequest("/admins");
+        console.log(response);
+        if(response && response.data.length>0){
+            setIsAdmin(true);
+        }
+    }
+    
     useEffect(()=>{
+        isUserIsAdmin();
         getCategories();
         getUser();
     },[])
@@ -49,7 +60,7 @@ function Navbar() {
   return (
     <div className='flex shadow w-full h-20 justify-between px-24 text-2xl font-semibold items-center'>
         <div className="flex items-center justify-center gap-x-1">
-            <img src={trolleyIcon} className="w-10 h-10"/>
+            <Link to="/"><img src={logoIcon} className="w-10 h-10"/></Link>
             <div className="text-blue-500">ShopCart</div>
         </div>
         <div>
@@ -75,7 +86,7 @@ function Navbar() {
                     </span>
             </div>
         </Link>
-        {user &&(user.role==="Admin"?
+        {user && (isAdmin?
         <Link to="/dashboard" >
             <div className="flex items-center gap-1 cursor-pointer"> 
                 <img src={profileIcon} className="w-8 h-8"/><div>{user.name}</div>

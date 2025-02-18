@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.brands = void 0;
-const databse_1 = require("../config/databse");
+exports.Brands = void 0;
 const sequelize_1 = require("sequelize");
-exports.brands = databse_1.sequelize.define("brands", {
-    brandtID: {
+const databse_1 = require("../config/databse");
+exports.Brands = databse_1.sequelize.define("Brands", {
+    brandID: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
@@ -14,7 +14,11 @@ exports.brands = databse_1.sequelize.define("brands", {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
+    brandThumbnail: {
+        type: sequelize_1.DataTypes.TEXT,
+        allowNull: false
+    }
 }, {
     timestamps: false
 });
-// console.log(Produtcs===sequelize.model("Products"));
+// console.log(Brands===sequelize.model("Brands"));

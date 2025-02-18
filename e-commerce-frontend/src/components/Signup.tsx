@@ -10,12 +10,11 @@ function Signup() {
   const [full_name, setFull_name] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [contact, setContact] = useState<string>("");
-  const [role, setRole] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [full_name_error, setFullNameError] = useState<string>("");
-  const [email_error, setEmail_Error] = useState<string>("");
-  const [contact_error, setContactError] = useState<string>("");
-  const [password_error, setPasswordError] = useState<string>("");
+  const [fullNameError, setFullNameError] = useState<string>("");
+  const [emailError, setEmail_Error] = useState<string>("");
+  const [contactError, setContactError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
   const navigate=useNavigate();
 
   const inputField = [
@@ -25,7 +24,7 @@ function Signup() {
       type: "text",
       value: full_name,
       setValue: setFull_name,
-      error: full_name_error,
+      error: fullNameError,
       setError: setFullNameError,
     },
     {
@@ -34,7 +33,7 @@ function Signup() {
       type: "text",
       value: email,
       setValue: setEmail,
-      error: email_error,
+      error:emailError,
       setError: setEmail_Error,
     },
     {
@@ -43,7 +42,7 @@ function Signup() {
       type: "text",
       value: contact,
       setValue: setContact,
-      error: contact_error,
+      error: contactError,
       setError: setContactError,
     },
     {
@@ -52,7 +51,7 @@ function Signup() {
       type: "password",
       value: password,
       setValue: setPassword,
-      error: password_error,
+      error: passwordError,
       setError: setPasswordError,
     },
   ];
@@ -62,7 +61,6 @@ function Signup() {
       name: full_name,
       email: email,
       contactNo: contact,
-      role: role,
       password: password,
     });
     console.log(resposne);
@@ -119,23 +117,6 @@ function Signup() {
                   />
                 );
               })}
-              <div className="input_box_container">
-                <select
-                  id="role"
-                  className="input_box require"
-                  value={role || ""}
-                  onChange={(e) => {
-                    console.log(e.target.value, "value");
-                    setRole(e.target.value);
-                  }}
-                >
-                  <option disabled value="">
-                    ----- Select a user role -----
-                  </option>{" "}
-                  <option value="Admin">Administrator</option>
-                  <option value="User">Standard User</option>
-                </select>
-              </div>
              <button
                 className="btn"
                 onClick={(e) => {

@@ -1,16 +1,23 @@
 import { Request, Response, NextFunction } from "express";
 
-export async function errorHandler(
-  err: Error | any,
+const errorHandler = (
+  err: CustomError,
   req: Request,
   res: Response,
   next: NextFunction
-) {
-  console.error(err.stack);
+) => {
+  // Fallback to 500 Internal Server Error if statusCode is not provided
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Something went wrong. Please try again later.';
 
-  if (err.status && err.message) {
-    res.status(err.status).json({ error: err.message });
-  } else {
-    res.status(500).json({ error: "Please try again after sometimes" });
-  }
-}
+  // Log error details for debugging
+  console.error(`Error: ${message}`, err);
+
+  // Send response to client
+  res.status(statusCode).json({
+    error: message,
+  });
+};
+
+export default errorHandler;
+

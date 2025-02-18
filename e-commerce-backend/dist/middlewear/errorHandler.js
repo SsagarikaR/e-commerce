@@ -1,23 +1,14 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
+Object.defineProperty(exports, "__esModule", { value: true });
+const errorHandler = (err, req, res, next) => {
+    // Fallback to 500 Internal Server Error if statusCode is not provided
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Something went wrong. Please try again later.';
+    // Log error details for debugging
+    console.error(`Error: ${message}`, err);
+    // Send response to client
+    res.status(statusCode).json({
+        error: message,
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorHandler = errorHandler;
-function errorHandler(err, req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.error(err.stack);
-        if (err.status && err.message) {
-            res.status(err.status).json({ error: err.message });
-        }
-        else {
-            res.status(500).json({ error: "Please try again after sometimes" });
-        }
-    });
-}
+exports.default = errorHandler;

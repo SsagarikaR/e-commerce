@@ -1,4 +1,4 @@
-import { Router,Request,Response } from "express";
+import { Router,Request,Response, NextFunction } from "express";
 import { checkToken, isAdmin } from "../middlewear/authorization";
 import { deleteUser, getAllUser, updateUserPassword ,getUserByID} from "../controllers/userController";
 const router=Router();
@@ -36,8 +36,8 @@ const router=Router();
  *       500:
  *         description: Server error
  */
-router.get("/users", checkToken, isAdmin, async (req: Request, res: Response) => {
-    getAllUser(req, res);
+router.get("/users", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+    getAllUser(req, res,next);
 });
 
 /**
@@ -58,8 +58,8 @@ router.get("/users", checkToken, isAdmin, async (req: Request, res: Response) =>
  *       500:
  *         description: Server error
  */
-router.get("/user", checkToken, async (req: Request, res: Response) => {
-    getUserByID(req, res);
+router.get("/user", checkToken, async (req: Request, res: Response,next:NextFunction) => {
+    getUserByID(req, res,next);
 });
 
 /**
@@ -90,8 +90,8 @@ router.get("/user", checkToken, async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.delete("/users", checkToken, async (req: Request, res: Response) => {
-    deleteUser(req, res);
+router.delete("/users", checkToken, async (req: Request, res: Response,next:NextFunction) => {
+    deleteUser(req, res,next);
 });
 
 /**
@@ -125,8 +125,8 @@ router.delete("/users", checkToken, async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.patch("/users", checkToken, async (req: Request, res: Response) => {
-    updateUserPassword(req, res);
+router.patch("/users", checkToken, async (req: Request, res: Response,next:NextFunction) => {
+    updateUserPassword(req, res,next);
 });
 
 export default router

@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
-import { createProduct, deleteProducts, getProducts, paginatedProduct, updateProduct } from "../controllers/productController";
+import express, { NextFunction, Request, Response } from "express";
+import { createProduct, deleteProducts, getProducts, updateProduct } from "../controllers/productController";
 import { checkToken, isAdmin } from "../middlewear/authorization";
 
 const router = express.Router();
@@ -55,8 +55,8 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", checkToken, isAdmin, async (req: Request, res: Response) => {
-    createProduct(req, res);
+router.post("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+    createProduct(req, res,next);
 });
 
 /**
@@ -95,8 +95,8 @@ router.post("/", checkToken, isAdmin, async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.get("/", async (req: Request, res: Response) => {
-   getProducts(req, res);
+router.get("/", async (req: Request, res: Response,next:NextFunction) => {
+   getProducts(req, res,next);
 });
 
 /**
@@ -125,8 +125,8 @@ router.get("/", async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.delete("/", checkToken, isAdmin, async (req: Request, res: Response) => {
-   deleteProducts(req, res);
+router.delete("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+   deleteProducts(req, res,next);
 });
 
 /**
@@ -165,12 +165,8 @@ router.delete("/", checkToken, isAdmin, async (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-router.patch("/", checkToken, isAdmin, async (req: Request, res: Response) => {
-   updateProduct(req, res);
+router.patch("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+   updateProduct(req, res,next);
 });
 
-
-router.get("/item",async(req:Request,res:Response)=>{
-   paginatedProduct(req,res);
-})
 export default router;

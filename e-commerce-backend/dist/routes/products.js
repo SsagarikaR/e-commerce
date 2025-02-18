@@ -66,8 +66,8 @@ const router = express_1.default.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, productController_1.createProduct)(req, res);
+router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, productController_1.createProduct)(req, res, next);
 }));
 /**
  * @swagger
@@ -105,8 +105,8 @@ router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res)
  *       500:
  *         description: Server error
  */
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, productController_1.getProducts)(req, res);
+router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, productController_1.getProducts)(req, res, next);
 }));
 /**
  * @swagger
@@ -134,8 +134,8 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
  *       500:
  *         description: Server error
  */
-router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, productController_1.deleteProducts)(req, res);
+router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, productController_1.deleteProducts)(req, res, next);
 }));
 /**
  * @swagger
@@ -173,10 +173,7 @@ router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, re
  *       500:
  *         description: Server error
  */
-router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, productController_1.updateProduct)(req, res);
-}));
-router.get("/item", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, productController_1.paginatedProduct)(req, res);
+router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, productController_1.updateProduct)(req, res, next);
 }));
 exports.default = router;

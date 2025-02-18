@@ -1,94 +1,89 @@
 import { generateToken } from "../middlewear/authentication";
 import bcrypt from "bcrypt"
-import { Request,Response } from "express";
-import { createNewUser, selectUserByEmail, selectUserByName, selectUserByNameANDContact } from "../services/db/users";
+import { Request,Response ,NextFunction} from "express";
+import { createNewUser, selectUserByEmail, selectUserByName} from "../services/db/users";
 
-export const createUser=async(req:Request,res:Response)=>{
-    const {name,email,contactNo,role,password}=req.body
-    try{
-        if( name===""  || name===undefined || !name){
-            return res.status(404).json({error:"Name can't be empty"});
-        }
-        if(email==="" || email===undefined || !email){
-            return res.status(404).json({error:"Email can't be empty"});
-        }
-        if(contactNo==="" || contactNo===undefined || !contactNo){
-            return res.status(404).json({error:"Contact No. can't be empty."});
-        }
-        if(role==="" || role===undefined || !role){
-            return res.status(404).json({error:"User's role can't be empty."});
-        }
-        if(password==="" || password===undefined || !password){
-            return res.status(404).json({error:"User's role can't be empty."});
+/**
+ * Creates a new user.
+ */
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { name, email, contactNo, password } = req.body;
+    try {
+        // Check for missing required fields
+        if (!name || !email || !contactNo || !password) {
+            return next({ statusCode: 409, message: "Please enter required credentials" });
         }
 
-        const ifUserExistWithName=await selectUserByName(name);
-        if(ifUserExistWithName.length!==0){
-            return res.status(403).json({error:"This user name is already taken"});
+        // Check if a user already exists with the given name
+        const ifUserExistWithName = await selectUserByName(name);
+        if (ifUserExistWithName.length !== 0) {
+            return next({ statusCode: 403, message: "This username is already taken" });
         }
 
-        const ifUserExistWithEmail=await selectUserByEmail(email)
-        if(ifUserExistWithEmail.length!==0){
-
-            return res.status(403).json({error:"This user email is already registered"});
+        // Check if a user already exists with the given email
+        const ifUserExistWithEmail = await selectUserByEmail(email);
+        if (ifUserExistWithEmail.length !== 0) {
+            return next({ statusCode: 403, message: "This email is already registered" });
         }
-      
-        const hashedPassword=await bcrypt.hash(password,10);
 
-        const [result,metaData]=await createNewUser(name,email,contactNo,role,hashedPassword)
+        // Hash the user's password before saving it
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        if(metaData!==0){
-            const token=await generateToken(result);
-            return res.status(201).json(token);
+        // Create a new user in the database
+        const [result, metaData] = await createNewUser(name, email, contactNo, hashedPassword);
+        if (metaData !== 0) {
+            // Generate a JWT token for the new user
+            const token = await generateToken(result);
+            return res.status(201).json({ token });
+        } else {
+            return next({ statusCode: 409, message: "Error creating a new user." });
         }
-        else{
-            return res.status(409).json({error:"Error creating a new user."});
-        }
+    } catch (error) {
+        console.log("Error creating user:", error);
+        return next({ statusCode: 500, message: "An error occurred while signing up" }); 
     }
-    catch(error){
-        console.log(error,"error creating  user")
-        return res.status(500).json({message:"Please try again after sometimes!"});
-        // nextTick
-    }
-}
+};
 
 
-export const getUser=async(req:Request,res:Response)=>{
-    const {name,contactNo,password}=req.body;
-    try{
-        if( name===""  || name===undefined || !name){
-            return res.status(404).json({error:"Name can't be empty"});
-        }
-        if(contactNo==="" || contactNo===undefined || !contactNo){
-            return res.status(404).json({error:"Contact No. can't be empty."});
-        }
-        if(password==="" || password==undefined || !password){
-            return res.status(404).json({error:"User's role can't be empty."});
+
+
+
+
+/**
+ * Retrieves user information based on email and password.
+ */
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    try {
+        // Check if email is provided
+        if (!email) {
+            return next({ statusCode: 404, message: "Email can't be empty" });
         }
 
-        const user:forUser[]=await selectUserByNameANDContact(name,contactNo)
-       
-        if(user.length!==0){
-            if(user[0].password){
-                const isPasswordValid=await bcrypt.compare(password,user[0].password)
-                if(!isPasswordValid){
-                    return res.status(403).json({message:"Invalid password."})
+        // Retrieve user data based on email
+        const user: forUser[] = await selectUserByEmail(email);
+
+        if (user.length !== 0) {
+            // If user exists, check the password validity
+            if (user[0].password) {
+                const isPasswordValid = await bcrypt.compare(password, user[0].password);
+                if (!isPasswordValid) {
+                    return next({ statusCode: 403, message: "Invalid password." });
                 }
             }
-            const token=await generateToken(user[0].userID)
-            console.log(token,"token")
-            const userToReturn=user[0]
-            userToReturn.token=token
-            delete userToReturn.password;
-            return res.status(200).json(userToReturn);
-        }
-        else{
 
-            return res.status(404).json({message:"User not found"});
+            // Generate a JWT token for the user
+            const token = await generateToken(user[0].userID);
+            const userToReturn = user[0];
+            userToReturn.token = token;
+            delete userToReturn.password; // Remove password from response
+
+            return res.status(200).json(userToReturn);
+        } else {
+            return next({ statusCode: 404, message: "User not found" });
         }
+    } catch (error) {
+        console.log("Error getting user:", error);
+        return next({ statusCode: 500, message: "An error occurred while signing in" });
     }
-    catch(error){
-        console.log(error,"error creating  user")
-        return res.status(500).json({message:"Please try again after sometimes!"});
-    }
-}
+};

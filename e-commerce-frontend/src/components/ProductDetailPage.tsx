@@ -32,7 +32,10 @@ function ProductDetailPage() {
                     </div>
                     <div className="w-150 text-gray-700 gap-y-9 flex flex-col">
                         <div className="flex gap-y-4 flex-col ">
-                            <div className="text-4xl font-semibold">{product[0].productName}</div>
+                            <div className="flex gap-x-3">
+                                <div className="text-4xl font-semibold">{product[0].productName}</div>
+                                <img src={product[0].brandThumbnail} className="w-10 h-10 rounded-full"/>
+                            </div>
                             <div className="text-2xl font-normal">₹{product[0].productPrice}</div>
                             <div className=" border-b  w-150 "></div>
                         </div>

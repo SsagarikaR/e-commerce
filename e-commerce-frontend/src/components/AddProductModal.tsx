@@ -3,33 +3,64 @@ import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
+import ModalInput from "../subComponents.tsx/ModalInput";
 
 function AddProductModal({
   setToggleModal,
   setListChange,
-  listChange,
   editProduct
 }: forProductModalProp) {
   const [productName, setProductName] = useState(editProduct?.productName || "");
   const [productDescription, setProductDescription] = useState(editProduct?.productDescription || "");
   const [productThumbnail, setProductThumbnail] = useState(editProduct?.ProductThumbnail || "");
+  const [stock,setStock]=useState(editProduct?.stock || " ")
   const [uploadedFileName, setUploadedFileName] = useState(""); 
   const [productPrice, setProductPrice] = useState(editProduct?.productPrice.toString() || "");
   const [categoryID, setCategoryID] = useState(editProduct?.categoryID || "");
   const [categories, setCategories] = useState<forCategories[]>();
+  const [brandID, setBrandID] = useState(editProduct?.brandID || "");
+  const [brands,setBrands]=useState<forBrand[]>();
   console.log(uploadedFileName);
   const data = {
     productName: productName,
     productDescription: productDescription,
     productThumbnail: productThumbnail,
     productPrice: productPrice,
+    stock:stock,
+    brandID:brandID,
     categoryID: categoryID,
   };
+
+  const fields=[
+    {
+      id:"product_name",
+      value:productName,
+      setValue:setProductName,
+      field:"product name"
+    },
+    {
+      id:"product_price",
+      value:productPrice,
+      setValue:setProductPrice,
+      field:"product price"
+    },
+    {
+      id:"stock",
+      value:stock,
+      setValue:setStock,
+      field:"stock"
+    }
+  ]
 
   const getCatgeories = async () => {
     const response = await makeUnAuthorizedGetRequest("/categories");
     setCategories(response?.data);
   };
+
+  const getBrands=async () =>{
+    const response = await makeUnAuthorizedGetRequest("/brands");
+    setBrands(response?.data);
+  }
 
   const handleSubmit = async () => {
     let response;
@@ -40,14 +71,19 @@ function AddProductModal({
       // Otherwise, add a new product
       response = await makeAuthorizedPostRequest("/products", data);
     }
-
+    console.log(response);
     if (response?.data) {
-      setListChange(!listChange);
+      console.log("list changed")
+      // console.log(listChange);
+      setListChange(prev=>!prev);
+      // console.log(listChange);
       setToggleModal(false);
     }
   };
+
   useEffect(() => {
     getCatgeories();
+    getBrands();
   },[]);
 
   return (
@@ -65,24 +101,18 @@ function AddProductModal({
         Add a new product
       </div>
       <div className="text-lg text-gray-600 p-2 flex flex-col gap-6">
-        <div className="flex">
-          <label htmlFor="product_name" className="font-semibold text-xl w-70 ">
-            Enter product name
-          </label>
-          <input
-            id="product_name "
-            className="border p-2 outline-none"
-            value={productName}
-            onChange={(e) => {
-              setProductName(e.target.value);
-            }}
-          />
-        </div>
+        {
+          fields.map((field)=>(
+             <ModalInput 
+              id={field.id}
+              value={field.value}
+              setValue={field.setValue}
+              field={field.field}
+             />
+          ))
+        }
         <div className="flex ">
-          <label
-            htmlFor="product_description"
-            className="font-semibold text-xl w-70 "
-          >
+          <label htmlFor="product_description" className="font-semibold text-xl w-70 ">
             Enter product description
           </label>
           <textarea
@@ -95,32 +125,13 @@ function AddProductModal({
           ></textarea>
         </div>
         <div className="flex ">
-           <label
-            htmlFor="product_thumbnail"
-            className="font-semibold text-xl  w-70 "
-          >
+          <label htmlFor="product_thumbnail" className="font-semibold text-xl  w-70 ">
             Select product thumbnail
           </label>
           <div>
            <CloudinaryImageUpload seturl={setProductThumbnail} setName={setUploadedFileName} />
            <div>{uploadedFileName}</div>
            </div>
-        </div>
-        <div className="flex">
-          <label
-            htmlFor="product_price"
-            className="font-semibold text-xl w-70 "
-          >
-            Enter product price
-          </label>
-          <input
-            id="product_price"
-            className="border p-2  outline-none"
-            value={productPrice}
-            onChange={(e) => {
-              setProductPrice(e.target.value);
-            }}
-          />
         </div>
         <div className="flex">
           <label className="font-semibold text-xl w-70">Select category</label>
@@ -141,18 +152,36 @@ function AddProductModal({
               ))}
           </select>
         </div>
+        <div className="flex">
+          <label className="font-semibold text-xl w-70">Select brand</label>
+          <select
+            className=" border p-2  outline-none w-91"
+            onChange={(e) => {
+             setBrandID(e.target.value);
+            }}
+          >
+            <option disabled selected>
+              --Select brand--
+            </option>
+            {brands &&
+              brands.map((brand) => (
+                <option value={brand.brandID}>
+                  {brand.brandName}
+                </option>
+              ))}
+          </select>
+        </div>
         <div className="flex justify-between p-4">
           <button
             className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer"
             onClick={() => {
               setToggleModal(false);
-              setListChange(!listChange)
             }}
           >
             Cancel
           </button>
           <button className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer" 
-            onClick={()=>{ handleSubmit(); setListChange(!listChange)}}>
+            onClick={()=>{ handleSubmit(); }}>
             {editProduct ? "Update" : "Add"}
           </button>
         </div>

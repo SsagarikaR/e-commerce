@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUsersPassword = exports.deleteUserByID = exports.selectUserByNameANDContact = exports.createNewUser = exports.selectUserByEmail = exports.selectUserByName = exports.selectUserByID = exports.selectAllUsers = void 0;
+exports.updateUsersPassword = exports.deleteUserByID = exports.selectUserByNameOREmail = exports.createNewUser = exports.selectUserByEmail = exports.selectUserByName = exports.selectUserByID = exports.selectAllUsers = void 0;
 const databse_1 = require("../../config/databse");
 const sequelize_1 = require("sequelize");
 const selectAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,21 +39,21 @@ const selectUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function*
     });
 });
 exports.selectUserByEmail = selectUserByEmail;
-const createNewUser = (name, email, contactNo, role, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
+const createNewUser = (name, email, contactNo, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
     return yield databse_1.sequelize.query(`INSERT INTO Users (name,email,contactNo,role,password) VALUES
                 (?,?,?,?,?)`, {
-        replacements: [name, email, contactNo, role, hashedPassword],
+        replacements: [name, email, contactNo, hashedPassword],
         type: sequelize_1.QueryTypes.INSERT
     });
 });
 exports.createNewUser = createNewUser;
-const selectUserByNameANDContact = (name, contactNo) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? AND  contactNo=?  `, {
-        replacements: [name, contactNo],
+const selectUserByNameOREmail = (name, email) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? AND  email=?  `, {
+        replacements: [name, email],
         type: sequelize_1.QueryTypes.SELECT
     });
 });
-exports.selectUserByNameANDContact = selectUserByNameANDContact;
+exports.selectUserByNameOREmail = selectUserByNameOREmail;
 const deleteUserByID = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield databse_1.sequelize.query('DELETE FROM Users WHERE userID=?', {
         replacements: [id],

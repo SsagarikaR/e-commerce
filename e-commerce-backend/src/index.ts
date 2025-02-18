@@ -5,21 +5,22 @@ import authAPIs from "./routes/auth";
 import userAPIs from "./routes/users";
 import categoriesAPIs from "./routes/categories";
 import productAPIs from "./routes/products";
-import cartAPIs from "./routes/cart";
+import cartAPIs from "./routes/carts";
+import adminAPIs from "./routes/admins";
+import brandAPIs from "./routes/brands"
 import cors from "cors";
 import swaggerDocs  from "./config/swaggerConfig";
-import { errorHandler } from "./middlewear/errorHandler";
+import errorHandler from "./middlewear/errorHandler";
 
-// import { Users } from "./models/Users";
+// import { Users } from "./models/users";
 // import { Categories } from "./models/category";
 // import { Produtcs } from "./models/product";
 // import { CartItems } from "./models/cartItem";
-// import { brands } from "./models/brand";
+// import { Brands } from "./models/brand";
+// import { Admins } from "./models/admin";
 
 const app=express();
 const port=3000
-
-app.use(errorHandler);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
@@ -29,9 +30,10 @@ swaggerDocs(app);
 (async()=>{
     // await Users.sync({alter:true});
     // await Categories.sync({alter:true});
-    // await brands.sync({force:true});
-    // await Produtcs.sync({alter:true})
+    //  await Produtcs.sync({alter:true})
+    // await Brands.sync({alter:true});
     // await CartItems.sync({alter:true});
+    // await Admins.sync({force:true});
 })();
 
 app.get("/",async(req:Request,res:Response)=>{
@@ -43,7 +45,9 @@ app.use("/",userAPIs);
 app.use("/categories",categoriesAPIs);
 app.use("/products",productAPIs);
 app.use("/cart",cartAPIs);
-// app.use("/brands",brandAPIs)
+app.use("/admins",adminAPIs);
+app.use("/brands",brandAPIs)
+app.use(errorHandler);
 
 app.listen(port,(error)=>{
     if(!error){

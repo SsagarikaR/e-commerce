@@ -57,8 +57,8 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, categoriesController_1.createCategories)(req, res);
+router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.createCategories)(req, res, next);
 }));
 /**
  * @swagger
@@ -80,8 +80,8 @@ router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res)
  *       500:
  *         description: Server error
  */
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, categoriesController_1.getCategories)(req, res);
+router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.getCategories)(req, res, next);
 }));
 /**
  * @swagger
@@ -109,8 +109,8 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
  *       500:
  *         description: Server error
  */
-router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, categoriesController_1.deletecategories)(req, res);
+router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.deleteCategories)(req, res, next);
 }));
 /**
  * @swagger
@@ -140,7 +140,7 @@ router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, re
  *       500:
  *         description: Server error
  */
-router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, categoriesController_1.updateCategories)(req, res);
+router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, categoriesController_1.updateCategories)(req, res, next);
 }));
 exports.default = router;

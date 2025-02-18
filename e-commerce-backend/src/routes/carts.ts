@@ -1,4 +1,4 @@
-import express,{Request,Response} from "express";
+import express,{NextFunction, Request,Response} from "express";
 import { addCartItem, deleteCartItem, getCartItems, updateCartItemQuantity } from "../controllers/cartController"; // Import the controller functions
 import { checkToken } from "../middlewear/authorization";
 
@@ -49,8 +49,8 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/",checkToken,async(req:Request,res:Response)=>{
-    addCartItem(req,res);
+router.post("/",checkToken,async(req:Request,res:Response,next:NextFunction)=>{
+    addCartItem(req,res,next);
 })
 
 /**
@@ -67,8 +67,8 @@ router.post("/",checkToken,async(req:Request,res:Response)=>{
  *       500:
  *         description: Server error
  */
-router.get("/",checkToken,async(req:Request,res:Response)=>{
-    getCartItems(req,res);
+router.get("/",checkToken,async(req:Request,res:Response,next:NextFunction)=>{
+    getCartItems(req,res,next);
 })
 
 /**
@@ -97,8 +97,8 @@ router.get("/",checkToken,async(req:Request,res:Response)=>{
  *       500:
  *         description: Server error
  */
-router.delete("/",checkToken,async(req:Request,res:Response)=>{
-    deleteCartItem(req,res);
+router.delete("/",checkToken,async(req:Request,res:Response,next:NextFunction)=>{
+    deleteCartItem(req,res,next);
 });
 
 /**
@@ -129,8 +129,8 @@ router.delete("/",checkToken,async(req:Request,res:Response)=>{
  *       500:
  *         description: Server error
  */
-router.patch("/", checkToken,async(req:Request,res:Response)=>{
-    updateCartItemQuantity(req,res);
+router.patch("/", checkToken,async(req:Request,res:Response,next:NextFunction)=>{
+    updateCartItemQuantity(req,res,next);
 });
 
 export default router;

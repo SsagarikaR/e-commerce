@@ -1,10 +1,9 @@
-
-import {   useState } from "react"
+import { useState } from "react"
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
 
-function AddCategoriesModal({setToggleModal,setListChange,listChange,editCategory}:forCategoryModalProp) {
+function AddCategoriesModal({setToggleModal,setListChange,editCategory}:forCategoryModalProp) {
   const [categoryName,setCategoryName]=useState<string>(editCategory?.categoryName || "");
   const [categoryThumbnail,setCategoryThumbnail]=useState<string>(editCategory?.categoryThumbnail || "");
   const [uploadedFileName, setUploadedFileName] = useState(""); 
@@ -25,7 +24,7 @@ function AddCategoriesModal({setToggleModal,setListChange,listChange,editCategor
     }
     console.log(response,"Respnse of adding post")
     if (response?.data) {
-      setListChange(!listChange);
+      setListChange(prev=>!prev);
       setToggleModal(false);
     }
   }

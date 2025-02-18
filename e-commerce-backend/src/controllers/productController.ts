@@ -1,116 +1,127 @@
-import { Request,Response } from "express";
-import { selectProductWithAllMatch ,createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID,updateProducts, selectProductPerPage} from "../services/db/products";
-
-export const createProduct=async(req:Request,res:Response)=>{
-  const {productName,productDescription,productThumbnail,productPrice,categoryID}=req.body;
-  try{
-      if( productName===""  || productName===undefined || !productName){
-          return res.status(404).json({error:"Product's name can't be empty"});
-      }
-      if(productDescription==="" || productDescription===undefined || !productDescription){
-          return res.status(404).json({error:"Product's description can't be empty"});
-      }
-      if(productThumbnail==="" || productThumbnail===undefined || !productThumbnail){
-          return res.status(404).json({error:"Product's thumbnail No. can't be empty."});
-      }
-      if(productPrice==="" || productPrice===undefined || !productPrice){
-          return res.status(404).json({error:"Product's price role can't be empty."});
-      }
-      if(categoryID==="" || categoryID===undefined || !categoryID){
-          return res.status(404).json({error:"Please choose a category role can't be empty."});
-      }
-
-      const isProductExist=await selectProductWithAllMatch(productName,productDescription,productPrice,categoryID);
-      if(isProductExist.length>0){
-          return res.status(403).json({error:"This product already exist."});
-      }
-      const [result,metaData]=await createNewProduct(productName,productDescription,productThumbnail,productPrice,categoryID)
-      if(metaData>0){
-          return res.status(202).json({message:"Successfully added the product."})
-      }
-      else{
-          return res.status(409).json({error:"Error in adding a new product."})
-      }
-  }
-  catch(error){
-      console.log(error,"error");
-      return res.status(500).json({error:"Please try again after sometimes!"});
-  }
-}
+import { Request,Response,NextFunction } from "express";
+import { selectProductWithAllMatch ,createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID,updateProducts} from "../services/db/products";
 
 
-export const getProducts = async (req: Request, res: Response) => {
-  const { name, price, categoryID, id } = req.query;
-  console.log(req.query);
-
-  try {
-    const products = await getProductWithCondition({
-      categoryID: categoryID ? String(categoryID) : undefined,
-      name: name ? String(name) : undefined,
-      id: id ? Number(id) : undefined, 
-      price: price === "low-to-high" || price === "high-to-low" ? (price as "low-to-high" | "high-to-low") : undefined,
-    });
-
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
+/**
+ * controller to create a product
+ */
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
+    const { productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock } = req.body;
+  
+    try {
+      // Check for missing fields
+      if (!productName || !productDescription || !productThumbnail || !productPrice || !categoryID || !brandID || !stock) {
+        return next({ statusCode: 400, message: "Please enter all the required fields." });
+      }
+  
+      // Check if the product already exists
+      const isProductExist = await selectProductWithAllMatch(productName, productDescription, productPrice, categoryID, brandID);
+      if (isProductExist.length > 0) {
+        return next({ statusCode: 403, message: "This product already exists." });
+      }
+  
+      // Create the new product
+      const [result, metaData] = await createNewProduct(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
+      if (metaData > 0) {
+        return res.status(202).json({ message: "Successfully added the product." });
+      } else {
+        return next({ statusCode: 409, message: "Error in adding a new product." });
+      }
+    } catch (error) {
+      console.log(error);
+      return next({ statusCode: 500, message: "An error occurred while creating products" });
     }
+  };
+  
 
-    return res.status(200).json(products);
-  } catch (error) {
-    console.log(error, "error");
-    return res.status(500).json({ error: "Please try again after sometime!" });
-  }
+/**
+ * controller to fetch all product (by name,price,categoryID,productID or all products)
+ */
+  export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
+    const { name, price, categoryID, id } = req.query;
+  
+    // Log incoming query parameters for debugging purposes
+    console.log("Query Parameters:", req.query);
+  
+    try {
+      // Construct the filters to be passed to the service based on query parameters
+      const filters = {
+        categoryID: categoryID ? String(categoryID) : undefined, // Category filter if provided
+        name: name ? String(name) : undefined, // Name filter if provided
+        id: id ? Number(id) : undefined, // Product ID filter if provided
+        price: price === "low-to-high" || price === "high-to-low" ? (price as "low-to-high" | "high-to-low") : undefined, // Price sorting if provided
+      };
+  
+      // Fetch products based on the filters
+      const products = await getProductWithCondition(filters);
+  
+      // Check if no products were found, if so return a 404 response
+      if (products.length === 0) {
+        return next({ statusCode: 404, message: "No products found" });
+      }
+  
+      // If products are found, return them with a 200 status
+      return res.status(200).json(products);
+    } catch (error) {
+      // If an error occurs, pass the error to the global error handler
+      console.error("Error", error);
+
+      // Pass the actual error to next()
+      return next({ statusCode: 500, message: "An error occurred while fetching products" });
+    }
 };
+
 
   
 
+/**
+ * controller to delete a product
+ */
+export const deleteProducts = async (req: Request, res: Response, next: NextFunction) => {
+    const { productID } = req.body;
+    try {
+      //fetch the product to be delete
+      const isProductExist = await selectByProductID(productID);
+      //if the product doesnt exist return them with 404 response
+      if (isProductExist.length === 0) {
+        return next({ statusCode: 404, message: "This product doesn't exist" });
+      }
+  
+      //if product is deleted successfully then return success message a 200 status code
+      const deleteProduct = await deleteByProductID(productID);
+      return res.status(200).json({ message: "Successfully deleted the product" });
 
-export const deleteProducts=async(req:Request,res:Response)=>{
-    console.log("data",req.body)
-    const {productID}=req.body;
-    try{
-        const isProductExist=await selectByProductID(productID);
-        if(isProductExist.length===0){
-            return res.status(404).json({error:"This product doesn't exist"});
-        }
-        console.log(req.body)
-        const deleteProduct=await deleteByProductID(productID)
-        return res.status(200).json({message:"Successfully deletd the product"})
+    } catch (error) {
+      // If an error occurs, pass the error to the global error handler
+      console.log(error);
+      return next({ statusCode: 500, message: "An error occurred while deleting products" });
     }
-    catch(error){
-        console.log(req)
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"})
-    }
-}
+  };
 
-export const updateProduct=async(req:Request,res:Response)=>{
-    const {productID,productName,productDescription,productThumbnail,productPrice,categoryID}=req.body;
-    try{
-        const isProductExist=await selectByProductID(productID);
 
-        if(isProductExist.length===0){
-            return res.status(403).json({error:"This product doesn't exist"});
-        }
-        const updatedProduct=await updateProducts(productName,productDescription,productThumbnail,productPrice,categoryID,productID)
-            return res.status(200).json({message:"Successfully updated the product."})
-    }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"})
-    }
-}
 
-export const paginatedProduct=async(req:Request,res:Response)=>{
-    const {page}=req.body
-    try{
-        let limit=12;
-        const offset= page>1?limit*page:1 ;
-        const products=await selectProductPerPage(offset,limit);
-        return res.status(200).json(products);
-    }
-    catch(error){
-        console.log(error,"error");
-        return res.status(500).json({error:"Please try again after sometimes!"})
-    }
-}
+
+/**
+ * controller to update a product
+ */
+  export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
+      const { productID, productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
+  
+      try {
+        //fetch the product to be update
+          const isProductExist = await selectByProductID(productID);
+        //if the product doesn't exist return response with 404 status
+          if (isProductExist.length === 0) {
+              return next({ statusCode: 404, message: "This product doesn't exist" });
+          }
+  
+           //if product is deleted successfully then return success message a 200 status code
+          const updatedProduct = await updateProducts(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
+          return res.status(200).json({ message: "Successfully updated the product." });
+      } catch (error) {
+        // If an error occurs, pass the error to the global error handler
+          console.log(error,"error")
+          return next({ statusCode: 500, message: "An error occurred while updating products" });
+      }
+  };
+  

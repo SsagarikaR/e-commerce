@@ -9,111 +9,113 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.paginatedProduct = exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
+exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
 const products_1 = require("../services/db/products");
-const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
+/**
+ * controller to create a product
+ */
+const createProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock } = req.body;
     try {
-        if (productName === "" || productName === undefined || !productName) {
-            return res.status(404).json({ error: "Product's name can't be empty" });
+        // Check for missing fields
+        if (!productName || !productDescription || !productThumbnail || !productPrice || !categoryID || !brandID || !stock) {
+            return next({ statusCode: 400, message: "Please enter all the required fields." });
         }
-        if (productDescription === "" || productDescription === undefined || !productDescription) {
-            return res.status(404).json({ error: "Product's description can't be empty" });
-        }
-        if (productThumbnail === "" || productThumbnail === undefined || !productThumbnail) {
-            return res.status(404).json({ error: "Product's thumbnail No. can't be empty." });
-        }
-        if (productPrice === "" || productPrice === undefined || !productPrice) {
-            return res.status(404).json({ error: "Product's price role can't be empty." });
-        }
-        if (categoryID === "" || categoryID === undefined || !categoryID) {
-            return res.status(404).json({ error: "Please choose a category role can't be empty." });
-        }
-        const isProductExist = yield (0, products_1.selectProductWithAllMatch)(productName, productDescription, productPrice, categoryID);
+        // Check if the product already exists
+        const isProductExist = yield (0, products_1.selectProductWithAllMatch)(productName, productDescription, productPrice, categoryID, brandID);
         if (isProductExist.length > 0) {
-            return res.status(403).json({ error: "This product already exist." });
+            return next({ statusCode: 403, message: "This product already exists." });
         }
-        const [result, metaData] = yield (0, products_1.createNewProduct)(productName, productDescription, productThumbnail, productPrice, categoryID);
+        // Create the new product
+        const [result, metaData] = yield (0, products_1.createNewProduct)(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
         if (metaData > 0) {
             return res.status(202).json({ message: "Successfully added the product." });
         }
         else {
-            return res.status(409).json({ error: "Error in adding a new product." });
+            return next({ statusCode: 409, message: "Error in adding a new product." });
         }
     }
     catch (error) {
-        console.log(error, "error");
-        return res.status(500).json({ error: "Please try again after sometimes!" });
+        console.log(error);
+        return next({ statusCode: 500, message: "An error occurred while creating products" });
     }
 });
 exports.createProduct = createProduct;
-const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+/**
+ * controller to fetch all product (by name,price,categoryID,productID or all products)
+ */
+const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, price, categoryID, id } = req.query;
-    console.log(req.query);
+    // Log incoming query parameters for debugging purposes
+    console.log("Query Parameters:", req.query);
     try {
-        const products = yield (0, products_1.getProductWithCondition)({
-            categoryID: categoryID ? String(categoryID) : undefined,
-            name: name ? String(name) : undefined,
-            id: id ? Number(id) : undefined,
-            price: price === "low-to-high" || price === "high-to-low" ? price : undefined,
-        });
+        // Construct the filters to be passed to the service based on query parameters
+        const filters = {
+            categoryID: categoryID ? String(categoryID) : undefined, // Category filter if provided
+            name: name ? String(name) : undefined, // Name filter if provided
+            id: id ? Number(id) : undefined, // Product ID filter if provided
+            price: price === "low-to-high" || price === "high-to-low" ? price : undefined, // Price sorting if provided
+        };
+        // Fetch products based on the filters
+        const products = yield (0, products_1.getProductWithCondition)(filters);
+        // Check if no products were found, if so return a 404 response
         if (products.length === 0) {
-            return res.status(404).json({ message: "No products found" });
+            return next({ statusCode: 404, message: "No products found" });
         }
+        // If products are found, return them with a 200 status
         return res.status(200).json(products);
     }
     catch (error) {
-        console.log(error, "error");
-        return res.status(500).json({ error: "Please try again after sometime!" });
+        // If an error occurs, pass the error to the global error handler
+        console.error("Error", error);
+        // Pass the actual error to next()
+        return next({ statusCode: 500, message: "An error occurred while fetching products" });
     }
 });
 exports.getProducts = getProducts;
-const deleteProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("data", req.body);
+/**
+ * controller to delete a product
+ */
+const deleteProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID } = req.body;
     try {
+        //fetch the product to be delete
         const isProductExist = yield (0, products_1.selectByProductID)(productID);
+        //if the product doesnt exist return them with 404 response
         if (isProductExist.length === 0) {
-            return res.status(404).json({ error: "This product doesn't exist" });
+            return next({ statusCode: 404, message: "This product doesn't exist" });
         }
-        console.log(req.body);
+        //if product is deleted successfully then return success message a 200 status code
         const deleteProduct = yield (0, products_1.deleteByProductID)(productID);
-        return res.status(200).json({ message: "Successfully deletd the product" });
+        return res.status(200).json({ message: "Successfully deleted the product" });
     }
     catch (error) {
-        console.log(req);
-        console.log(error, "error");
-        return res.status(500).json({ error: "Please try again after sometimes!" });
+        // If an error occurs, pass the error to the global error handler
+        console.log(error);
+        return next({ statusCode: 500, message: "An error occurred while deleting products" });
     }
 });
 exports.deleteProducts = deleteProducts;
-const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+/**
+ * controller to update a product
+ */
+const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID, productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
     try {
+        //fetch the product to be update
         const isProductExist = yield (0, products_1.selectByProductID)(productID);
+        //if the product doesn't exist return response with 404 status
         if (isProductExist.length === 0) {
-            return res.status(403).json({ error: "This product doesn't exist" });
+            return next({ statusCode: 404, message: "This product doesn't exist" });
         }
+        //if product is deleted successfully then return success message a 200 status code
         const updatedProduct = yield (0, products_1.updateProducts)(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
         return res.status(200).json({ message: "Successfully updated the product." });
     }
     catch (error) {
+        // If an error occurs, pass the error to the global error handler
         console.log(error, "error");
-        return res.status(500).json({ error: "Please try again after sometimes!" });
+        return next({ statusCode: 500, message: "An error occurred while updating products" });
     }
 });
 exports.updateProduct = updateProduct;
-const paginatedProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page } = req.body;
-    try {
-        let limit = 12;
-        const offset = page > 1 ? limit * page : 1;
-        const products = yield (0, products_1.selectProductPerPage)(offset, limit);
-        return res.status(200).json(products);
-    }
-    catch (error) {
-        console.log(error, "error");
-        return res.status(500).json({ error: "Please try again after sometimes!" });
-    }
-});
-exports.paginatedProduct = paginatedProduct;

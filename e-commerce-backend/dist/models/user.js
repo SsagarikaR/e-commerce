@@ -22,10 +22,6 @@ exports.Users = databse_1.sequelize.define("Users", {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
-    role: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false
-    },
     password: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false

@@ -5,12 +5,13 @@ export const selectProductWithAllMatch = async (
   productName: string,
   productDescription: string,
   productPrice: number,
-  categoryID: number
+  categoryID: number,
+  brandID:number
 ) => {
   return await sequelize.query(
-    "SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=?",
+    "SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=? AND brandID=?",
     {
-      replacements: [productName, productDescription, productPrice, categoryID],
+      replacements: [productName, productDescription, productPrice, categoryID,brandID],
       type: QueryTypes.SELECT,
     }
   );
@@ -38,24 +39,17 @@ export const selectByProductID=async(productID:number)=>{
     )
 }
 
-export const selectProductPerPage=async(offset:number,limit:number)=>{
-  return await sequelize.query("SELECT * FROM Products LIMIT ? OFFSET ?",
-    {
-      replacements:[limit,offset],
-      type:QueryTypes.SELECT
-    }
-  )
-}
-
 export const createNewProduct = async (
   productName: string,
   productDescription: string,
   productThumbnail: string,
   productPrice: number,
-  categoryID: number
+  categoryID: number,
+  brandID: number,
+  stock:number
 ) => {
   return await sequelize.query(
-    "INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID) VALUES (?,?,?,?,?)",
+    "INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID,brandID,stock) VALUES (?,?,?,?,?,?,?)",
     {
       replacements: [
         productName,
@@ -63,51 +57,55 @@ export const createNewProduct = async (
         productThumbnail,
         productPrice,
         categoryID,
+        brandID,
+        stock
       ],
       type: QueryTypes.INSERT,
     }
   );
 };
 
-export const getProductWithCondition = async ({categoryID,name,id,price,}: 
-    {categoryID?: string | number;name?: string;id?: string | number;price?: "low-to-high" | "high-to-low";}) => {
-  let query = `
-          SELECT *
-          FROM Products p
-          LEFT JOIN Categories c ON p.categoryID = c.categoryID
-        `;
-  let replacements = [];
-  let conditions = [];
+export const getProductWithCondition = async ({categoryID, name, id, price,}: 
+  {categoryID?: string | number; name?: string; id?: string | number; price?: "low-to-high" | "high-to-low";}) => {
 
-  if (categoryID) {
-    conditions.push(`p.categoryID = ?`);
-    replacements.push(categoryID);
+let query = `
+        SELECT p.*, c.*, b.*
+        FROM Products p
+        LEFT JOIN Categories c ON p.categoryID = c.categoryID
+        LEFT JOIN Brands b ON p.brandID = b.brandID
+      `;
+let replacements = [];
+let conditions = [];
+
+if (categoryID) {
+  conditions.push(`p.categoryID = ?`);
+  replacements.push(categoryID);
+}
+
+if (name) {
+  conditions.push(`p.productName LIKE ?`);
+  replacements.push(`%${name}%`);
+}
+
+if (id) {
+  conditions.push(`p.productID = ?`);
+  replacements.push(id);
+}
+
+if (conditions.length > 0) {
+  query += ` WHERE ` + conditions.join(" AND ");
+}
+
+if (price) {
+  if (price === "low-to-high") {
+    query += ` ORDER BY p.productPrice ASC`;
+  } else if (price === "high-to-low") {
+    query += ` ORDER BY p.productPrice DESC`;
   }
+}
 
-  if (name) {
-    conditions.push(`p.productName LIKE ?`);
-    replacements.push(`%${name}%`);
-  }
-
-  if (id) {
-    conditions.push(`p.productID = ?`);
-    replacements.push(id);
-  }
-
-  if (conditions.length > 0) {
-    query += ` WHERE ` + conditions.join(" AND ");
-  }
-
-  if (price) {
-    if (price === "low-to-high") {
-      query += ` ORDER BY p.productPrice ASC`;
-    } else if (price === "high-to-low") {
-      query += ` ORDER BY p.productPrice DESC`;
-    }
-  }
-
-  return await sequelize.query(query, {
-    replacements: replacements,
-    type: QueryTypes.SELECT,
-  });
+return await sequelize.query(query, {
+  replacements: replacements,
+  type: QueryTypes.SELECT,
+});
 };

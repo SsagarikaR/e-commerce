@@ -22,7 +22,6 @@ function Pages() {
             <Route path="/categories" element={<Categories/>}/>
             <Route path="/products" element={<Products/>}/>
             <Route path="/product/:id" element={<ProductDetailPage/>}/>
-            {/* <Route path="/products/:name" element={<Products/>}/> */}
             <Route path="/dashboard" element={<AdminDashboard/>}/>
             <Route path="/cart" element={<Cart/>}/>
             <Route path="/signup" element={<Signup/>}/>

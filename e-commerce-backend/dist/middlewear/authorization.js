@@ -29,6 +29,7 @@ const checkToken = (req, res, next) => {
         if (process.env.JWT) {
             const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT);
             req.body.user = decoded;
+            console.log(req.body);
             next();
         }
     }
@@ -40,21 +41,17 @@ const checkToken = (req, res, next) => {
 exports.checkToken = checkToken;
 const isAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.body.user.identifire;
-    console.log("route hit");
+    console.log(id, "route hit");
     try {
-        const user = yield databse_1.sequelize.query('SELECT * FROM Users WHERE userID=?', {
+        const user = yield databse_1.sequelize.query('SELECT * FROM Admins WHERE userID=?', {
             replacements: [id],
             type: sequelize_1.QueryTypes.SELECT
         });
         if (user.length === 0) {
-            res.status(404).json({ error: "User not found." });
-        }
-        else {
-            if (user[0].role !== "Admin") {
-                res.status(401).json({ error: "You are not authorized for this action." });
-            }
+            res.status(404).json({ error: "Invalid credentials." });
             next();
         }
+        next();
     }
     catch (error) {
         res.status(500).json({ error: "Please try again after sometimes" });

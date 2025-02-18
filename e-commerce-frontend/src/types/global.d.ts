@@ -18,6 +18,13 @@ declare global {
     };
   }
 
+  interface forModalInputProp{
+    id:string;
+    value:string|number;
+    setValue:(value:string)=>void;
+    field:string
+  }
+
   interface forProductProp {
     product: forProductbyName;
     setModalOpen: (value: boolean) => void;
@@ -27,7 +34,6 @@ declare global {
     name: string;
     email: string;
     contactNo: string;
-    role: string;
     password?: string;
     token?: string;
   }
@@ -38,6 +44,12 @@ declare global {
     categoryThumbnail: string;
   }
 
+  interface forBrand{
+    brandID: number;
+    brandName: string;
+    brandThumbnail: string;
+  }
+
   interface forProductbyName {
     ProductThumbnail: string;
     categoryID: number;
@@ -45,9 +57,14 @@ declare global {
     categoryThumbnail?: string;
     productDescription: string;
     productID: number;
+    brandID:number;
+    brandName:string;
+    brandThumbnail:string;
+    stock:number;
     productName: string;
     productPrice: number;
   }
+
   interface forCartItem {
     cartItemID: number;
     categoryName: string;
@@ -61,15 +78,20 @@ declare global {
   }
 
   interface forCategoryModalProp {
-    setToggleModal: (value: boolean) => void;
-    setListChange: (value: boolean) => void;
-    listChange: boolean;
+    setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setListChange: React.Dispatch<React.SetStateAction<boolean>>;
     editCategory: forCategories;
   }
+
+  interface forBrandModalProp {
+    setToggleModal:  React.Dispatch<React.SetStateAction<boolean>>;
+    setListChange:  React.Dispatch<React.SetStateAction<boolean>>;
+    editBrand: forBrand;
+  }
+
   interface forProductModalProp {
-    setToggleModal: (value: boolean) => void;
-    setListChange: (value: boolean) => void;
-    listChange: boolean;
+    setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setListChange: React.Dispatch<React.SetStateAction<boolean>>;
     editProduct: forProductbyName;
   }
 
@@ -77,16 +99,24 @@ declare global {
     data: forProductbyName[];
     setDeleteProductID:(value:number)=>void
     setEditProduct: (value: forProductbyName) => void;
-    setToggleModal: (value: boolean) => void;
-    setIsDelete:(value:boolean)=>void
+    setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
   interface forCategoriesProp {
     data: forCategories[];
-    setDeleteCatgeoryID:(value:number)=>void
+    setDeleteCatgeoryID:(value:number)=>void;
     setEditCategory: (value: forCategories) => void;
-    setToggleModal: (value: boolean) => void;
-    setIsDelete:(value:boolean)=>void
+    setToggleModal:  React.Dispatch<React.SetStateAction<boolean>>;
+    setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+
+  interface forBrandListProp {
+    data: forBrand[];
+    setDeleteBrandID:(value:number)=>void
+    setEditBrand: (value: forBrand) => void;
+    setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
   interface FormData {
@@ -111,12 +141,11 @@ declare global {
   interface CloudinaryWidget {
     open: () => void;
     close: () => void;
-    // Add any other methods or properties based on the Cloudinary documentation you need
-}
+  }
 
-// global.d.ts or custom.d.ts
-interface Cloudinary {
-  createUploadWidget: (
+
+  interface Cloudinary {
+    createUploadWidget: (
       options: {
           cloudName: string;
           uploadPreset: string;

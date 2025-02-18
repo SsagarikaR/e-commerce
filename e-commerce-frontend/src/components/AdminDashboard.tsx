@@ -8,23 +8,28 @@ import AddCategoriesModal from "./AddCategoriesModal";
 import CustomerList from "../subComponents.tsx/CustomerList";
 import { makeAuthorizedGetRequest } from "../services/authorizedRequests";
 import { makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
+import BrandList from "../subComponents.tsx/BrandList";
+import AddBrandModal from "./AddBrandModal";
 
 function AdminDashboard() {
   const [page, setPage] = useState("products");
   const [productData, setProductData] = useState<forProductbyName[]>();
   const [categoriesData, setCategoriesData] = useState<forCategories[]>();
   const [userData, setUserData] = useState<forUser[]>();
+  const [brandData, setBrandData] = useState<forBrand[]>();
   const [toggleModal, setToggleModal] = useState(false);
-  const [listChange, setListChange] = useState(false);
+  const [listChange, setListChange] = useState<boolean>(false);
   const [editProduct, setEditProduct] = useState<forProductbyName>();
   const [editCategory, setEditCategory] = useState<forCategories>();
+  const [editBrand, setEditBrand] = useState<forBrand>();
   const [isDelete,setIsDelete]=useState(false);
   const [deleteProductID,setDeleteProductID]=useState<number>();
   const [deleteCategoryID,setDeleteCategoryID]=useState<number>();
+  const [deleteBrandID,setDeleteBrandID]=useState<number>();
 
     const deleteProduct=async(productID:number)=>{
     console.log(productID);
-    const response=await makeAuthorizedDeleteRequest(`/products/`,{productID:productID})
+    const response=await makeAuthorizedDeleteRequest(`/products`,{productID:productID})
     if(response?.data){
       setListChange(!listChange);
     }
@@ -32,8 +37,16 @@ function AdminDashboard() {
 
   const deleteCategories=async(categoryID:number)=>{
     // console.log(categoryID);
-    const response=await makeAuthorizedDeleteRequest(`/categories/`,{categoryID:categoryID})
+    const response=await makeAuthorizedDeleteRequest(`/categories`,{categoryID:categoryID})
     if(response?.data){
+      setListChange(!listChange);
+    }
+  }
+
+  const deleteBrand=async(brandID:number)=>{
+    // console.log(categoryID);
+    const response=await makeAuthorizedDeleteRequest(`/brands`,{brandID:brandID})
+    if(response){
       setListChange(!listChange);
     }
   }
@@ -53,7 +66,11 @@ function AdminDashboard() {
         setProductData(response.data);
       } else if (page === "categories") {
         setCategoriesData(response.data);
-      } else {
+      } 
+      else if(page==="brands"){
+        setBrandData(response.data);
+      }
+      else {
         setUserData(response.data);
       }
       console.log(response);
@@ -72,7 +89,7 @@ function AdminDashboard() {
       >
         <div className="shadow-lg h-20  px-10 items-center flex justify-between">
           <div className="font-semibold text-3xl text-blue-500">{page}</div>
-          {(page === "products" || page === "categories") && (
+          {(page === "products" || page === "categories" || page==="brands") && (
             <div className="flexgap-2">
               <button
                 className="shadow-xl bg-blue-400 w-40 p-2 text-lg cursor-pointer"
@@ -86,28 +103,46 @@ function AdminDashboard() {
             </div>
           )}
         </div>
-        <div className="flex flex-col w-300  mx-auto px-5 my-2 py-5 bg-white ">
-          <div className="text-3xl pb-3 font-semibold text-gray-600">
-            Product list
-          </div>
+        <div className="flex flex-col w-300  mx-auto px-5 my-2 py-5 bg-white overflow-auto max-h-215">
           {page === "products" ? (
+           <div> <div className="text-3xl pb-3 font-semibold text-gray-600">
+            Product list
+            </div>
             <ProductList
               data={productData!}
               setDeleteProductID={setDeleteProductID}
               setEditProduct={setEditProduct}
               setToggleModal={setToggleModal}
               setIsDelete={setIsDelete}
-            />
+            /></div>
           ) : page === "categories" ? (
+           <div> <div className="text-3xl pb-3 font-semibold text-gray-600">
+            Category list
+            </div>
             <CategoryList
               data={categoriesData!}
               setDeleteCatgeoryID={setDeleteCategoryID}
               setEditCategory={setEditCategory}
               setToggleModal={setToggleModal}
               setIsDelete={setIsDelete}
-            />
-          ) : (
-            <CustomerList data={userData!} />
+            /></div>
+          ) : ( page==="users"?
+            <div><div className="text-3xl pb-3 font-semibold text-gray-600">
+            Customer list
+            </div>
+            <CustomerList data={userData!}/>
+            </div>
+            :
+            <div><div className="text-3xl pb-3 font-semibold text-gray-600">
+            Brand list
+            </div>
+            <BrandList 
+              data={brandData!}
+              setDeleteBrandID={setDeleteBrandID}
+              setEditBrand={setEditBrand}
+              setToggleModal={setToggleModal}
+              setIsDelete={setIsDelete}
+            /></div>
           )}
         </div>
         
@@ -121,29 +156,37 @@ function AdminDashboard() {
           <button className="bg-red-400  p-2 w-30 font-semibold cursor-pointer" onClick={()=>{
             if(page==="products"){
               deleteProduct(deleteProductID!)}
-              else{
-                deleteCategories(deleteCategoryID!)
-              }
+            else if(page==="categories"){
+              deleteCategories(deleteCategoryID!)
+            }
+            else if(page==="brands"){
+              deleteBrand(deleteBrandID!);
+            }
             setIsDelete(false);
           }}>Delete</button>
          </div>
       </div>}
       {toggleModal &&
-        (page === "products" ? (
-          <AddProductModal
-            setToggleModal={setToggleModal}
-            setListChange={setListChange}
-            listChange={listChange}
-            editProduct={editProduct!}
-          />
-        ) : (
-          <AddCategoriesModal
-            setToggleModal={setToggleModal}
-            setListChange={setListChange}
-            listChange={listChange}
-            editCategory={editCategory!}
-          />
-        ))}
+          (page === "products" ? (
+            <AddProductModal
+              setToggleModal={setToggleModal}
+              setListChange={setListChange}
+              editProduct={editProduct!}
+            />
+          ) : 
+          (page === "categories"?
+            <AddCategoriesModal
+              setToggleModal={setToggleModal}
+              setListChange={setListChange}
+              editCategory={editCategory!}
+            />:
+          <AddBrandModal
+              setToggleModal={setToggleModal}
+              setListChange={setListChange}
+              editBrand={editBrand!}
+          />)
+          )
+        }
     </div>
   );
 }
