@@ -35,7 +35,7 @@ const addNewCartItem = (userID, productID, quantity) => __awaiter(void 0, void 0
 exports.addNewCartItem = addNewCartItem;
 const getCartByUserID = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     return yield databse_1.sequelize.query(`
-            SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,
+            SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,br.brandID,br.brandThumbnail,
             (SELECT SUM(ci2.quantity * p2.productPrice) 
             FROM CartItems ci2 
             JOIN Products p2 ON ci2.productID = p2.productID 
@@ -43,6 +43,7 @@ const getCartByUserID = (userID) => __awaiter(void 0, void 0, void 0, function* 
             FROM CartItems ci
             JOIN Products p ON ci.productID = p.productID
             JOIN Categories c ON p.categoryID = c.categoryID
+            JOIN Brands br ON br.brandID = p.brandID
             WHERE ci.userID = ? 
           `, {
         replacements: [userID, userID],

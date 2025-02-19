@@ -35,7 +35,7 @@ export const  addNewCartItem=async(userID:number, productID:number, quantity:num
 export const getCartByUserID=async(userID:number)=>{
     return await sequelize.query(
           `
-            SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,
+            SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,br.brandID,br.brandThumbnail,
             (SELECT SUM(ci2.quantity * p2.productPrice) 
             FROM CartItems ci2 
             JOIN Products p2 ON ci2.productID = p2.productID 
@@ -43,6 +43,7 @@ export const getCartByUserID=async(userID:number)=>{
             FROM CartItems ci
             JOIN Products p ON ci.productID = p.productID
             JOIN Categories c ON p.categoryID = c.categoryID
+            JOIN Brands br ON br.brandID = p.brandID
             WHERE ci.userID = ? 
           `,
           {
