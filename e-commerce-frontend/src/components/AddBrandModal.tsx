@@ -15,16 +15,16 @@ function AddBrandModal({setToggleModal,setListChange,editBrand}:forBrandModalPro
      brandThumbnail:brandThumbnail
     }
   
-  
+    //handle submission 
     const handleSubmit=async()=>{
         console.log("Respnse of adding post")
         let response;
         if(editBrand){
-          response=await makeAuthorizedPatchRequest("/brands",{editBrand:editBrand.brandID,...data});
+          response=await makeAuthorizedPatchRequest("/brands",{editBrand:editBrand.brandID,...data});//if the edit brand is presnt then update the field
   
         }
         else{
-          response=await makeAuthorizedPostRequest("/brands",data);
+          response=await makeAuthorizedPostRequest("/brands",data);//else add a new brand
         }
         console.log(response,"Respnse of adding post")
         if (response?.data) {

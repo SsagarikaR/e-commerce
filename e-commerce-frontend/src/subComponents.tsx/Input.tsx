@@ -13,9 +13,9 @@ function Input({ field, id, type, value, setValue, error, setError }: InputProps
   }
 
   return (
-    <div className={`input_box_container ${id === "password" ? "password-container" : ""}`}>
+    <div className={`relative mb-8 ${id === "password" ? "space-y-2" : ""}`}>
       <input
-        className="input_box"
+        className="w-[90%] p-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-800 font-medium text-lg focus:outline-none"
         id={id}
         value={value}
         onChange={(e) => {
@@ -25,9 +25,10 @@ function Input({ field, id, type, value, setValue, error, setError }: InputProps
         type={type}
         placeholder={`Enter your ${field}`}
       />
-      {error && <div className="error">{error}</div>}
+      {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
     </div>
   );
 }
 
 export default Input;
+
