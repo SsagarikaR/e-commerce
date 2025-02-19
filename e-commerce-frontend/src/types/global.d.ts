@@ -78,12 +78,16 @@ declare global {
     productPrice: number;
     productThumbnail: string;
     quantity: number;
+    brandID:number;
+    brandThumbnail:string;
   }
 
   interface forDeleteModalProp{
     page:string;
     deleteID:number;
+    listChange:boolean;
     setListChange:React.Dispatch<React.SetStateAction<boolean>>;
+    setIsDelete:React.Dispatch<React.SetStateAction<boolean>>;
   }
 
   interface forCategoryModalProp {
@@ -102,6 +106,11 @@ declare global {
     setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
     setListChange: React.Dispatch<React.SetStateAction<boolean>>;
     editProduct: forProductbyName;
+  }
+
+  interface forCustomerListProp{
+    data:forUser[];
+    setListChange: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
   interface forProductListProp {

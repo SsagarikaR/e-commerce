@@ -16,7 +16,7 @@ function CartModal({
   };
 
   return (
-    <div className="h-240 bg-white w-100 absolute z-10 right-0 top-0">
+    <div className="h-240 bg-white w-100 absolute z-10 right-0 top-0 overflow-auto">
       <div className="text-4xl text-center underline font-bold text-blue-500">
         Cart
       </div>

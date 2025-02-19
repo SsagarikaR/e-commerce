@@ -25,7 +25,6 @@ function Product({product,setModalOpen}:forProductProp) {
           </div>          
           <div className='text-center' >₹{product.productPrice}</div>
           <div className="flex items-center justify-center gap-2 mt-2">
-          <div className="text-sm text-gray-600">{product.brandName}</div>
         </div>
         </div>
         <button className="btn_color w-full p-2  rounded rounded-lg cursor-pointer"

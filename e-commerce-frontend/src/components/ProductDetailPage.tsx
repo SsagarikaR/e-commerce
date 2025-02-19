@@ -4,6 +4,7 @@ import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest"; im
 import Container from "../containers/Container";  
 import CartModal from "./CartModal";  
 import { ADD_TO_CART_BTN } from "../constants/btnConst";  
+import payPalIcon from "../assets/paypal.png"
 
 function ProductDetailPage() {
    const [product, setProduct] = useState<forProductbyName[]>();
@@ -11,9 +12,8 @@ function ProductDetailPage() {
    const { id } = useParams(); // Extract the product id from the URL parameters
    const { addToCart } = useCart();
 
-    /**
-     * Function to fetch product data based on the product id
-     * */
+    
+    //  Function to fetch product data based on the product id
     const fetchData = async () => {
         // Send GET request to fetch the product details by id
         const response = await makeUnAuthorizedGetRequest(`/products?id=${id}`);
@@ -22,9 +22,8 @@ function ProductDetailPage() {
         }
     };
 
-    /**
-     * Effect hook to fetch data whenever the product id changes (from the URL)
-     * */
+    
+    //  Effect hook to fetch data whenever the product id changes (from the URL)
     useEffect(() => {
         fetchData();
     }, [id]);
@@ -47,7 +46,7 @@ function ProductDetailPage() {
                                     <div className="text-4xl font-semibold">{product[0].productName}</div>
                                     <img
                                         src={product[0].brandThumbnail}
-                                        className="w-10 h-10 rounded-full"
+                                        className="w-10 h-10 rounded-full border"
                                     />
                                 </div>
                                 <div className="text-2xl font-normal">₹{product[0].productPrice}</div>
@@ -55,15 +54,21 @@ function ProductDetailPage() {
                                 <div className=" border-b  w-150 "></div>
                             </div>
                             <div className="text-justify text-lg">{product[0].productDescription}</div>
-                            <button
-                                className="bg-blue-400 hover:bg-blue-500 text-black p-3 text-xl font-semibold rounded-lg w-100 mx-auto"
-                                onClick={() => {
-                                    addToCart(product[0].productID);  // Add the product to the cart
-                                    setModalOpen(true);  // Open the cart modal
-                                }}
-                            >
-                                {ADD_TO_CART_BTN}  {/* Button text from constant */}
-                            </button>
+                            <div className="flex flex-col gap-y-2">
+                                <button
+                                    className="bg-blue-400 hover:bg-blue-500 text-black p-3 text-xl font-semibold rounded-lg w-100 mx-auto"
+                                    onClick={() => {
+                                        addToCart(product[0].productID);  // Add the product to the cart
+                                        setModalOpen(true);  // Open the cart modal
+                                    }}
+                                >
+                                    {ADD_TO_CART_BTN}  {/* Button text from constant */}
+                                </button>
+                                <div className="w-100 bg-orange-400   p-3  h-14 rounded-xl text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer mx-auto">
+                                    <button >Pay with</button>
+                                    <img src={payPalIcon} className="w-18 h-18"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ) : (
