@@ -87,9 +87,7 @@ function AddProductModal({
     console.log(response);
     if (response?.data) {
       console.log("list changed")
-      // console.log(listChange);
       setListChange(prev=>!prev);
-      // console.log(listChange);
       setToggleModal(false);
     }
   };

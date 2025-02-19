@@ -1,1 +1,0 @@
-export const ADD_TO_CART_BTN="ADD TO CART"

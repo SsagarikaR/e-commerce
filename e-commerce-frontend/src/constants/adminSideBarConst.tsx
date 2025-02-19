@@ -1,4 +1,4 @@
-export const SIDEBAR_TEXTs={
+export const SIDEBAR_TEXTS={
     brand_name:"ShopCart",
     products:"Prodcuts",
     producut_list:"Product list",

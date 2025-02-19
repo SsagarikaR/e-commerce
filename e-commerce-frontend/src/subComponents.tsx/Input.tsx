@@ -1,6 +1,11 @@
 import { validations } from '../utils/validations/validationRules';
 
 function Input({ field, id, type, value, setValue, error, setError }: InputProps) {
+  /**
+   * handle error of each input field if a error is presnt
+   * @param value 
+   * @param id 
+   */
   function checkError(value: string, id: string) {
     for (const key in validations[id]) {
       if (validations[id][key].logic(value)) {

@@ -1,5 +1,5 @@
 import Product from "../subComponents.tsx/Product";
-import Container from "./Container";
+import Container from "../containers/Container";
 import { useEffect, useState } from "react";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { useSearchParams } from "react-router-dom";
@@ -15,7 +15,9 @@ function Products() {
   const name = searchParams.get("name");
   const categoryID = searchParams.get("categoryID");
 
-  // Get the data from the backend
+  /**
+   *  Get the data from the backend
+   *  */
   const getData = async () => {
     const queryParams = [];
 
@@ -35,7 +37,9 @@ function Products() {
     }
   };
 
-  // Update data when price, name or categoryID change
+  /**
+   * Update data when price, name or categoryID change
+   *  */ 
   useEffect(() => {
     getData();
     console.log(price);
@@ -81,7 +85,7 @@ function Products() {
           {products && products.length > 0 ? (
             <div className="flex flex-col p-5">
               <div className="overflow-y-auto max-h-300">
-                <div className="grid grid-cols-4 gap-10">
+                <div className="grid grid-cols-4 gap-10 ">
                   {currentProducts &&
                     currentProducts.map((product) => {
                       console.log(

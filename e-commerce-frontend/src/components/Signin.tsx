@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { makeUnAuthorizedPostRequest } from "../services/unAuthorizedRequest";
 import { useNavigate, Link } from "react-router-dom";
 import { validateInput } from "../utils/validations/validateInputs";
+import { SIGN_IN_BTN, SIGN_UP_BTN } from "../constants/btnConst";
 
 function Signin() {
   const [email, setEmail] = useState<string>("");
@@ -12,6 +13,7 @@ function Signin() {
   const [password_error, setPasswordError] = useState<string>("");
   const navigate = useNavigate();
 
+  // Input field configuration for email and password
   const inputField = [
     {
       id: "email",
@@ -33,6 +35,7 @@ function Signin() {
     },
   ];
 
+  // Function to login the user
   const loginUser = async () => {
     const resposne = await makeUnAuthorizedPostRequest("/auth/login", {
       email: email,
@@ -40,19 +43,17 @@ function Signin() {
     });
 
     if (resposne && resposne.data) {
-      console.log(resposne, "signed in");
       Cookies.set("token", resposne?.data.token, { expires: 7, secure: true });
-      console.log(resposne);
-      navigate("/");
+      navigate("/"); // Redirect to home on success
     }
   };
 
+  // Function to validate inputs
   const checkError = (): boolean => {
     let isValid = true;
     isValid = validateInput("email", email, setEmailError) && isValid;
     isValid = validateInput("password", password, setPasswordError) && isValid;
 
-    console.log("Validation result:", isValid);
     return isValid;
   };
 
@@ -82,11 +83,11 @@ function Signin() {
                 onClick={(e) => {
                   e.preventDefault();
                   if (checkError()) {
-                    loginUser();
+                    loginUser(); // Proceed with login if no errors
                   }
                 }}
               >
-                Sign in
+                {SIGN_IN_BTN}
               </button>
             </div>
           </form>
@@ -97,7 +98,7 @@ function Signin() {
             <p className="mb-4">Don't have an account?</p>
             <Link to="/signup">
               <button className="w-[160px] h-[46px] border-2 border-white bg-transparent text-white font-medium">
-                Sign up
+                {SIGN_UP_BTN}
               </button>
             </Link>
           </div>
@@ -108,5 +109,3 @@ function Signin() {
 }
 
 export default Signin;
-
-

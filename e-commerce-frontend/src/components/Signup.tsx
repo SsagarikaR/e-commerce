@@ -4,6 +4,7 @@ import {makeUnAuthorizedGetRequest,makeUnAuthorizedPostRequest,} from "../servic
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { validateInput } from "../utils/validations/validateInputs";
+import { SIGN_IN_BTN, SIGN_UP_BTN } from "../constants/btnConst";
 
 function Signup() {
   const [full_name, setFull_name] = useState<string>("");
@@ -14,8 +15,9 @@ function Signup() {
   const [emailError, setEmail_Error] = useState<string>("");
   const [contactError, setContactError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
+  // Configuration for the input fields (full name, email, contact, password)
   const inputField = [
     {
       id: "full_name",
@@ -32,7 +34,7 @@ function Signup() {
       type: "text",
       value: email,
       setValue: setEmail,
-      error:emailError,
+      error: emailError,
       setError: setEmail_Error,
     },
     {
@@ -55,6 +57,9 @@ function Signup() {
     },
   ];
 
+  /**
+   * Function to handle user signup 
+   * */ 
   const createUser = async () => {
     const resposne = await makeUnAuthorizedPostRequest("/auth/signup", {
       name: full_name,
@@ -64,17 +69,23 @@ function Signup() {
     });
     console.log(resposne);
     Cookies.set('token', resposne?.data, { expires: 7, secure: true });
-    console.log(Cookies.get('token'),"Is token exist");
-    if(Cookies.get('token') && !(Cookies.get('token')===undefined)){
-      navigate("/")
+    console.log(Cookies.get('token'), "Is token exist");
+    if (Cookies.get('token') && !(Cookies.get('token') === undefined)) {
+      navigate("/") // Redirect to home on successful signup
     }
   };
 
+  /**
+   * Function to fetch product data (just a sample, you might remove if not needed)
+   * */
   const getData = async () => {
     const resposnse = await makeUnAuthorizedGetRequest("/products");
     console.log(resposnse);
   };
 
+  /**
+   * Check for any input errors before submitting the form
+   * */
   const checkError = (): boolean => {
     let isValid = true;
 
@@ -87,7 +98,10 @@ function Signup() {
     console.log("Validation result:", isValid);
     return isValid;
   };
-  
+
+  /**
+   * Fetch data when component mounts
+   *  */ 
   useEffect(() => {
     getData();
   }, []);
@@ -118,11 +132,11 @@ function Signup() {
                 onClick={(e) => {
                   e.preventDefault();
                   if (checkError()) {
-                    createUser();
+                    createUser(); // Proceed with signup if no errors
                   }
                 }}
               >
-                Sign up
+                {SIGN_UP_BTN} {/* Sign-up button text */}
               </button>
             </div>
           </form>
@@ -133,7 +147,7 @@ function Signup() {
             <p className="mb-4">Already have an account?</p>
             <Link to="/signin">
               <button className="w-[160px] h-[46px] border-2 border-white bg-transparent text-white font-medium">
-                Sign in
+                {SIGN_IN_BTN} {/* Sign-in button text */}
               </button>
             </Link>
           </div>
@@ -144,4 +158,3 @@ function Signup() {
 }
 
 export default Signup;
-
