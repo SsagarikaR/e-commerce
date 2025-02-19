@@ -4,6 +4,7 @@ import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { useCart } from "../context/cartContext";
 import Container from "./Container";
 import CartModal from "./CartModal";
+import { ADD_TO_CART_BTN } from "../constants/addToCartBtnConst";
 
 function ProductDetailPage() {
     const [product,setProduct]=useState<forProductbyName[]>();
@@ -44,7 +45,7 @@ function ProductDetailPage() {
                         onClick={()=>{
                             addToCart(product[0].productID)
                             setModalOpen(true);
-                        }}>ADD TO CART</button>
+                        }}>{ADD_TO_CART_BTN}</button>
                     </div>
                 </div>
             :<div>No product found</div>}

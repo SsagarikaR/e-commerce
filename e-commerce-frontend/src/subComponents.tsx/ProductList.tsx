@@ -1,5 +1,6 @@
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
+import { PRODUCT_LIST_HEADING } from "../constants/adminListTablesConst";
 
 function ProductList({data,setEditProduct,setToggleModal,setIsDelete,setDeleteProductID}:forProductListProp) {
   
@@ -7,12 +8,12 @@ function ProductList({data,setEditProduct,setToggleModal,setIsDelete,setDeletePr
     <table className="w-full border-collapse border border-gray-400 text-lg text-gray-700 ">
             <thead>
               <tr>
-                <th className="border border-gray-400 p-5">Product Name</th>
-                <th className="border border-gray-400 p-5">Category</th>
-                <th className="border border-gray-400 p-5">Price</th>
-                <th className="border border-gray-400 p-5">Stock</th>
-                <th className="border border-gray-400 p-5">brand</th>
-                <th className="border border-gray-400 p-5">Action</th>
+                <th className="border border-gray-400 p-5">{PRODUCT_LIST_HEADING.product_name}</th>
+                <th className="border border-gray-400 p-5">{PRODUCT_LIST_HEADING.category}</th>
+                <th className="border border-gray-400 p-5">{PRODUCT_LIST_HEADING.price}</th>
+                <th className="border border-gray-400 p-5">{PRODUCT_LIST_HEADING.stock}</th>
+                <th className="border border-gray-400 p-5">{PRODUCT_LIST_HEADING.brand}</th>
+                <th className="border border-gray-400 p-5">{PRODUCT_LIST_HEADING.action}</th>
               </tr>
             </thead>
             <tbody>

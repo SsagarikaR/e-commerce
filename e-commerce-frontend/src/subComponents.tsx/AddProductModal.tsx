@@ -3,7 +3,7 @@ import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
-import ModalInput from "../subComponents.tsx/ModalInput";
+import ModalInput from "./ModalInput";
 
 function AddProductModal({
   setToggleModal,
@@ -21,6 +21,8 @@ function AddProductModal({
   const [brandID, setBrandID] = useState(editProduct?.brandID || "");
   const [brands,setBrands]=useState<forBrand[]>();
   console.log(uploadedFileName);
+
+   // data to send in the parameter on making api call
   const data = {
     productName: productName,
     productDescription: productDescription,
@@ -31,6 +33,8 @@ function AddProductModal({
     categoryID: categoryID,
   };
 
+  
+  //Input text fields of the form fields
   const fields=[
     {
       id:"product_name",
@@ -52,16 +56,25 @@ function AddProductModal({
     }
   ]
 
+  /**
+   * fetch categories to show the category list to add in the products category
+   */
   const getCatgeories = async () => {
     const response = await makeUnAuthorizedGetRequest("/categories");
     setCategories(response?.data);
   };
 
+  /**
+   * fetch brands to show the brands list to add in the products brand
+   */
   const getBrands=async () =>{
     const response = await makeUnAuthorizedGetRequest("/brands");
     setBrands(response?.data);
   }
 
+  /**
+   * handle submit
+   */
   const handleSubmit = async () => {
     let response;
     if (editProduct) {
@@ -182,7 +195,7 @@ function AddProductModal({
           </button>
           <button className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer" 
             onClick={()=>{ handleSubmit(); }}>
-            {editProduct ? "Update" : "Add"}
+            {editProduct ? "Update" : "Add"} 
           </button>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useState } from "react"
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
+import ModalInput from "./ModalInput";
 
 
 function AddBrandModal({setToggleModal,setListChange,editBrand}:forBrandModalProp) {
@@ -10,17 +11,30 @@ function AddBrandModal({setToggleModal,setListChange,editBrand}:forBrandModalPro
     const [brandThumbnail,setBrandThumbnail]=useState<string>(editBrand?.brandThumbnail|| "");
     const [uploadedFileName,setUploadedFileName]=useState<string>("");
   
+    // data to send in the parameter on making api call
     const data={
      brandName:brandName,
      brandThumbnail:brandThumbnail
     }
+
+    //Input text fields of the form fields
+    const fields=[
+      {
+        id:"product_name",
+        value:brandName,
+        setValue:setBrandName,
+        field:"brand name"
+      }
+    ]
   
-    //handle submission 
+    /**
+     * handle submission 
+     * */
     const handleSubmit=async()=>{
         console.log("Respnse of adding post")
         let response;
         if(editBrand){
-          response=await makeAuthorizedPatchRequest("/brands",{editBrand:editBrand.brandID,...data});//if the edit brand is presnt then update the field
+          response=await makeAuthorizedPatchRequest("/brands",{editBrand:editBrand.brandID,...data});//if the edit brand is present then update the field
   
         }
         else{
@@ -38,10 +52,16 @@ function AddBrandModal({setToggleModal,setListChange,editBrand}:forBrandModalPro
     <div className="4xl absolute right-2"><img src={crossIcon} className="w-8 h-8" onClick={()=>{setToggleModal(false)}}/></div>
     <div className="text-4xl p-6 text-center font-bold text-blue-500 ">Add a new category</div>
     <div className="text-lg text-gray-600 p-2 flex flex-col gap-6">
-      <div className="flex">
-        <label htmlFor="category_name" className="font-semibold text-xl w-70 ">Enter brand name</label>
-        <input id="categroy_name " className="border p-2 outline-none" value={brandName} onChange={(e)=>{setBrandName(e.target.value)}}/>
-      </div>
+      {
+        fields.map((field)=>(
+          <ModalInput
+            id={field.id}
+            value={field.value}
+            setValue={field.setValue}
+            field={field.field}
+          />
+        ))
+      }
       <div className="flex">
          <label htmlFor="category_thumbnail" className="font-semibold text-xl  w-70 ">Enter brand thumbnail</label>
           <div>

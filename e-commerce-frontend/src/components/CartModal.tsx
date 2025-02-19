@@ -6,6 +6,7 @@ function CartModal({setModalOpen}:{setModalOpen:(value:boolean)=>void}) {
     const {cart,updateQuantity,removeFromCart}=useCart();
     const navigate=useNavigate();
 
+    //on clicking over a specific product open product detail page
     const openProductDetail=async(productID:number)=>{
         navigate(`/product/${productID}`)
       }

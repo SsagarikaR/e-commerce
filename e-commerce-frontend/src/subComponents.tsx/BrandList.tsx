@@ -1,5 +1,6 @@
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
+import { BRAND_LIST_HEADING } from "../constants/adminListTablesConst";
 
 function BrandList({data,setDeleteBrandID,setEditBrand,setToggleModal,setIsDelete}:forBrandListProp) {
   return (
@@ -7,8 +8,8 @@ function BrandList({data,setDeleteBrandID,setEditBrand,setToggleModal,setIsDelet
        <table className="w-full border-collapse border border-gray-400 text-lg text-gray-700">
     <thead>
       <tr>
-        <th className="border border-gray-400 p-5">Brand Name</th>
-        <th className="border border-gray-400 p-5">Action</th>
+        <th className="border border-gray-400 p-5">{BRAND_LIST_HEADING.brand_name}</th>
+        <th className="border border-gray-400 p-5">{BRAND_LIST_HEADING.action}</th>
       </tr>
     </thead>
     <tbody>

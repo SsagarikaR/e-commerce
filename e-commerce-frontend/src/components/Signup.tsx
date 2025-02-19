@@ -1,4 +1,3 @@
-import "../styles/signup.css";
 import Input from "../subComponents.tsx/Input";
 import { useEffect, useState } from "react";
 import {makeUnAuthorizedGetRequest,makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
