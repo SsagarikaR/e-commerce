@@ -42,6 +42,7 @@ export const updateTheBrand=async(brandID:number,brandName:string,brandThumbnail
 }
 
 export const deleteBrandByID=async(brandID:number)=>{
+    console.log()
     return await sequelize.query(`DELETE FROM Brands WHERE brandID=?`,{
         replacements:[brandID],
         type:QueryTypes.DELETE

@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/databse";
-import { Users } from "./user";
 
 export const Brands=sequelize.define("Brands",{
     brandID:{

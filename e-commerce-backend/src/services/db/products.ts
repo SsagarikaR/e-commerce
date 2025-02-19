@@ -65,6 +65,7 @@ export const createNewProduct = async (
   );
 };
 
+
 export const getProductWithCondition = async ({categoryID, name, id, price,}: 
   {categoryID?: string | number; name?: string; id?: string | number; price?: "low-to-high" | "high-to-low";}) => {
 

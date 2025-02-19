@@ -11,9 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCategories = exports.updateCategories = exports.getCategories = exports.createCategories = void 0;
 const categories_1 = require("../services/db/categories");
-/**
- * Controller to create a new category
- * */
+// Controller to create a new category
 const createCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryName, categoryThumbnail } = req.body;
     try {
@@ -37,9 +35,7 @@ const createCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.createCategories = createCategories;
-/**
- * Controller to get categories (by name or all categories)
- * */
+//  Controller to get categories (by name or all categories)
 const getCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.query;
     try {
@@ -70,18 +66,14 @@ const getCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getCategories = getCategories;
-/**
- * Controller to update an existing category
- * */
+//  Controller to update an existing category
 const updateCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryID, categoryName, categoryThumbnail } = req.body;
     try {
-        // Ensure the category exists
         const isCategoryExist = yield (0, categories_1.selectCatgeoryByID)(categoryID);
         if (isCategoryExist.length === 0) {
             return next({ statusCode: 404, message: "Category not found" });
         }
-        // Update the category
         const updateThumbnail = yield (0, categories_1.updateTheCatgeory)(categoryName, categoryThumbnail, categoryID);
         return res.status(200).json({ message: "Successfully updated the category." });
     }
@@ -91,18 +83,14 @@ const updateCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.updateCategories = updateCategories;
-/**
- * Controller to delete an existing category
- * */
+//  Controller to delete an existing category
 const deleteCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryID } = req.body;
     try {
-        // Check if the category exists
         const isCategoryExist = yield (0, categories_1.selectCatgeoryByID)(categoryID);
         if (isCategoryExist.length === 0) {
             return next({ statusCode: 404, message: "This category not found" });
         }
-        // Delete the category
         yield (0, categories_1.deleteCatgeory)(categoryID);
         return res.status(200).json({ message: "Successfully deleted the category." });
     }

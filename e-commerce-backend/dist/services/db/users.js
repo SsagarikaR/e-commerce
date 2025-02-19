@@ -13,13 +13,26 @@ exports.updateUsersPassword = exports.deleteUserByID = exports.selectUserByNameO
 const databse_1 = require("../../config/databse");
 const sequelize_1 = require("sequelize");
 const selectAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT * FROM Users`, {
+    return yield databse_1.sequelize.query(`SELECT Users.*,
+            CASE 
+                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
+                ELSE 'User' 
+            END AS role
+        FROM Users
+        LEFT JOIN Admins ON Users.userID = Admins.userID`, {
         type: sequelize_1.QueryTypes.SELECT
     });
 });
 exports.selectAllUsers = selectAllUsers;
 const selectUserByID = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('SELECT * FROM Users WHERE userID=?', {
+    return yield databse_1.sequelize.query(`SELECT Users.*, 
+            CASE 
+                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
+                ELSE 'User' 
+            END AS role
+        FROM Users
+        LEFT JOIN Admins ON Users.userID = Admins.userID
+        WHERE Users.userID = ?`, {
         replacements: [id],
         type: sequelize_1.QueryTypes.SELECT
     });

@@ -8,9 +8,8 @@ import {
   updateTheCatgeory,
 } from "../services/db/categories";
 
-/**
- * Controller to create a new category
- * */
+
+// Controller to create a new category
 export const createCategories = async (req: Request, res: Response, next: NextFunction) => {
   const { categoryName, categoryThumbnail } = req.body;
 
@@ -37,11 +36,8 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
 
 
 
-
-
-/** 
- * Controller to get categories (by name or all categories)
- * */
+ 
+//  Controller to get categories (by name or all categories)
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
   const { name } = req.query;
 
@@ -76,22 +72,20 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
 
 
 
-/**
- * Controller to update an existing category
- * */
+
+//  Controller to update an existing category
 export const updateCategories = async (req: Request, res: Response, next: NextFunction) => {
   const { categoryID, categoryName, categoryThumbnail } = req.body;
 
   try {
-    // Ensure the category exists
     const isCategoryExist = await selectCatgeoryByID(categoryID);
     if (isCategoryExist.length === 0) {
       return next({ statusCode: 404, message: "Category not found" });
     }
 
-    // Update the category
     const updateThumbnail = await updateTheCatgeory(categoryName, categoryThumbnail, categoryID);
     return res.status(200).json({ message: "Successfully updated the category." });
+
   } catch (error) {
     console.error(error);
     return next({ statusCode: 500, message: "Please try again after some time." });
@@ -101,23 +95,19 @@ export const updateCategories = async (req: Request, res: Response, next: NextFu
 
 
 
-
-/**
- * Controller to delete an existing category
- * */
+//  Controller to delete an existing category
 export const deleteCategories = async (req: Request, res: Response, next: NextFunction) => {
   const { categoryID } = req.body;
 
   try {
-    // Check if the category exists
     const isCategoryExist = await selectCatgeoryByID(categoryID);
     if (isCategoryExist.length === 0) {
       return next({ statusCode: 404, message: "This category not found" });
     }
 
-    // Delete the category
     await deleteCatgeory(categoryID);
     return res.status(200).json({ message: "Successfully deleted the category." });
+
   } catch (error) {
     console.error(error);
     return next({ statusCode: 500, message: "Please try again after some time!" });

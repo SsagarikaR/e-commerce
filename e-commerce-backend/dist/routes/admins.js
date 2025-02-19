@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const adminController_1 = require("../controllers/adminController");
 const express_1 = require("express");
 const authorization_1 = require("../middlewear/authorization");
-const brandControllers_1 = require("../controllers/brandControllers");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -22,10 +22,10 @@ const router = (0, express_1.Router)();
  */
 /**
  * @swagger
- * /brands:
+ * /admins:
  *   post:
- *     summary: Create a new brand
- *     tags: [Brand]
+ *     summary: Create a new admin
+ *     tags: [Admin]
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -35,99 +35,100 @@ const router = (0, express_1.Router)();
  *           schema:
  *             type: object
  *             required:
- *               - brandName
- *               - brandDescription
+ *               - userID
  *             properties:
- *               brandName: { type: string }
- *               brandDescription: { type: string }
+ *               userID:
+ *                 type: integer
+ *                 description: ID of the user to be added as an admin
  *     responses:
  *       201:
- *         description: Brand created successfully
- *       403:
- *         description: Unauthorized to create brand
+ *         description: Admin created successfully
+ *       409:
+ *         description: Conflict, admin already exists or missing userID
  *       500:
  *         description: Server error
  */
 router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
-    (0, brandControllers_1.createBrands)(req, res, next);
+    (0, adminController_1.createAdmin)(req, res, next);
 });
 /**
  * @swagger
- * /brands:
+ * /admin:
  *   get:
- *     summary: Get a list of brands
- *     tags: [Brand]
- *     responses:
- *       200:
- *         description: List of brands
- *       404:
- *         description: No brands found
- *       500:
- *         description: Server error
- */
-router.get("/", (req, res, next) => {
-    (0, brandControllers_1.getBrands)(req, res, next);
-});
-/**
- * @swagger
- * /brands:
- *   patch:
- *     summary: Update brand details
- *     tags: [Brand]
+ *     summary: Admin login
+ *     tags: [Admin]
  *     security:
  *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - brandID
- *               - brandName
- *               - brandDescription
- *             properties:
- *               brandID: { type: integer }
- *               brandName: { type: string }
- *               brandDescription: { type: string }
  *     responses:
  *       200:
- *         description: Brand updated successfully
- *       403:
- *         description: Brand not found
+ *         description: Admin login successful
+ *       409:
+ *         description: Admin not found
  *       500:
  *         description: Server error
  */
-router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
-    (0, brandControllers_1.updateBrands)(req, res, next);
+router.get("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+    (0, adminController_1.adminLogin)(req, res, next);
 });
 /**
  * @swagger
- * /brands:
+ * /admin:
  *   delete:
- *     summary: Delete a brand
- *     tags: [Brand]
+ *     summary: Delete an admin
+ *     tags: [Admin]
  *     security:
  *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - brandID
- *             properties:
- *               brandID: { type: integer }
+ *     parameters:
+ *       - in: query
+ *         name: userID
+ *         required: true
+ *         description: ID of the user to be deleted as an admin
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: Brand deleted successfully
+ *         description: Admin deleted successfully
  *       404:
- *         description: Brand not found
+ *         description: Admin not found
  *       500:
  *         description: Server error
  */
 router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
-    (0, brandControllers_1.deleteBrands)(req, res, next);
+    (0, adminController_1.deleteAdmin)(req, res, next);
+});
+/**
+ * @swagger
+ * /admin:
+ *   patch:
+ *     summary: Update an admin
+ *     tags: [Admin]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userID
+ *               - newUserID
+ *             properties:
+ *               userID:
+ *                 type: integer
+ *                 description: ID of the user to be updated
+ *               newUserID:
+ *                 type: integer
+ *                 description: New ID to replace the old one
+ *     responses:
+ *       200:
+ *         description: Admin updated successfully
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Server error
+ */
+router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+    (0, adminController_1.updateAdmin)(req, res, next);
 });
 exports.default = router;

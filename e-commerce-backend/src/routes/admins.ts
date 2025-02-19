@@ -1,7 +1,6 @@
-import { adminLogin, createAdmin } from "../controllers/adminController";
+import { adminLogin, createAdmin, deleteAdmin, updateAdmin } from "../controllers/adminController";
 import { NextFunction, Request, Response, Router } from "express";
 import { checkToken, isAdmin } from "../middlewear/authorization";
-import { createBrands, deleteBrands, getBrands, updateBrands } from "../controllers/brandControllers";
 
 const router = Router();
 
@@ -22,12 +21,13 @@ const router = Router();
  *     description: "JWT Token required for authentication"
  */
 
+
 /**
  * @swagger
- * /brands:
+ * /admins:
  *   post:
- *     summary: Create a new brand
- *     tags: [Brand]
+ *     summary: Create a new admin
+ *     tags: [Admin]
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -37,82 +37,79 @@ const router = Router();
  *           schema:
  *             type: object
  *             required:
- *               - brandName
- *               - brandDescription
+ *               - userID
  *             properties:
- *               brandName: { type: string }
- *               brandDescription: { type: string }
+ *               userID: 
+ *                 type: integer
+ *                 description: ID of the user to be added as an admin
  *     responses:
  *       201:
- *         description: Brand created successfully
- *       403:
- *         description: Unauthorized to create brand
+ *         description: Admin created successfully
+ *       409:
+ *         description: Conflict, admin already exists or missing userID
  *       500:
  *         description: Server error
  */
 router.post("/", checkToken, isAdmin, (req: Request, res: Response, next: NextFunction) => {
-  createBrands(req, res, next);
+ createAdmin(req, res, next);
 });
+
 
 /**
  * @swagger
- * /brands:
+ * /admin:
  *   get:
- *     summary: Get a list of brands
- *     tags: [Brand]
- *     responses:
- *       200:
- *         description: List of brands
- *       404:
- *         description: No brands found
- *       500:
- *         description: Server error
- */
-router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  getBrands(req, res, next);
-});
-
-/**
- * @swagger
- * /brands:
- *   patch:
- *     summary: Update brand details
- *     tags: [Brand]
+ *     summary: Admin login
+ *     tags: [Admin]
  *     security:
  *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - brandID
- *               - brandName
- *               - brandDescription
- *             properties:
- *               brandID: { type: integer }
- *               brandName: { type: string }
- *               brandDescription: { type: string }
  *     responses:
  *       200:
- *         description: Brand updated successfully
- *       403:
- *         description: Brand not found
+ *         description: Admin login successful
+ *       409:
+ *         description: Admin not found
  *       500:
  *         description: Server error
  */
-router.patch("/", checkToken, isAdmin, (req: Request, res: Response, next: NextFunction) => {
-  updateBrands(req, res, next);
+router.get("/", checkToken, isAdmin, (req: Request, res: Response, next: NextFunction) => {
+ adminLogin(req, res, next);
 });
 
 
 /**
  * @swagger
- * /brands:
+ * /admin:
  *   delete:
- *     summary: Delete a brand
- *     tags: [Brand]
+ *     summary: Delete an admin
+ *     tags: [Admin]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userID
+ *         required: true
+ *         description: ID of the user to be deleted as an admin
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Admin deleted successfully
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/",checkToken,isAdmin,(req:Request,res:Response,next:NextFunction)=>{
+    deleteAdmin(req,res,next);
+})
+
+
+/**
+ * @swagger
+ * /admin:
+ *   patch:
+ *     summary: Update an admin
+ *     tags: [Admin]
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -122,19 +119,25 @@ router.patch("/", checkToken, isAdmin, (req: Request, res: Response, next: NextF
  *           schema:
  *             type: object
  *             required:
- *               - brandID
+ *               - userID
+ *               - newUserID
  *             properties:
- *               brandID: { type: integer }
+ *               userID: 
+ *                 type: integer
+ *                 description: ID of the user to be updated
+ *               newUserID: 
+ *                 type: integer
+ *                 description: New ID to replace the old one
  *     responses:
  *       200:
- *         description: Brand deleted successfully
+ *         description: Admin updated successfully
  *       404:
- *         description: Brand not found
+ *         description: Admin not found
  *       500:
  *         description: Server error
  */
-router.delete("/", checkToken, isAdmin, (req: Request, res: Response, next: NextFunction) => {
-  deleteBrands(req, res, next);
-});
+router.patch("/",checkToken,isAdmin,(req:Request,res:Response,next:NextFunction)=>{
+    updateAdmin(req,res,next);
+})
 
 export default router;

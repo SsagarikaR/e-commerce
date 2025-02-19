@@ -9,31 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminLogin = exports.createAdmin = void 0;
+exports.updateAdmin = exports.deleteAdmin = exports.adminLogin = exports.createAdmin = void 0;
 const admins_1 = require("../services/db/admins");
-/**
- * The function for creating a new admin
- * */
+// The function for creating a new admin 
 const createAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { userID } = req.body;
     try {
-        // Check if the userID is provided
         if (!userID) {
             return next({ statusCode: 409, message: "Please enter users ID to add the user as admin" });
         }
-        // Check if the admin with this userID already exists
         const isExist = yield (0, admins_1.selectAdmin)(userID);
         if (isExist.length > 0) {
             return next({ statusCode: 403, message: "This Admin is already registered." });
         }
-        // Create a new admin
         const [result, metaData] = yield (0, admins_1.createNewAdmin)(userID);
         if (metaData !== 0) {
-            // If the admin is created successfully, send a success response
             return res.status(201).json({ message: "Admin created successfully" });
         }
         else {
-            // If there is an issue creating the admin, send an error response
             return next({ statusCode: 409, message: "Please try again after some time!" });
         }
     }
@@ -43,20 +36,15 @@ const createAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.createAdmin = createAdmin;
-/**
- * The function for admin login
- * */
+// The function for admin login
 const adminLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const adminID = req.body.user.identifire; // Extracting admin ID from the request body
+    const adminID = req.body.user.identifire;
     try {
-        // Check if the admin exists with the provided ID
         const findAdmin = yield (0, admins_1.selectAdmin)(adminID);
         if (findAdmin.length === 0) {
-            // If the admin is not found, send an error response
             return next({ statusCode: 409, message: "You are not registered as an admin" });
         }
         else {
-            // If the admin is found, send their details back with a success status
             return res.status(200).json(findAdmin);
         }
     }
@@ -66,3 +54,40 @@ const adminLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.adminLogin = adminLogin;
+//The function for admin delete by users id
+const deleteAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userID } = req.body;
+    try {
+        const admin = yield (0, admins_1.selectAdmin)(userID);
+        if (admin.length === 0) {
+            return next({ statusCode: 404, message: "Admin not found" });
+        }
+        const result = yield (0, admins_1.deleteAdminByID)(userID);
+        return res.status(200).json({ message: "Admin deleted successfully" });
+    }
+    catch (error) {
+        console.error("Error deleting admin:", error);
+        return next({ statusCode: 500, message: "An error occurred while deleting admin" });
+    }
+});
+exports.deleteAdmin = deleteAdmin;
+//function for update admin 
+const updateAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userID, newUserID } = req.body;
+    try {
+        const admin = yield (0, admins_1.selectAdmin)(userID);
+        if (admin.length === 0) {
+            return next({ statusCode: 404, message: "Admin not found" });
+        }
+        const result = yield (0, admins_1.updateAdminByID)(userID, newUserID);
+        if (result[0] === 0) {
+            return next({ statusCode: 409, message: "Failed to update admin" });
+        }
+        return res.status(200).json({ message: "Admin updated successfully" });
+    }
+    catch (error) {
+        console.error("Error updating admin:", error);
+        return next({ statusCode: 500, message: "An error occurred while updating admin" });
+    }
+});
+exports.updateAdmin = updateAdmin;

@@ -6,6 +6,7 @@ declare global {
     contactNo: string;
     password?: string;
     token?: string;
+    role?:string;
   }
 
   interface CustomError extends Error {

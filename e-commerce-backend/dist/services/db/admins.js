@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectAdmin = exports.createNewAdmin = void 0;
+exports.updateAdminByID = exports.deleteAdminByID = exports.selectAdmin = exports.createNewAdmin = void 0;
 const databse_1 = require("../../config/databse");
 const sequelize_1 = require("sequelize");
 const createNewAdmin = (userID) => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,3 +26,17 @@ const selectAdmin = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.selectAdmin = selectAdmin;
+const deleteAdminByID = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databse_1.sequelize.query("DELETE FROM Admins WHERE userID = ?", {
+        replacements: [userID],
+        type: sequelize_1.QueryTypes.DELETE
+    });
+});
+exports.deleteAdminByID = deleteAdminByID;
+const updateAdminByID = (userID, newUserID) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databse_1.sequelize.query("UPDATE Admins SET userID = ? WHERE userID = ?", {
+        replacements: [newUserID, userID],
+        type: sequelize_1.QueryTypes.UPDATE
+    });
+});
+exports.updateAdminByID = updateAdminByID;

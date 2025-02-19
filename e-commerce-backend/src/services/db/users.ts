@@ -3,18 +3,37 @@ import { QueryTypes } from "sequelize";
 
 
 export const selectAllUsers=async()=>{
-    return await sequelize.query(`SELECT * FROM Users`,{
-        type:QueryTypes.SELECT
-    })
+    return await sequelize.query(
+        `SELECT Users.*,
+            CASE 
+                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
+                ELSE 'User' 
+            END AS role
+        FROM Users
+        LEFT JOIN Admins ON Users.userID = Admins.userID`,
+        {
+            type:QueryTypes.SELECT
+        }
+    )
 }
+
 export const selectUserByID=async(id:number):Promise<forUser[]>=>{
-    return await sequelize.query('SELECT * FROM Users WHERE userID=?',
+    return await sequelize.query(
+        `SELECT Users.*, 
+            CASE 
+                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
+                ELSE 'User' 
+            END AS role
+        FROM Users
+        LEFT JOIN Admins ON Users.userID = Admins.userID
+        WHERE Users.userID = ?`,
         {
             replacements:[id],
             type:QueryTypes.SELECT
         }
     );
 }
+
 export const selectUserByName=async(name:string)=>{
     return await sequelize.query(`SELECT * FROM Users WHERE name=? `,
         {

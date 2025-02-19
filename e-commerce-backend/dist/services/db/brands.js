@@ -47,6 +47,7 @@ const updateTheBrand = (brandID, brandName, brandThumbnail) => __awaiter(void 0,
 });
 exports.updateTheBrand = updateTheBrand;
 const deleteBrandByID = (brandID) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log();
     return yield databse_1.sequelize.query(`DELETE FROM Brands WHERE brandID=?`, {
         replacements: [brandID],
         type: sequelize_1.QueryTypes.DELETE

@@ -17,18 +17,15 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_1 = require("../services/db/users");
 // Delete a user by their ID
 const deleteUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.body.user.identifire; // Extract the user ID from the request body
+    const id = req.body.user.identifire;
     try {
-        // Check if the ID is provided
         if (!id) {
             return next({ statusCode: 400, message: "User ID not found" });
         }
-        // Check if the user exists in the database
         const isUserExist = yield (0, users_1.selectUserByID)(id);
         if (isUserExist.length === 0) {
             return next({ statusCode: 404, message: "User not found" });
         }
-        // Proceed with deleting the user
         const deleteUser = yield (0, users_1.deleteUserByID)(id);
         console.log("Deleted user:", deleteUser);
         return res.status(200).json({ message: "User deleted successfully" });
@@ -42,21 +39,18 @@ exports.deleteUser = deleteUser;
 // Update the user's password
 const updateUserPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { newPassword, oldPassword } = req.body;
-    const id = req.body.user.identifire; // Extract user ID from the request body
+    const id = req.body.user.identifire;
     try {
-        // Check if the user exists
         const isUserExist = yield (0, users_1.selectUserByID)(id);
         if (isUserExist.length === 0) {
             return next({ statusCode: 404, message: "User not found" });
         }
-        // Verify the old password
         if (isUserExist[0].password) {
             const isPasswordValid = yield bcrypt_1.default.compare(oldPassword, isUserExist[0].password);
             if (!isPasswordValid) {
                 return next({ statusCode: 403, message: "Invalid old password" });
             }
         }
-        // Hash the new password and update it
         const hashedPassword = yield bcrypt_1.default.hash(newPassword, 10);
         const updateUser = yield (0, users_1.updateUsersPassword)(hashedPassword);
         console.log(updateUser);
@@ -71,7 +65,6 @@ exports.updateUserPassword = updateUserPassword;
 // Retrieve all users
 const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Fetch all users from the database
         const users = yield (0, users_1.selectAllUsers)();
         if (users.length === 0) {
             return next({ statusCode: 404, message: "No users found" });
@@ -86,14 +79,12 @@ const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 exports.getAllUser = getAllUser;
 // Get a user by their ID
 const getUserByID = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.body.user.identifire; // Extract user ID from the request body
+    const id = req.body.user.identifire;
     try {
-        // Check if the user exists
         const users = yield (0, users_1.selectUserByID)(id);
         if (users.length === 0) {
             return next({ statusCode: 404, message: "Invalid user ID" });
         }
-        // Remove the password from the response before returning
         delete users[0].password;
         return res.status(200).json(users[0]);
     }
