@@ -16,7 +16,6 @@ function Navbar() {
     const [search, setSearch] = useState<string>();
     const [categories, setCategories] = useState<forCategories[]>();
     const [openProfile, setOpenProfile] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
 
     // Search products based on the name
@@ -32,6 +31,7 @@ function Navbar() {
     // Fetch user details
     const getUser = async () => {
         const response = await makeAuthorizedGetRequest("/user");
+        console.log(response);
         if (response && response.data) {
             setUser(response.data);
         }
@@ -45,17 +45,8 @@ function Navbar() {
         }
     };
 
-    // Check if the logged-in user is an admin
-    const isUserIsAdmin = async () => {
-        const response = await makeAuthorizedGetRequest("/admins");
-        if (response && response.data.length > 0) {
-            setIsAdmin(true);
-        }
-    };
-
     // Use effect to fetch data when the component is mounted
     useEffect(() => {
-        isUserIsAdmin();
         getCategories();
         getUser();
     }, []);
@@ -103,7 +94,7 @@ function Navbar() {
             </Link>
 
             {/* User profile (conditional render for admin or regular user) */}
-            {user && (isAdmin ? 
+            {user && ( user.role==="Admin"? 
                 // Admin view, with dashboard link
                 <Link to="/dashboard">
                     <div className="flex items-center gap-1 cursor-pointer">

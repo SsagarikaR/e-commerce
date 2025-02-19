@@ -6,10 +6,11 @@ import CategoryList from "../subComponents.tsx/CategoryList";
 import AddProductModal from "../subComponents.tsx/AddProductModal";
 import AddCategoriesModal from "../subComponents.tsx/AddCategoriesModal";
 import CustomerList from "../subComponents.tsx/CustomerList";
-import { makeAuthorizedGetRequest, makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
+import { makeAuthorizedGetRequest} from "../services/authorizedRequests";
 import BrandList from "../subComponents.tsx/BrandList";
 import AddBrandModal from "../subComponents.tsx/AddBrandModal";
-import { PAGE_TITLES, MODAL_TEXTS, BUTTON_TEXTS, LIST_TITLES } from "../constants/adminDashboardConst";
+import { PAGE_TITLES, BUTTON_TEXTS, LIST_TITLES } from "../constants/adminDashboardConst";
+import DeleteModal from "../subComponents.tsx/DeleteModal";
 
 function AdminDashboard() {
   const [page, setPage] = useState("products");
@@ -27,38 +28,7 @@ function AdminDashboard() {
   const [deleteCategoryID, setDeleteCategoryID] = useState<number>();
   const [deleteBrandID, setDeleteBrandID] = useState<number>();
 
-  /**
-   * function to delete specific product
-   * @param productID 
-   */
-  const deleteProduct = async (productID: number) => {
-    const response = await makeAuthorizedDeleteRequest(`/products`, { productID });
-    if (response?.data) {
-      setListChange(!listChange);
-    }
-  }
-
-  /**
-   * function to delete specific category
-   * @param categoryID 
-   */
-  const deleteCategories = async (categoryID: number) => {
-    const response = await makeAuthorizedDeleteRequest(`/categories`, { categoryID });
-    if (response?.data) {
-      setListChange(!listChange);
-    }
-  }
-
- /**
-  * function to delete specific brand
-  * @param brandID 
-  */
-  const deleteBrand = async (brandID: number) => {
-    const response = await makeAuthorizedDeleteRequest(`/brands`, { brandID });
-    if (response) {
-      setListChange(!listChange);
-    }
-  }
+ 
 
   /**
    * Get list of data on the basis of current page view
@@ -85,6 +55,7 @@ function AdminDashboard() {
     }
   };
 
+
   /**
    *  fetch data on initial render, on page change ,
    * or on adding or deleting new data (listChange changes on data change)
@@ -104,7 +75,13 @@ function AdminDashboard() {
             <div className="flex gap-2">
               <button
                 className="shadow-xl bg-blue-400 w-40 p-2 text-lg cursor-pointer"
-                onClick={() => setToggleModal(true)}
+                onClick={() => {
+                    setToggleModal(true);
+                    setEditBrand(undefined);
+                    setEditProduct(undefined);
+                    setEditCategory(undefined);
+                  }
+                }
               >
                 {BUTTON_TEXTS.addButton}
               </button>
@@ -137,7 +114,10 @@ function AdminDashboard() {
           ) : (page === "users" ?
             <div>
               <div className="text-3xl pb-3 font-semibold text-gray-600">{LIST_TITLES.customerList}</div>
-              <CustomerList data={userData!} />
+              <CustomerList 
+                data={userData!} 
+                setListChange={setListChange}
+              />
             </div>
             :
             <div>
@@ -153,28 +133,17 @@ function AdminDashboard() {
           )}
         </div>
       </div>
-      {isDelete &&
-        <div className="fixed bg-white w-100 h-60 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 p-6">
-          <div className="text-2xl text-center font-bold">{MODAL_TEXTS.deleteConfirmation}</div>
-          <div className="text-center font-medium text-lg">{MODAL_TEXTS.deleteWarning}</div>
-          <div className="flex justify-between">
-            <button className="bg-blue-400 p-2 w-30 font-semibold cursor-pointer" onClick={() => setIsDelete(false)}>
-              {MODAL_TEXTS.cancelButton}
-            </button>
-            <button className="bg-red-400 p-2 w-30 font-semibold cursor-pointer" onClick={() => {
-              if (page === "products") {
-                deleteProduct(deleteProductID!);
-              } else if (page === "categories") {
-                deleteCategories(deleteCategoryID!);
-              } else if (page === "brands") {
-                deleteBrand(deleteBrandID!);
-              }
-              setIsDelete(false);
-            }}>
-              {MODAL_TEXTS.deleteButton}
-            </button>
-          </div>
-        </div>}
+      {isDelete && 
+        <DeleteModal
+          page={page}
+          deleteID={page==="products"?deleteProductID!
+                    :(page==="categories"?deleteCategoryID!
+                    :deleteBrandID!)}
+          listChange={listChange}
+          setListChange={setListChange}
+          setIsDelete={setIsDelete}
+        />
+      }
       {toggleModal && //Form Modal for add or update data
         (page === "products" ? (
           <AddProductModal

@@ -1,3 +1,5 @@
+import React from "react";
+
 declare global {
   interface InputProps {
     field: string;
@@ -36,6 +38,7 @@ declare global {
     contactNo: string;
     password?: string;
     token?: string;
+    role:string
   }
 
   interface forCategories {
@@ -75,6 +78,12 @@ declare global {
     productPrice: number;
     productThumbnail: string;
     quantity: number;
+  }
+
+  interface forDeleteModalProp{
+    page:string;
+    deleteID:number;
+    setListChange:React.Dispatch<React.SetStateAction<boolean>>;
   }
 
   interface forCategoryModalProp {

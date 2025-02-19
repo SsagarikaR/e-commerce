@@ -6,7 +6,9 @@ export const CATEGORY_LIST_HEADINGS={
 export const CUSTOMER_LIST_HEADING={
     customer_name:"Customer Name",
     email:"Email",
-    contactNo:"Contact No."
+    contactNo:"Contact No.",
+    role:"User Role",
+    add_admin:"Add As Admin"
 }
 
 export const BRAND_LIST_HEADING={

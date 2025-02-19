@@ -2,7 +2,7 @@ import { useState } from "react"
 import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
-import ModalInput from "./ModalInput";
+import ModalInput from "../subComponents.tsx/ModalInput";
 
 
 function AddBrandModal({setToggleModal,setListChange,editBrand}:forBrandModalProp) {
