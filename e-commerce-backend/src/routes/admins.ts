@@ -57,7 +57,7 @@ router.post("/", checkToken, isAdmin, (req: Request, res: Response, next: NextFu
 
 /**
  * @swagger
- * /admin:
+ * /admins:
  *   get:
  *     summary: Admin login
  *     tags: [Admin]
@@ -78,7 +78,7 @@ router.get("/", checkToken, isAdmin, (req: Request, res: Response, next: NextFun
 
 /**
  * @swagger
- * /admin:
+ * /admins:
  *   delete:
  *     summary: Delete an admin
  *     tags: [Admin]
@@ -106,7 +106,7 @@ router.delete("/",checkToken,isAdmin,(req:Request,res:Response,next:NextFunction
 
 /**
  * @swagger
- * /admin:
+ * /admins:
  *   patch:
  *     summary: Update an admin
  *     tags: [Admin]
