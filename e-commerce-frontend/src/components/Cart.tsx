@@ -17,8 +17,8 @@ const Cart = () => {
             {cart.length === 0 ? (
                 <p className="text-center text-lg">Your cart is empty</p>
             ) : (
-                <div className="flex gap-4">
-                    <div className="grid gap-4 w-4/5">
+                <div className=" flex md:static flex-col md:flex-row gap-4 ">
+                    <div className="flex flex-col gap-4 xl:w-4/5 md:w-3/5 justify-center itemc-center overflow-auto">
                     {cart.map((item: forCartItem) => (
                         <div key={item.productID} className="shadow-xl p-4 shadow-md flex items-center gap-4">
                             <img src={item.productThumbnail} className="w-30 h-30 object-cover shadow-lg cursor-pointer"
@@ -61,11 +61,11 @@ const Cart = () => {
                         </div>
                     ))}
                     </div>
-                    <div className="flex flex-col w-1/5 gap-y-2">
-                        <div className="bg-gray-900 h-15 w-full rounded-xl flex items-center">
-                            <div className="text-xl font-semibold text-white p-5 text-center [word-spacing:5px]">Total Price= ₹{cart[cart.length-1].totalPrice}</div>
+                    <div className="flex md:flex-col md:static fixed bottom-4 left-0 right-0 p-6 bg_color md:p-0 gap-x-10 xl:w-1/5 md:w-2/5 gap-y-2 ">
+                        <div className="bg-gray-900 h-15 w-full rounded-lg flex items-center ">
+                            <div className=" text-lg md:text-xl font-semibold text-white p-5 text-center [word-spacing:5px]">Total Price= ₹{cart[cart.length-1].totalPrice}</div>
                         </div>
-                        <div className="w-full bg-orange-400 h-15 rounded-xl text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer">
+                        <div className="w-full bg-orange-400 h-15 rounded-xl text-lg md:text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer">
                             <button >Pay with</button>
                             <img src={payPalIcon} className="w-18 h-18"/>
                         </div>
