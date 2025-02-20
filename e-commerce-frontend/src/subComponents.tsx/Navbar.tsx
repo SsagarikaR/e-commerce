@@ -52,16 +52,16 @@ function Navbar() {
     }, []);
 
     return (
-        <div className="flex shadow w-full h-20 justify-between px-24 text-2xl font-semibold items-center">
+        <div className="flex fixed bg_color shadow w-full h-20 gap-x-15 items-center justify-center md:gap-x-0 md:justify-between px-24 xl:px-24 p-0 sm:p-0 md:px-10 text-2xl lg:text-2xl md:text-xl font-semibold items-center">
             <div className="flex items-center justify-center gap-x-1">
                 <Link to="/">
-                    <img src={logoIcon} className="w-10 h-10" />
+                    <img src={logoIcon} className="w-10 h-10 " />
                 </Link>
-                <div className="text-blue-500">ShopCart</div>
+                <div className="text-blue-500 hidden lg:inline-block sm:hidden">ShopCart</div>
             </div>
 
             {/* Dropdown for Categories */}
-            <div>
+            <div className="hidden md:inline-block">
                 <select
                     className="outline-none"
                     onChange={(e) => { handleCategoryChange(e.target.value); }}
@@ -74,13 +74,13 @@ function Navbar() {
             </div>
 
             {/* Search bar */}
-            <div className="border-2 h-10 border-gray-500 rounded-lg flex items-center p-2">
+            <div className="border-2 h-10 border-gray-500 rounded-lg flex items-center px-8  sm:p-2">
                 <input
-                    className="outline-none text-lg font-normal"
+                    className="outline-none text-sm md:text-lg font-normal"
                     placeholder="Search by product name."
                     onChange={(e) => { setSearch(e.target.value); }}
                 />
-                <img src={searchIcon} className="w-8 h-8" onClick={searchProduct} />
+                <img src={searchIcon} className="w-6 h-6 md:w-8 md:h-8 cursor-pointer" onClick={searchProduct} />
             </div>
 
             {/* Cart icon with item count */}
@@ -99,10 +99,10 @@ function Navbar() {
                 <Link to="/dashboard">
                     <div className="flex items-center gap-1 cursor-pointer">
                         <img src={profileIcon} className="w-8 h-8" />
-                        <div>{user.name}</div>
+                        <div className="hidden lg:inline-block sm:hidden">{user.name}</div>
                     </div>
                 </Link> : 
-                // Regular user view with profile options
+                // Regular user view with logout options
                 <div className="flex flex-col relative cursor-pointer">
                     <div className="flex items-center gap-1" onClick={() => { setOpenProfile(true); }}>
                         <img src={profileIcon} className="w-8 h-8" />

@@ -53,7 +53,7 @@ router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res,
 });
 /**
  * @swagger
- * /admin:
+ * /admins:
  *   get:
  *     summary: Admin login
  *     tags: [Admin]
@@ -72,7 +72,7 @@ router.get("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, 
 });
 /**
  * @swagger
- * /admin:
+ * /admins:
  *   delete:
  *     summary: Delete an admin
  *     tags: [Admin]
@@ -98,7 +98,7 @@ router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, re
 });
 /**
  * @swagger
- * /admin:
+ * /admins:
  *   patch:
  *     summary: Update an admin
  *     tags: [Admin]
