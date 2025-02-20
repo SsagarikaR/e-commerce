@@ -1,7 +1,6 @@
 import { makeAuthorizedDeleteRequest } from "../services/authorizedRequests";
 import { MODAL_TEXTS } from "../constants/adminDashboardConst"
 
-
 function DeleteModal({page,deleteID,listChange,setListChange,setIsDelete}:forDeleteModalProp) {
      
         // function to delete specific product

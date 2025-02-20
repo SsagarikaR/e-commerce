@@ -31,6 +31,7 @@ declare global {
     product: forProductbyName;
     setModalOpen: (value: boolean) => void;
   }
+  
   interface forUser {
     userID: number;
     name: string;
