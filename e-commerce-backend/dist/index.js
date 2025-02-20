@@ -22,6 +22,7 @@ const products_1 = __importDefault(require("./routes/products"));
 const carts_1 = __importDefault(require("./routes/carts"));
 const admins_1 = __importDefault(require("./routes/admins"));
 const brands_1 = __importDefault(require("./routes/brands"));
+const wishList_1 = __importDefault(require("./routes/wishList"));
 const cors_1 = __importDefault(require("cors"));
 const swaggerConfig_1 = __importDefault(require("./config/swaggerConfig"));
 const errorHandler_1 = __importDefault(require("./middlewear/errorHandler"));
@@ -31,6 +32,7 @@ const errorHandler_1 = __importDefault(require("./middlewear/errorHandler"));
 // import { CartItems } from "./models/cartItem";
 // import { Brands } from "./models/brand";
 // import { Admins } from "./models/admin";
+// import { WishLists } from "./models/wishList";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
@@ -44,6 +46,7 @@ app.use((0, cors_1.default)());
     // await Brands.sync({alter:true});
     // await CartItems.sync({alter:true});
     // await Admins.sync({force:true});
+    // await WishLists.sync({force:true});
 }))();
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("App is listening on port 3000");
@@ -55,6 +58,7 @@ app.use("/products", products_1.default);
 app.use("/cart", carts_1.default);
 app.use("/admins", admins_1.default);
 app.use("/brands", brands_1.default);
+app.use("/wishlist", wishList_1.default);
 app.use(errorHandler_1.default);
 app.listen(port, (error) => {
     if (!error) {
