@@ -15,9 +15,7 @@ function Products() {
   const name = searchParams.get("name");
   const categoryID = searchParams.get("categoryID");
 
-  /**
-   *  Get the data from the backend
-   *  */
+  // Get the data from the backend
   const getData = async () => {
     const queryParams = [];
 
@@ -37,9 +35,7 @@ function Products() {
     }
   };
 
-  /**
-   * Update data when price, name or categoryID change
-   *  */ 
+  // Update data when price, name or categoryID change
   useEffect(() => {
     getData();
     console.log(price);
@@ -81,7 +77,7 @@ function Products() {
             </select>
           </div>
         </div>
-        <div>
+        <div className="overflow-auto ">
           {products && products.length > 0 ? (
             <div className="flex flex-col p-5">
               <div className="overflow-y-auto max-h-300">

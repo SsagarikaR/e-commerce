@@ -8,6 +8,7 @@ import Products from "../components/Products";
 import AdminDashboard from "../components/AdminDashboard";
 import Cart from "../components/Cart";
 import ProductDetailPage from "../components/ProductDetailPage";
+import WishList from "../components/WishList";
 
 function Pages() {
   // console.log(document.cookie);
@@ -26,6 +27,7 @@ function Pages() {
             <Route path="/cart" element={<Cart/>}/>
             <Route path="/signup" element={<Signup/>}/>
             <Route path="/signin" element={<Signin/>}/>
+            <Route path="/wishlist" element={<WishList/>}/>
           </Routes>:
           <Routes> 
             <Route path="*" element={<Navigate to="/" replace/>}/> 

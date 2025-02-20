@@ -20,6 +20,12 @@ declare global {
     };
   }
 
+  interface wishList{
+    wishListID:number;
+    productID:number;
+    userID:number;
+  }
+
   interface forModalInputProp{
     id:string;
     value:string|number;

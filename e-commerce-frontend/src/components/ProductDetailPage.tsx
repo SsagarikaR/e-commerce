@@ -5,11 +5,16 @@ import Container from "../containers/Container";
 import CartModal from "./CartModal";  
 import { ADD_TO_CART_BTN } from "../constants/btnConst";  
 import payPalIcon from "../assets/paypal.png"
+import favIcon from "../assets/fav.png";
+import notFavIcon from "../assets/nFav.png";
+import { makeAuthorizedGetRequest,makeAuthorizedDeleteRequest,makeAuthorizedPostRequest } from "../services/authorizedRequests";
 
 function ProductDetailPage() {
    const [product, setProduct] = useState<forProductbyName[]>();
+   const [WishList,setWishList]=useState<wishList[]|undefined>();
+   const [toggleWishList,setToggleWishList]=useState(false);
    const [isModalOpen, setModalOpen] = useState(false);
-   const { id } = useParams(); // Extract the product id from the URL parameters
+   const { id } = useParams(); 
    const { addToCart } = useCart();
 
     
@@ -22,6 +27,36 @@ function ProductDetailPage() {
         }
     };
 
+    //check whether product is in the wish list
+      const fetchWishList=async()=>{
+        const response=await makeAuthorizedGetRequest(`/wishlist/${id}`);
+        console.log(response,"response");
+        if(response?.data){
+         setWishList(response.data);
+        }
+        else{
+          setWishList(undefined);
+        }
+      }
+    
+      //add item to wishList 
+      const addToWishList=async()=>{
+        let response
+        if(WishList){
+          response=await makeAuthorizedDeleteRequest("/wishlist",{wishListID:WishList[0].wishListID});
+        }
+        else{
+          response=await makeAuthorizedPostRequest("/wishlist",{productID:id});
+        }
+        if(response?.data){
+          setToggleWishList(!toggleWishList);
+        }
+      }
+    
+      useEffect(()=>{
+        fetchWishList();
+      },[toggleWishList])
+
     
     //  Effect hook to fetch data whenever the product id changes (from the URL)
     useEffect(() => {
@@ -33,14 +68,20 @@ function ProductDetailPage() {
             <div className="flex items-center justify-center">
                 {/* Render product details if product is available */}
                 {product ? (
-                    <div className="flex p-20 gap-x-10">
+                    <div className="flex p-20 gap-x-10 ">
+                        <div className='absolute m-2 cursor-pointer ' onClick={()=>{addToWishList()}}>
+                            {
+                                WishList?<img src={favIcon} className='w-10 h-10 '/>
+                                :<img src={notFavIcon} className='w-10 h-10'/>
+                            }
+                        </div>
                         <div className="">
                             <img
                                 src={product[0].ProductThumbnail}
                                 className="shadow-[0_0_15px_5px_rgba(0,0,0,0.3)] w-150 h-150"
                             />
                         </div>
-                        <div className="w-150 text-gray-700 gap-y-9 flex flex-col">
+                        <div className="w-150 text-gray-700 gap-y-9 flex flex-col ">
                             <div className="flex gap-y-4 flex-col ">
                                 <div className="flex gap-x-3">
                                     <div className="text-4xl font-semibold">{product[0].productName}</div>
