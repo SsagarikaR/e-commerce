@@ -1,6 +1,6 @@
 import Input from "../subComponents.tsx/Input";
-import { useEffect, useState } from "react";
-import {makeUnAuthorizedGetRequest,makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
+import {  useState } from "react";
+import {makeUnAuthorizedPostRequest,} from "../services/unAuthorizedRequest";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { validateInput } from "../utils/validations/validateInputs";
@@ -75,13 +75,6 @@ function Signup() {
     }
   };
 
-  /**
-   * Function to fetch product data (just a sample, you might remove if not needed)
-   * */
-  const getData = async () => {
-    const resposnse = await makeUnAuthorizedGetRequest("/products");
-    console.log(resposnse);
-  };
 
   /**
    * Check for any input errors before submitting the form
@@ -99,12 +92,6 @@ function Signup() {
     return isValid;
   };
 
-  /**
-   * Fetch data when component mounts
-   *  */ 
-  useEffect(() => {
-    getData();
-  }, []);
 
   return (
     <div className="flex min-h-screen min-w-full justify-center items-center bg-gradient-to-r from-gray-200 to-blue-200">
