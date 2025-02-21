@@ -24,7 +24,7 @@ const createNewOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             return res.status(201).json({ message: "Successfully ordered this product." });
         }
         else {
-            return next({ statusCode: 409, message: "Error in adding review, Please try again!" });
+            return next({ statusCode: 409, message: "Error in creating order, Please try again!" });
         }
     }
     catch (error) {

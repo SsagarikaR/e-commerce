@@ -10,6 +10,7 @@ import adminAPIs from "./routes/admins";
 import brandAPIs from "./routes/brands"
 import wishListAPIs from "./routes/wishLists";
 import reviewAPIs from "./routes/reviews";
+import prefernceAPIs from "./routes/prefernces"
 import cors from "cors";
 import swaggerDocs  from "./config/swaggerConfig";
 import errorHandler from "./middlewear/errorHandler";
@@ -23,6 +24,7 @@ import rateLimit from "express-rate-limit";
 // import { Admins } from "./models/admin";
 // import { WishLists } from "./models/wishList";
 // import { Reviews } from "./models/Review";
+// import { Preferences } from "./models/preference";
 
 const app=express();
 const port=3000
@@ -41,6 +43,7 @@ swaggerDocs(app);
     // await Admins.sync({force:true});
     // await WishLists.sync({force:true});
     // await Reviews.sync({force:true});
+    // await Preferences.sync({force:true})
 })();
 
 //Rate limiting middleware
@@ -62,6 +65,7 @@ app.use("/admins",adminAPIs);
 app.use("/brands",brandAPIs)
 app.use("/wishlist",wishListAPIs);
 app.use("/reviews",reviewAPIs);
+app.use("/prefernces",prefernceAPIs);
 
 app.use(errorHandler);
 app.use(limiter);

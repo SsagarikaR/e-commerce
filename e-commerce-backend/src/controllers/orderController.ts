@@ -15,7 +15,7 @@ export const createNewOrder=async(req:Request,res:Response,next:NextFunction)=>{
            return res.status(201).json({message:"Successfully ordered this product."})
         }
         else{
-            return next({statusCode:409,message:"Error in adding review, Please try again!"});
+            return next({statusCode:409,message:"Error in creating order, Please try again!"});
         }
         
     }catch (error) {

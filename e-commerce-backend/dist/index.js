@@ -24,6 +24,7 @@ const admins_1 = __importDefault(require("./routes/admins"));
 const brands_1 = __importDefault(require("./routes/brands"));
 const wishLists_1 = __importDefault(require("./routes/wishLists"));
 const reviews_1 = __importDefault(require("./routes/reviews"));
+const prefernces_1 = __importDefault(require("./routes/prefernces"));
 const cors_1 = __importDefault(require("cors"));
 const swaggerConfig_1 = __importDefault(require("./config/swaggerConfig"));
 const errorHandler_1 = __importDefault(require("./middlewear/errorHandler"));
@@ -36,6 +37,7 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 // import { Admins } from "./models/admin";
 // import { WishLists } from "./models/wishList";
 // import { Reviews } from "./models/Review";
+// import { Preferences } from "./models/preference";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
@@ -51,6 +53,7 @@ app.use((0, cors_1.default)());
     // await Admins.sync({force:true});
     // await WishLists.sync({force:true});
     // await Reviews.sync({force:true});
+    // await Preferences.sync({force:true})
 }))();
 //Rate limiting middleware
 const limiter = (0, express_rate_limit_1.default)({
@@ -69,6 +72,7 @@ app.use("/admins", admins_1.default);
 app.use("/brands", brands_1.default);
 app.use("/wishlist", wishLists_1.default);
 app.use("/reviews", reviews_1.default);
+app.use("/prefernces", prefernces_1.default);
 app.use(errorHandler_1.default);
 app.use(limiter);
 app.listen(port, (error) => {

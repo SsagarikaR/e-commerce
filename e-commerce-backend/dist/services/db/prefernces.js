@@ -9,28 +9,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.yourPrefernce = void 0;
-const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const yourPrefernce = (userID) => __awaiter(void 0, void 0, void 0, function* () {
-    databse_1.sequelize.query(`SELECT
-                    pr.PreferenceID,
-                    pr.userID
-                    p.productID,
-                    p.productName,
-                    p.productThumbnail,
-                    p.productPrice,
-                    c.categoryID,
-                    br.brandID,
-                    br.brandThumbnail
-                    FROM Preferences pr
-                    JOIN Products p ON pr.productID = p.productID
-                    JOIN Catgeories c on p.categoryID = c.categoryID
-                    JOIN Brands br ON p.brandID = br.brandID
-                    WHERE pr.userID=?
-                    `, {
-        replacements: [userID],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.deletePreferenceService = exports.updatePreferenceService = exports.fetchPreferencesService = exports.createPreferenceService = void 0;
+const prefernces_1 = require("../../respository/prefernces");
+// Service function for creating a preference
+const createPreferenceService = (productID, userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // First, check if the preference already exists
+        const [existingPreference] = yield (0, prefernces_1.selectPrefernceByProductANDUser)(productID, userID);
+        // If the preference exists, return null to prevent adding again
+        if (existingPreference) {
+            return null;
+        }
+        // Insert new preference if it doesn't exist
+        const result = yield (0, prefernces_1.insertPrefernce)(productID, userID);
+        return result;
+    }
+    catch (error) {
+        console.log(error, "error");
+        throw new Error("Error while creating preference: ");
+    }
 });
-exports.yourPrefernce = yourPrefernce;
+exports.createPreferenceService = createPreferenceService;
+const fetchPreferencesService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const preferences = yield (0, prefernces_1.fetchPreference)(userID);
+        if (!preferences || preferences.length === 0) {
+            return null; // No preferences found for the user
+        }
+        return preferences;
+    }
+    catch (error) {
+        throw new Error("Error while selecting prefernces. Please try again!");
+    }
+});
+exports.fetchPreferencesService = fetchPreferencesService;
+const updatePreferenceService = (preferenceID, productID, userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, prefernces_1.updatePreference)(preferenceID, productID, userID);
+        if (result[0] === 0) {
+            return null; // No rows were updated (preference might not exist)
+        }
+        return result;
+    }
+    catch (error) {
+        throw new Error("Error while updating prefernces. Please try again!");
+    }
+});
+exports.updatePreferenceService = updatePreferenceService;
+const deletePreferenceService = (preferenceID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, prefernces_1.deletePreference)(preferenceID);
+        return result;
+    }
+    catch (error) {
+        throw new Error("Error while deleting prefernces. Please try again!");
+    }
+});
+exports.deletePreferenceService = deletePreferenceService;
