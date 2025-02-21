@@ -126,8 +126,8 @@ function Navbar() {
             >
               <img src={profileIcon} className="w-7 h-7 m-auto" />
             </Link>
-            <Link to="/wishlist" className=" py-1 flex gap-x-1 text-center">
-              <img src={favIcon} className="w-5 h-5 " />
+            <Link to="/wishlist" className=" py-1 flex gap-x-1 items-center justify-center">
+              <img src={favIcon} className="w-4 h-4 " />
               <div>Wishlist</div>
             </Link>
             <Link to="#" className="block p-1 underline">

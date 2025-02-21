@@ -26,6 +26,19 @@ declare global {
     userID:number;
   }
 
+  interface wishListDetails extends wishList{
+    productName:string;
+    productPrice:string;
+    productThumbnail:string;
+    brandID:number;
+    brandThmbnail:string
+  }
+
+  interface wishListProp {
+    item:wishListDetails
+    setToggleWishList:React.Dispatch<React.SetStateAction<boolean>>
+  }
+
   interface forModalInputProp{
     id:string;
     value:string|number;

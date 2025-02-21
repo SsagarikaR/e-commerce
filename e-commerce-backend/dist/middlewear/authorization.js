@@ -21,7 +21,7 @@ dotenv_1.default.config();
 const checkToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer')) {
-        res.status(401).json({ error: "Token not found" });
+        return next({ statusCode: 401, message: "Authentication required." });
     }
     console.log(authHeader, "authHeader");
     const token = authHeader.split(' ')[1];
@@ -48,7 +48,7 @@ const isAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             type: sequelize_1.QueryTypes.SELECT
         });
         if (user.length === 0) {
-            res.status(404).json({ error: "Invalid credentials." });
+            res.status(403).json({ error: "You are not authorized for this action." });
             next();
         }
         next();

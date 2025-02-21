@@ -65,7 +65,7 @@ export const getWishListItemById=async(req: Request, res: Response, next: NextFu
   const {id}=req.params;
   try{
       const isWishlist=await selectByUserAndProduct(userID,Number( id));
-      console.log("wishlist",isWishlist)
+      // console.log("wishlist",isWishlist)
       if(isWishlist.length===0){
         return next({ statusCode: 404, message: "No item found." });
       }

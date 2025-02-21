@@ -33,21 +33,23 @@ const errorHandler_1 = __importDefault(require("./middlewear/errorHandler"));
 // import { Brands } from "./models/brand";
 // import { Admins } from "./models/admin";
 // import { WishLists } from "./models/wishList";
+// import { Reviews } from "./models/Review";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)());
 (0, swaggerConfig_1.default)(app);
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    // await Users.sync({alter:true});
-    // await Categories.sync({alter:true});
-    //  await Produtcs.sync({alter:true})
-    // await Brands.sync({alter:true});
-    // await CartItems.sync({alter:true});
-    // await Admins.sync({force:true});
-    // await WishLists.sync({force:true});
-}))();
+// (async()=>{
+// await Users.sync({alter:true});
+// await Categories.sync({alter:true});
+//  await Produtcs.sync({alter:true})
+// await Brands.sync({alter:true});
+// await CartItems.sync({alter:true});
+// await Admins.sync({force:true});
+// await WishLists.sync({force:true});
+// await Reviews.sync({force:true});
+// })();
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("App is listening on port 3000");
 }));

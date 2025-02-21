@@ -20,6 +20,7 @@ import errorHandler from "./middlewear/errorHandler";
 // import { Brands } from "./models/brand";
 // import { Admins } from "./models/admin";
 // import { WishLists } from "./models/wishList";
+// import { Reviews } from "./models/Review";
 
 const app=express();
 const port=3000
@@ -29,7 +30,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors());
 swaggerDocs(app);
 
-(async()=>{
+// (async()=>{
     // await Users.sync({alter:true});
     // await Categories.sync({alter:true});
     //  await Produtcs.sync({alter:true})
@@ -37,7 +38,8 @@ swaggerDocs(app);
     // await CartItems.sync({alter:true});
     // await Admins.sync({force:true});
     // await WishLists.sync({force:true});
-})();
+    // await Reviews.sync({force:true});
+// })();
 
 app.get("/",async(req:Request,res:Response)=>{
     res.send("App is listening on port 3000");

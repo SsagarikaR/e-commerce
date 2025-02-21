@@ -58,7 +58,7 @@ const getWishListItemById = (req, res, next) => __awaiter(void 0, void 0, void 0
     const { id } = req.params;
     try {
         const isWishlist = yield (0, wishLists_1.selectByUserAndProduct)(userID, Number(id));
-        console.log("wishlist", isWishlist);
+        // console.log("wishlist",isWishlist)
         if (isWishlist.length === 0) {
             return next({ statusCode: 404, message: "No item found." });
         }

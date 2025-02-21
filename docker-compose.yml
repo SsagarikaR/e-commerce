@@ -1,0 +1,52 @@
+version: '3.8'
+
+# Services
+services:
+  # Server service
+  server:
+    build:
+      context: ./e-commerce-backend
+      dockerfile: Dockerfile
+    container_name: e-commerce-backend
+    ports:
+      - "3000:3000"
+    env_file: ./.env
+    environment:
+      - JWT="hjhwjhwjshddshhshdgggyreyreyyretrery3877yrehdbcbbcsbbhsahhahjakjdkjdakkdskdslklkslkslkalklsalkkjsjdshdbbcuyweyuiojhgfg" 
+      - DBNAME="eCommerce" 
+      - DBUSER="sagarika"
+      - PASSWORD="Sagarika@%71"
+    depends_on:
+      - mysql
+
+  # Client service
+  client:
+    build:
+      context: ./e-commerce-frontend
+      dockerfile: Dockerfile
+
+    container_name: e-commerce-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+
+  # Database service
+  mongodb:
+    image: mysql:latest
+    container_name: mysql_server
+
+    env_file: ./.env
+    environment:
+      - DBUSER="sagarika"
+      - PASSWORD="Sagarika@%71"
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - ./../mydata:/data/db
+
+# Volumes define
+volumes: 
+  mydata:

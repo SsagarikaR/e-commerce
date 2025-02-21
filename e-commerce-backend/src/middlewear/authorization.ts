@@ -8,7 +8,7 @@ dotenv.config();
 export const checkToken=(req:Request,res:Response,next:NextFunction)=>{
     const authHeader=req.headers['authorization'];
     if(!authHeader || !authHeader.startsWith('Bearer')){
-         res.status(401).json({error:"Token not found"})
+        return next({statusCode:401,message:"Authentication required."})
     }
     console.log(authHeader,"authHeader");
     const token=authHeader!.split(' ')[1];
@@ -37,7 +37,7 @@ export const isAdmin=async(req:Request,res:Response,next:NextFunction)=>{
             }
         )
         if(user.length===0){
-            res.status(404).json({error:"Invalid credentials."});
+            res.status(403).json({error:"You are not authorized for this action."});
             next();
         }
         next();

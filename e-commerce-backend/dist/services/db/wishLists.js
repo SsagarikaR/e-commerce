@@ -30,18 +30,16 @@ const getWishListByUserID = (userID) => __awaiter(void 0, void 0, void 0, functi
     return yield databse_1.sequelize.query(`
         SELECT 
           wl.wishListID, 
-          p.productID, 
+          wl.userID,
+          wl.productID, 
           p.productName, 
-          p.productDescription, 
           p.productThumbnail, 
-          p.productPrice, 
-          c.categoryName,
+          p.productPrice,
           br.brandID,
           br.brandThumbnail
         FROM WishLists wl
         JOIN Products p ON wl.productID = p.productID
-        JOIN Categories c ON p.categoryID = c.categoryID
-        JOIN Brands br ON br.brandID = p.brandID
+        JOIN Brands br ON p.brandID = br.brandID
         WHERE wl.userID = ? 
       `, {
         replacements: [userID],
