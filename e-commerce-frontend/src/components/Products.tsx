@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import CartModal from "./CartModal";
 
 function Products() {
-  const [products, setProducts] = useState<forProductbyName[] | undefined>();
+  const [products, setProducts] = useState<product[] | undefined>();
   const [price, setPrice] = useState("");
   const [searchParams] = useSearchParams();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -77,7 +77,7 @@ function Products() {
             </select>
           </div>
         </div>
-        <div className="overflow-auto ">
+        <div className="">
           {products && products.length > 0 ? (
             <div className="flex flex-col p-5">
               <div className="overflow-y-auto max-h-300">

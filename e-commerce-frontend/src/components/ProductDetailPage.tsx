@@ -8,9 +8,10 @@ import payPalIcon from "../assets/paypal.png"
 import favIcon from "../assets/fav.png";
 import notFavIcon from "../assets/nFav.png";
 import { makeAuthorizedGetRequest,makeAuthorizedDeleteRequest,makeAuthorizedPostRequest } from "../services/authorizedRequests";
+import Review from "./Review";
 
 function ProductDetailPage() {
-   const [product, setProduct] = useState<forProductbyName[]>();
+   const [product, setProduct] = useState<product[]>();
    const [WishList,setWishList]=useState<wishList[]|undefined>();
    const [toggleWishList,setToggleWishList]=useState(false);
    const [isModalOpen, setModalOpen] = useState(false);
@@ -110,6 +111,9 @@ function ProductDetailPage() {
                                     <img src={payPalIcon} className="w-18 h-18"/>
                                 </div>
                             </div>
+                            <Review 
+                                productID={Number(id)}
+                                rating={product[0].rating}/>
                         </div>
                     </div>
                 ) : (

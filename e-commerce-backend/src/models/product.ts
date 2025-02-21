@@ -47,6 +47,11 @@ export const Produtcs=sequelize.define("Products",{
             key:"brandID"
         },
         onDelete:'CASCADE'
+    },
+    rating:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        defaultValue:'0'
     }
 },
 {

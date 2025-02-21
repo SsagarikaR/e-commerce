@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Reviews = void 0;
-const sequelize_1 = require("sequelize");
+exports.Preferences = void 0;
 const databse_1 = require("../config/databse");
+const sequelize_1 = require("sequelize");
 const product_1 = require("./product");
 const user_1 = require("./user");
-exports.Reviews = databse_1.sequelize.define("Reviews", {
-    reviewID: {
+exports.Preferences = databse_1.sequelize.define("Preferences", {
+    preferenceID: {
         type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        autoIncrement: true
     },
     productID: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -18,7 +18,8 @@ exports.Reviews = databse_1.sequelize.define("Reviews", {
         references: {
             model: product_1.Produtcs,
             key: "productID"
-        }
+        },
+        onDelete: 'CASCADE'
     },
     userID: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -26,15 +27,8 @@ exports.Reviews = databse_1.sequelize.define("Reviews", {
         references: {
             model: user_1.Users,
             key: "userID"
-        }
-    },
-    rating: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false
-    },
-    description: {
-        type: sequelize_1.DataTypes.TEXT,
-        allowNull: false
+        },
+        onDelete: 'CASCADE'
     }
 }, {
     timestamps: false

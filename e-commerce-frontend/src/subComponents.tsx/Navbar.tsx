@@ -11,7 +11,7 @@ import { useCart } from "../context/cartContext";
 
 function Navbar() {
   const { cart } = useCart();
-  const [user, setUser] = useState<forUser | undefined>();
+  const [user, setUser] = useState<user | undefined>();
   const [search, setSearch] = useState<string>();
   const [categories, setCategories] = useState<forCategories[]>();
   const navigate = useNavigate();

@@ -47,24 +47,35 @@ declare global {
   }
 
   interface forProductProp {
-    product: forProductbyName;
+    product: product;
     setModalOpen: (value: boolean) => void;
   }
   
-  interface forUser {
+  interface user {
     userID: number;
     name: string;
     email: string;
     contactNo: string;
     password?: string;
     token?: string;
-    role:string
+    role?:string
+  }
+
+  interface review extends user{
+    reviewID:number;
+    productID:number;
+    rating:number;
+    description:rating
+  }
+  interface ratingProp{
+    productID:number;
+    rating:number;
   }
 
   interface forCategories {
     categoryID: number;
     categoryName: string;
-    categoryThumbnail: string;
+    categoryThumbnail?: string;
   }
 
   interface forBrand{
@@ -73,19 +84,14 @@ declare global {
     brandThumbnail: string;
   }
 
-  interface forProductbyName {
-    ProductThumbnail: string;
-    categoryID: number;
-    categoryName: string;
-    categoryThumbnail?: string;
-    productDescription: string;
-    productID: number;
-    brandID:number;
-    brandName:string;
-    brandThumbnail:string;
-    stock:number;
+  interface product extends forCategories,forBrand{
     productName: string;
     productPrice: number;
+    productID: number;
+    ProductThumbnail: string;
+    productDescription: string;
+    stock:number;
+    rating:number
   }
 
   interface forCartItem {

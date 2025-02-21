@@ -21,6 +21,10 @@ exports.Orders = databse_1.sequelize.define("Orders", {
         },
         onDelete: 'CASCADE'
     },
+    quantiy: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false
+    },
     userID: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
@@ -46,6 +50,10 @@ exports.Orders = databse_1.sequelize.define("Orders", {
     },
     totalPrice: {
         type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false
+    },
+    address: {
+        type: sequelize_1.DataTypes.TEXT,
         allowNull: false
     },
     status: {

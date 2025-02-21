@@ -49,6 +49,11 @@ exports.Produtcs = databse_1.sequelize.define("Products", {
             key: "brandID"
         },
         onDelete: 'CASCADE'
+    },
+    rating: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: '0'
     }
 }, {
     timestamps: false

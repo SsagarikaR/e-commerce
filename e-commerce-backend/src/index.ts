@@ -8,10 +8,12 @@ import productAPIs from "./routes/products";
 import cartAPIs from "./routes/carts";
 import adminAPIs from "./routes/admins";
 import brandAPIs from "./routes/brands"
-import wishListAPIs from "./routes/wishList";
+import wishListAPIs from "./routes/wishLists";
+import reviewAPIs from "./routes/reviews";
 import cors from "cors";
 import swaggerDocs  from "./config/swaggerConfig";
 import errorHandler from "./middlewear/errorHandler";
+import rateLimit from "express-rate-limit";
 
 // import { Users } from "./models/users";
 // import { Categories } from "./models/category";
@@ -30,7 +32,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors());
 swaggerDocs(app);
 
-// (async()=>{
+(async()=>{
     // await Users.sync({alter:true});
     // await Categories.sync({alter:true});
     //  await Produtcs.sync({alter:true})
@@ -39,7 +41,13 @@ swaggerDocs(app);
     // await Admins.sync({force:true});
     // await WishLists.sync({force:true});
     // await Reviews.sync({force:true});
-// })();
+})();
+
+//Rate limiting middleware
+const limiter=rateLimit({
+    windowMs:15 * 60 * 1000,//15 minutes
+    max:100 , //maximum 100 requests per window
+})
 
 app.get("/",async(req:Request,res:Response)=>{
     res.send("App is listening on port 3000");
@@ -53,7 +61,10 @@ app.use("/cart",cartAPIs);
 app.use("/admins",adminAPIs);
 app.use("/brands",brandAPIs)
 app.use("/wishlist",wishListAPIs);
+app.use("/reviews",reviewAPIs);
+
 app.use(errorHandler);
+app.use(limiter);
 
 app.listen(port,(error)=>{
     if(!error){

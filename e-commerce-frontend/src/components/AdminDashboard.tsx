@@ -14,13 +14,13 @@ import DeleteModal from "../subComponents.tsx/DeleteModal";
 
 function AdminDashboard() {
   const [page, setPage] = useState("products");
-  const [productData, setProductData] = useState<forProductbyName[]>();
+  const [productData, setProductData] = useState<product[]>();
   const [categoriesData, setCategoriesData] = useState<forCategories[]>();
-  const [userData, setUserData] = useState<forUser[]>();
+  const [userData, setUserData] = useState<user[]>();
   const [brandData, setBrandData] = useState<forBrand[]>();
   const [toggleModal, setToggleModal] = useState(false);
   const [listChange, setListChange] = useState<boolean>(false);
-  const [editProduct, setEditProduct] = useState<forProductbyName>();
+  const [editProduct, setEditProduct] = useState<product>();
   const [editCategory, setEditCategory] = useState<forCategories>();
   const [editBrand, setEditBrand] = useState<forBrand>();
   const [isDelete, setIsDelete] = useState(false);
