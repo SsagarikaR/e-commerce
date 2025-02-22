@@ -25,6 +25,7 @@ const brands_1 = __importDefault(require("./routes/brands"));
 const wishLists_1 = __importDefault(require("./routes/wishLists"));
 const reviews_1 = __importDefault(require("./routes/reviews"));
 const prefernces_1 = __importDefault(require("./routes/prefernces"));
+const orders_1 = __importDefault(require("./routes/orders"));
 const cors_1 = __importDefault(require("cors"));
 const swaggerConfig_1 = __importDefault(require("./config/swaggerConfig"));
 const errorHandler_1 = __importDefault(require("./middlewear/errorHandler"));
@@ -73,6 +74,7 @@ app.use("/brands", brands_1.default);
 app.use("/wishlist", wishLists_1.default);
 app.use("/reviews", reviews_1.default);
 app.use("/prefernces", prefernces_1.default);
+app.use("/orders", orders_1.default);
 app.use(errorHandler_1.default);
 app.use(limiter);
 app.listen(port, (error) => {

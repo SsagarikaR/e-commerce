@@ -15,9 +15,9 @@ const prefernces_1 = require("../../respository/prefernces");
 const createPreferenceService = (productID, userID) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // First, check if the preference already exists
-        const [existingPreference] = yield (0, prefernces_1.selectPrefernceByProductANDUser)(productID, userID);
+        const existingPreference = yield (0, prefernces_1.selectPrefernceByProductANDUser)(productID, userID);
         // If the preference exists, return null to prevent adding again
-        if (existingPreference) {
+        if (existingPreference.length > 0) {
             return null;
         }
         // Insert new preference if it doesn't exist
@@ -31,6 +31,7 @@ const createPreferenceService = (productID, userID) => __awaiter(void 0, void 0,
 });
 exports.createPreferenceService = createPreferenceService;
 const fetchPreferencesService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(userID, "got3");
     try {
         const preferences = yield (0, prefernces_1.fetchPreference)(userID);
         if (!preferences || preferences.length === 0) {
@@ -39,6 +40,7 @@ const fetchPreferencesService = (userID) => __awaiter(void 0, void 0, void 0, fu
         return preferences;
     }
     catch (error) {
+        console.error(error);
         throw new Error("Error while selecting prefernces. Please try again!");
     }
 });

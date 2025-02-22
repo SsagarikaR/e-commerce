@@ -1,9 +1,10 @@
+import React, { useEffect, useState } from "react";
 import Product from "../subComponents.tsx/Product";
 import Container from "../containers/Container";
-import { useEffect, useState } from "react";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { useSearchParams } from "react-router-dom";
 import CartModal from "./CartModal";
+import Pagination from "./Paginations"; // Import Pagination component
 
 function Products() {
   const [products, setProducts] = useState<product[] | undefined>();
@@ -22,6 +23,8 @@ function Products() {
     if (categoryID) queryParams.push(`categoryID=${categoryID}`);
     if (name) queryParams.push(`name=${name}`);
     if (price) queryParams.push(`price=${price}`);
+    queryParams.push(`page=${currentPage}`); // Add pagination parameter
+    queryParams.push(`limit=${itemsPerPage}`); // Limit the number of items per page
 
     const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
 
@@ -35,27 +38,23 @@ function Products() {
     }
   };
 
-  // Update data when price, name or categoryID change
+  // Update data when price, name, or categoryID change
   useEffect(() => {
     getData();
     console.log(price);
-  }, [name, price, categoryID]);
+  }, [name, price, categoryID, currentPage]);
 
-  // Get products to be displayed on the current page
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = products?.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-
-  // Calculate the total number of pages
-  const totalPages = products ? Math.ceil(products.length / itemsPerPage) : 1;
+  // Get total number of pages from the response headers (or manually calculated)
+  let totalPages:number;
+  if(products){
+    totalPages = Math.ceil((products[0].totalCount ?? 0) / itemsPerPage);
+  }
+ 
 
   return (
     <Container>
       <div className="flex">
-        <div className="p-2 shadow-l ">
+        <div className="p-2 shadow-l">
           <div className="text-lg p-2 border-b">
             <select
               className="outline-none"
@@ -81,45 +80,24 @@ function Products() {
           {products && products.length > 0 ? (
             <div className="flex flex-col p-5">
               <div className="overflow-y-auto max-h-300">
-                <div className="grid grid-cols-4 gap-10 ">
-                  {currentProducts &&
-                    currentProducts.map((product) => {
-                      console.log(
-                        product.ProductThumbnail,
-                        "product thumbnail"
-                      );
-                      return (
-                        <Product
-                          product={product}
-                          key={product.productID}
-                          setModalOpen={setModalOpen}
-                        />
-                      );
-                    })}
+                <div className="grid grid-cols-4 gap-10">
+                  {products?.map((product) => {
+                    return (
+                      <Product
+                        product={product}
+                        key={product.productID}
+                        setModalOpen={setModalOpen}
+                      />
+                    );
+                  })}
                 </div>
               </div>
               {/* Pagination Controls */}
-              <div className="flex justify-center mt-6 ">
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage === 1}
-                  className="bg-blue-400 text-white py-2 px-4 rounded mx-2 cursor-pointer"
-                >
-                  Previous
-                </button>
-                <span className="self-center text-xl">{`Page ${currentPage} of ${totalPages}`}</span>
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="bg-blue-400 text-white py-2 px-4 rounded mx-2 cursor-pointer"
-                >
-                  Next
-                </button>
-              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages!}
+                onPageChange={setCurrentPage}
+              />
             </div>
           ) : (
             <div className="text-center w-400 mt-6 text-2xl font-medium text-red-800">

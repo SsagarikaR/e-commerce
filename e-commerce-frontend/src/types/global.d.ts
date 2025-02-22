@@ -34,6 +34,18 @@ declare global {
     brandThmbnail:string
   }
 
+  interface prefernce{
+  brandName:string
+  brandThumbnail:string
+  preferenceID:number
+  productDescription:string
+  productThumbnail:string;
+  productID:number
+  productName:string
+  productPrice:number
+  userID:string
+  }
+
   interface wishListProp {
     item:wishListDetails
     setToggleWishList:React.Dispatch<React.SetStateAction<boolean>>
@@ -91,7 +103,8 @@ declare global {
     ProductThumbnail: string;
     productDescription: string;
     stock:number;
-    rating:number
+    rating:number;
+    totalCount:number;
   }
 
   interface forCartItem {

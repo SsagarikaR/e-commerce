@@ -1,4 +1,3 @@
-import Container from '../containers/Container'
 import "../styles/categories.css";
 import Category from '../subComponents.tsx/Category';
 import { useSearchParams } from 'react-router-dom';
@@ -33,16 +32,14 @@ function Categories() {
   },[categoryName])
 
   return (
-    <Container>
-    <div className='p-10 flex-col flex w-full '>
-      <h1 className='text-center text-4xl font-bold font '>Choose a category</h1>
-      {categories && categories?.length>0?<div className='grid grid-cols-1 xl:grid-cols-5 margin-auto self-center sm:grid-cols-2 lg:grid-cols-4 gap-x-5 pt-4 justify-center md:grid-cols-3'>
-        {categories && categories.map((category)=>{
-          return <Category category={category} key={category.categoryID}/>
-        })}
-      </div>:<div className='text-center mt-6 text-2xl font-medium text-red-800'>No item found</div>}
-    </div>
-    </Container>
+      <div>
+        <h1 className=' text-3xl  font-bold font-serif text-center md:text-start'>Choose a category</h1>
+        {categories && categories?.length>0?<div className='grid grid-cols-1 xl:grid-cols-5 margin-auto self-center sm:grid-cols-2 lg:grid-cols-4 gap-x-5 pt-4 justify-center md:grid-cols-3'>
+          {categories && categories.map((category)=>{
+            return <Category category={category} key={category.categoryID}/>
+          })}
+        </div>:<div className='text-center mt-6 text-2xl font-medium text-red-800'>No item found</div>}
+      </div>
   )
 }
 

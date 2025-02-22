@@ -38,7 +38,10 @@ const createProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 exports.createProduct = createProduct;
 // controller to fetch all product (by name,price,categoryID,productID or all products)
 const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, price, categoryID, id } = req.query;
+    const { name, price, categoryID, id, page = 1, limit = 8 } = req.query;
+    // Convert query parameters to expected types
+    const currentPage = Number(page);
+    const itemsPerPage = Number(limit);
     console.log("Query Parameters:", req.query);
     try {
         // Construct the filters to be passed to the service based on query parameters
@@ -46,10 +49,10 @@ const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             categoryID: categoryID ? String(categoryID) : undefined,
             name: name ? String(name) : undefined,
             id: id ? Number(id) : undefined,
-            price: price === "low-to-high" || price === "high-to-low" ? price : undefined, // Price sorting if provided
+            price: price === "low-to-high" || price === "high-to-low" ? price : undefined,
         };
-        // Fetch products based on the filters
-        const products = yield (0, products_1.getProductWithCondition)(filters);
+        // Fetch products based on filters and pagination
+        const products = yield (0, products_1.getProductWithCondition)(filters, currentPage, itemsPerPage);
         if (products.length === 0) {
             return next({ statusCode: 404, message: "No products found" });
         }

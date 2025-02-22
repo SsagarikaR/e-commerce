@@ -1,12 +1,11 @@
-import { sequelize } from "../config/databse";
 import { Request,Response,NextFunction} from "express";
-import { QueryTypes } from "sequelize";
 import { createPreferenceService,deletePreferenceService,fetchPreferencesService, updatePreferenceService } from "../services/db/prefernces";  // Import service
 
 
 //create a new preference
 export const createPreference = async (req:Request, res:Response,next:NextFunction) => {
-  const { productID, userID } = req.body;
+  const userID=req.body.user.identifire;
+  const { productID } = req.body;
 
   try {
     const result = await createPreferenceService(productID, userID);
@@ -25,8 +24,7 @@ export const createPreference = async (req:Request, res:Response,next:NextFuncti
 
 //fetch prefernces
 export const fetchPreferences = async (req:Request, res:Response,next:NextFunction) => {
-  const { userID } = req.body.user.identifire; 
-
+  const userID  = req.body.user.identifire; 
   try {
     const preferences = await fetchPreferencesService(userID);
 
@@ -34,7 +32,7 @@ export const fetchPreferences = async (req:Request, res:Response,next:NextFuncti
       return res.status(404).json({ message: "No preferences found for the user" });
     }
 
-    res.status(200).json({ preferences });
+    res.status(200).json( preferences );
   } catch (error) {
     return next({statusCode:500,message:"Failed to fetch Preferences, Please try again!"});
   }
@@ -61,7 +59,8 @@ export const deletePreference = async (req:Request, res:Response,next:NextFuncti
 //update prefernces
 export const updatePreference = async (req:Request, res:Response,next:NextFunction) => {
   const { preferenceID } = req.params;
-  const { productID, userID } = req.body;
+  const userID  = req.body.user.identifire; 
+  const { productID} = req.body;
 
   try {
     const result = await updatePreferenceService(Number(preferenceID), productID, userID);

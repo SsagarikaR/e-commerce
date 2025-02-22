@@ -55,15 +55,17 @@ const createNewProduct = (productName, productDescription, productThumbnail, pro
     });
 });
 exports.createNewProduct = createNewProduct;
-const getProductWithCondition = (_a) => __awaiter(void 0, [_a], void 0, function* ({ categoryID, name, id, price, }) {
+const getProductWithCondition = (_a, page_1, limit_1) => __awaiter(void 0, [_a, page_1, limit_1], void 0, function* ({ categoryID, name, id, price, }, page, limit) {
+    // Base query for products
     let query = `
-        SELECT p.*, c.*, b.*
-        FROM Products p
-        LEFT JOIN Categories c ON p.categoryID = c.categoryID
-        LEFT JOIN Brands b ON p.brandID = b.brandID
-      `;
+    SELECT p.*, c.*, b.*, COUNT(*) OVER() AS totalCount
+    FROM Products p
+    LEFT JOIN Categories c ON p.categoryID = c.categoryID
+    LEFT JOIN Brands b ON p.brandID = b.brandID
+  `;
     let replacements = [];
     let conditions = [];
+    // Apply conditions for filtering products
     if (categoryID) {
         conditions.push(`p.categoryID = ?`);
         replacements.push(categoryID);
@@ -76,9 +78,11 @@ const getProductWithCondition = (_a) => __awaiter(void 0, [_a], void 0, function
         conditions.push(`p.productID = ?`);
         replacements.push(id);
     }
+    // Add conditions to the query if any filters are provided
     if (conditions.length > 0) {
         query += ` WHERE ` + conditions.join(" AND ");
     }
+    // Add sorting based on price if provided
     if (price) {
         if (price === "low-to-high") {
             query += ` ORDER BY p.productPrice ASC`;
@@ -87,9 +91,17 @@ const getProductWithCondition = (_a) => __awaiter(void 0, [_a], void 0, function
             query += ` ORDER BY p.productPrice DESC`;
         }
     }
-    return yield databse_1.sequelize.query(query, {
+    // Pagination logic (LIMIT and OFFSET)
+    query += ` LIMIT ? OFFSET ?`;
+    replacements.push(limit, (page - 1) * limit);
+    console.log(query, "query");
+    console.log(replacements, "replacements");
+    // Execute the query to fetch products
+    const result = yield databse_1.sequelize.query(query, {
         replacements: replacements,
         type: sequelize_1.QueryTypes.SELECT,
     });
+    // Extract the totalCount from the first result (since it's the same for all rows)
+    return result;
 });
 exports.getProductWithCondition = getProductWithCondition;

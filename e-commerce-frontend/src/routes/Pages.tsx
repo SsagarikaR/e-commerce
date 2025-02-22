@@ -1,7 +1,7 @@
 import {Routes,Route,Navigate} from "react-router-dom";
 import Signup from "../components/Signup";
 import Signin from "../components/Signin";
-import Categories from "../components/Categories";
+// import Categories from "../components/Categories";
 import Landing from "../components/Landing";
 import Cookies from "js-cookie";
 import Products from "../components/Products";
@@ -9,6 +9,7 @@ import AdminDashboard from "../components/AdminDashboard";
 import Cart from "../components/Cart";
 import ProductDetailPage from "../components/ProductDetailPage";
 import WishList from "../components/WishList";
+import Home from "../components/Home";
 
 function Pages() {
   // console.log(document.cookie);
@@ -19,8 +20,8 @@ function Pages() {
         {
           token ?
           <Routes>
-            <Route path="/" element={<Categories/>}/>
-            <Route path="/categories" element={<Categories/>}/>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/categories" element={<Home/>}/>
             <Route path="/products" element={<Products/>}/>
             <Route path="/product/:id" element={<ProductDetailPage/>}/>
             <Route path="/dashboard" element={<AdminDashboard/>}/>

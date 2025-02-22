@@ -45,15 +45,17 @@ export const updatePreference=async(productID:number, userID:number, preferenceI
 }
 
 export const fetchPreference=async(userID:number)=>{
+    // console.log(userID,"got2")
     return await sequelize.query(
-        `SELECT p.preferenceID, p.productID, p.userID, pr.productName, pr.productDescription, pr.productPrice, 
-                b.brandName, b.brandThumbnail
+        `SELECT p.preferenceID, p.productID, p.userID, 
+        pr.productName, pr.productDescription,pr.productThumbnail,pr.productPrice, 
+        b.brandName, b.brandThumbnail
          FROM Preferences p
          JOIN Products pr ON pr.productID = p.productID
          JOIN Brands b ON b.brandID = pr.brandID
-         WHERE p.userID = :userID`,  // Filter by userID
+         WHERE p.userID = ?`,  // Filter by userID
         {
-          replacements: { userID },
+          replacements: [ userID ],
           type:QueryTypes.SELECT
         }
       );

@@ -32,32 +32,36 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
 
 
   // controller to fetch all product (by name,price,categoryID,productID or all products)
-  export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, price, categoryID, id } = req.query;
-    console.log("Query Parameters:", req.query);
-  
-    try {
-      // Construct the filters to be passed to the service based on query parameters
-      const filters = {
-        categoryID: categoryID ? String(categoryID) : undefined,
-        name: name ? String(name) : undefined, 
-        id: id ? Number(id) : undefined, 
-        price: price === "low-to-high" || price === "high-to-low" ? (price as "low-to-high" | "high-to-low") : undefined, // Price sorting if provided
-      };
-  
-      // Fetch products based on the filters
-      const products = await getProductWithCondition(filters);
-  
-    
-      if (products.length === 0) {
-        return next({ statusCode: 404, message: "No products found" });
-      }
-      return res.status(200).json(products);
-    } 
-    catch (error) {
-      console.error("Error", error);
-      return next({ statusCode: 500, message: "An error occurred while fetching products" });
+export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
+  const { name, price, categoryID, id, page = 1, limit = 8 } = req.query;
+
+  // Convert query parameters to expected types
+  const currentPage = Number(page);
+  const itemsPerPage = Number(limit);
+
+  console.log("Query Parameters:", req.query);
+
+  try {
+    // Construct the filters to be passed to the service based on query parameters
+    const filters = {
+      categoryID: categoryID ? String(categoryID) : undefined,
+      name: name ? String(name) : undefined,
+      id: id ? Number(id) : undefined,
+      price: price === "low-to-high" || price === "high-to-low" ? (price as "low-to-high" | "high-to-low") : undefined,
+    };
+
+    // Fetch products based on filters and pagination
+    const products = await getProductWithCondition(filters, currentPage, itemsPerPage);
+
+    if (products.length === 0) {
+      return next({ statusCode: 404, message: "No products found" });
     }
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.error("Error", error);
+    return next({ statusCode: 500, message: "An error occurred while fetching products" });
+  }
 };
 
 

@@ -8,10 +8,10 @@ import { insertPrefernce, selectPrefernceByProductANDUser,
 export const createPreferenceService = async (productID:number, userID:number) => {
   try {
     // First, check if the preference already exists
-    const [existingPreference] = await selectPrefernceByProductANDUser(productID,userID)
+    const existingPreference= await selectPrefernceByProductANDUser(productID,userID)
 
     // If the preference exists, return null to prevent adding again
-    if (existingPreference) {
+    if (existingPreference.length>0) {
       return null;
     }
 
@@ -27,6 +27,7 @@ export const createPreferenceService = async (productID:number, userID:number) =
 
 
 export const fetchPreferencesService = async (userID:number) => {
+    console.log(userID,"got3")
     try {
       const preferences = await fetchPreference(userID);
       if (!preferences || preferences.length === 0) {
@@ -34,6 +35,7 @@ export const fetchPreferencesService = async (userID:number) => {
       }
       return preferences;
     } catch (error) {
+        console.error(error);
       throw new Error("Error while selecting prefernces. Please try again!");
     }
 };
@@ -51,6 +53,7 @@ export const updatePreferenceService = async (preferenceID:number, productID:num
 
     return result;
   } catch (error) {
+
     throw new Error("Error while updating prefernces. Please try again!");
   }
 };

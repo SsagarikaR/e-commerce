@@ -50,7 +50,7 @@ function Navbar() {
   }, []);
 
   return (
-    <div className="flex fixed bg_color shadow w-full h-20 gap-x-15 z-10 justify-center md:gap-x-0 md:justify-between px-24 xl:px-24 p-0 sm:p-0 md:px-10 text-2xl lg:text-2xl md:text-xl font-semibold items-center">
+    <div className="flex fixed bg_color shadow w-full h-20 lg:gap-x-15 gap-x-8 z-10 justify-center md:gap-x-0 md:justify-between px-24 xl:px-24 p-0 sm:p-0 md:px-10 text-lg lg:text-2xl md:text-xl font-semibold items-center">
       <div className="flex items-center justify-center gap-x-1">
         <Link to="/">
           <img src={logoIcon} className="w-10 h-10 " />

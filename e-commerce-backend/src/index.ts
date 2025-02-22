@@ -11,6 +11,7 @@ import brandAPIs from "./routes/brands"
 import wishListAPIs from "./routes/wishLists";
 import reviewAPIs from "./routes/reviews";
 import prefernceAPIs from "./routes/prefernces"
+import orderAPIs from "./routes/orders";
 import cors from "cors";
 import swaggerDocs  from "./config/swaggerConfig";
 import errorHandler from "./middlewear/errorHandler";
@@ -66,6 +67,7 @@ app.use("/brands",brandAPIs)
 app.use("/wishlist",wishListAPIs);
 app.use("/reviews",reviewAPIs);
 app.use("/prefernces",prefernceAPIs);
+app.use("/orders",orderAPIs);
 
 app.use(errorHandler);
 app.use(limiter);

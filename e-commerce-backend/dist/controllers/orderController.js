@@ -9,27 +9,106 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createNewOrder = void 0;
+exports.updateOrderStatusToCancelled = exports.deleteOrder = exports.updateOrderAddress = exports.fetchUserOrders = exports.createOrder = void 0;
 const orders_1 = require("../services/db/orders");
-//add a new order
-const createNewOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userID = req.body.user.identifire;
-    const { productID, productPrice, address, quantiy } = req.body;
+    const { totalAmount, items, address } = req.body;
     try {
-        if (!productID) {
-            return next({ statusCode: 409, message: "Please enter the product ." });
+        // Validate the required fields
+        if (!address || !totalAmount || !items || items.length === 0) {
+            return next({ statusCode: 400, message: "Please provide all required fields (address, totalAmount, items)." });
         }
-        const [result, metaData] = yield (0, orders_1.createOrder)(userID, productID, productPrice, address, quantiy);
-        if (metaData > 0) {
-            return res.status(201).json({ message: "Successfully ordered this product." });
+        const result = yield (0, orders_1.createOrderService)(userID, totalAmount, items, address);
+        if (!result) {
+            return res.status(400).json({ message: 'Error while creating order. Please try again.' });
         }
-        else {
-            return next({ statusCode: 409, message: "Error in creating order, Please try again!" });
-        }
+        res.status(201).json({ message: 'Order created successfully', result });
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+        return next({
+            statusCode: 500,
+            message: 'Error in creating order, Please try again!',
+        });
     }
 });
-exports.createNewOrder = createNewOrder;
+exports.createOrder = createOrder;
+const fetchUserOrders = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const userID = req.body.user.identifire; // Assuming the userID comes from the request body.
+    try {
+        const orders = yield (0, orders_1.fetchOrdersWithProductAndBrand)(userID);
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'No orders found for this user.' });
+        }
+        res.status(200).json({ orders });
+    }
+    catch (error) {
+        return next({
+            statusCode: 500,
+            message: 'Error fetching orders. Please try again later.',
+        });
+    }
+});
+exports.fetchUserOrders = fetchUserOrders;
+const updateOrderAddress = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId, productId, newAddress } = req.body;
+    try {
+        if (!orderId || !productId || !newAddress) {
+            return next({ statusCode: 400, message: 'Please provide orderId, productId, and newAddress.' });
+        }
+        // Check if the order status is 'Cancelled'
+        const orderStatus = yield (0, orders_1.getOrderStatusById)(orderId);
+        if (orderStatus === 'Cancelled') {
+            return res.status(400).json({ message: 'You cannot update the address of a cancelled order.' });
+        }
+        const result = yield (0, orders_1.updateOrderAddressService)(orderId, productId, newAddress);
+        if (!result) {
+            return res.status(400).json({ message: 'Error updating product address. Please try again.' });
+        }
+        res.status(200).json({ message: 'Product address updated successfully' });
+    }
+    catch (error) {
+        return next({
+            statusCode: 500,
+            message: 'Error in updating product address, please try again!',
+        });
+    }
+});
+exports.updateOrderAddress = updateOrderAddress;
+const deleteOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId } = req.body;
+    try {
+        if (!orderId) {
+            return next({ statusCode: 400, message: 'Please provide orderId.' });
+        }
+        const result = yield (0, orders_1.deleteOrderService)(orderId);
+        res.status(200).json({ message: 'Order deleted successfully' });
+    }
+    catch (error) {
+        return next({
+            statusCode: 500,
+            message: 'Error in deleting order, please try again!',
+        });
+    }
+});
+exports.deleteOrder = deleteOrder;
+const updateOrderStatusToCancelled = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId } = req.body;
+    try {
+        if (!orderId) {
+            return next({ statusCode: 400, message: 'Please provide orderId.' });
+        }
+        const result = yield (0, orders_1.updateOrderStatusService)(orderId, 'Cancelled');
+        if (!result) {
+            return res.status(400).json({ message: 'Error updating order status. Please try again.' });
+        }
+        res.status(200).json({ message: 'Order status updated to Cancelled' });
+    }
+    catch (error) {
+        return next({
+            statusCode: 500,
+            message: 'Error in updating order status, please try again!',
+        });
+    }
+});
+exports.updateOrderStatusToCancelled = updateOrderStatusToCancelled;

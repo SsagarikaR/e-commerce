@@ -1,31 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Orders = void 0;
+exports.OrderItems = void 0;
 const sequelize_1 = require("sequelize");
 const databse_1 = require("../config/databse");
-exports.Orders = databse_1.sequelize.define("Orders", {
-    ordersID: {
-        type: sequelize_1.DataTypes.INTEGER,
+const order_1 = require("./order");
+exports.OrderItems = databse_1.sequelize.define("OrderItems", {
+    orderItemID: {
+        type: sequelize_1.DataTypes.INET,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true
     },
-    userId: {
+    orderId: {
+        type: sequelize_1.DataTypes.INTEGER,
+        references: {
+            model: order_1.Orders,
+            key: "orderID"
+        }
+    },
+    productId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
-    totalAmount: {
+    quantity: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
-    status: {
-        type: sequelize_1.DataTypes.ENUM('Pending', 'Success', 'Cancel'),
-        defaultValue: 'Pending'
-    },
-    address: {
-        type: sequelize_1.DataTypes.STRING, // Store the address as a string
+    price: {
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
-    }
+    },
 }, {
     timestamps: false
 });

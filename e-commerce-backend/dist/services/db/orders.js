@@ -9,14 +9,90 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createOrder = void 0;
+exports.getOrderStatusById = exports.updateOrderStatusService = exports.deleteOrderService = exports.updateOrderAddressService = exports.fetchOrdersWithProductAndBrand = exports.createOrderService = void 0;
 const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const createOrder = (userID, productID, productPrice, address, quantiy) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`INSERT INTO Orders (productID,userID,productPrice,totalPrice,address,quantity) VALUES
-        (?,?,?,sum(platformFee,deliveryFee,productPrice),?,?) `, {
-        replacements: [productID, userID, productPrice, address, quantiy],
-        type: sequelize_1.QueryTypes.INSERT
-    });
+const orders_1 = require("../../respository/orders");
+const createOrderService = (userID, totalAmount, items, address) => __awaiter(void 0, void 0, void 0, function* () {
+    const t = yield databse_1.sequelize.transaction();
+    try {
+        // First, check if the user already has a pending order
+        const existingOrder = yield (0, orders_1.selectOrderByUserID)(userID, t);
+        if (existingOrder.length > 0) {
+            return null; // If there is an existing pending order, don't create a new one
+        }
+        // Insert the order with the address
+        const result = yield (0, orders_1.insertOrder)(userID, totalAmount, address, t);
+        // Insert the order items if the order is created successfully
+        if (result) {
+            for (const item of items) {
+                yield (0, orders_1.insertOrderItems)(result.orderID, item.productId, item.quantity, item.price, t);
+            }
+        }
+        // Commit the transaction
+        yield t.commit();
+        return result;
+    }
+    catch (error) {
+        // Rollback the transaction in case of any error
+        yield t.rollback();
+        console.log(error);
+        throw new Error('Error while creating order and order items');
+    }
 });
-exports.createOrder = createOrder;
+exports.createOrderService = createOrderService;
+const fetchOrdersWithProductAndBrand = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Fetch the orders along with products and brands
+        const orders = yield (0, orders_1.selectOrdersWithProductAndBrand)(userID);
+        return orders;
+    }
+    catch (error) {
+        console.error('Error fetching orders with product and brand details:', error);
+        throw new Error('Error fetching orders with product and brand details');
+    }
+});
+exports.fetchOrdersWithProductAndBrand = fetchOrdersWithProductAndBrand;
+const updateOrderAddressService = (orderId, productId, newAddress) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, orders_1.updateOrderAddressQuery)(orderId, productId, newAddress);
+        return result;
+    }
+    catch (error) {
+        console.error('Error in service:', error);
+        throw new Error('Error while updating product address');
+    }
+});
+exports.updateOrderAddressService = updateOrderAddressService;
+const deleteOrderService = (orderId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, orders_1.deleteOrderQuery)(orderId);
+        return result;
+    }
+    catch (error) {
+        console.error('Error in service:', error);
+        throw new Error('Error while deleting the order');
+    }
+});
+exports.deleteOrderService = deleteOrderService;
+const updateOrderStatusService = (orderId, status) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, orders_1.updateOrderStatusQuery)(orderId, status);
+        return result;
+    }
+    catch (error) {
+        console.error('Error in service:', error);
+        throw new Error('Error while updating order status');
+    }
+});
+exports.updateOrderStatusService = updateOrderStatusService;
+const getOrderStatusById = (orderId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, orders_1.getOrderStatusByIdQuery)(orderId);
+        return result;
+    }
+    catch (error) {
+        console.error('Error fetching order status:', error);
+        throw new Error('Error fetching order status');
+    }
+});
+exports.getOrderStatusById = getOrderStatusById;

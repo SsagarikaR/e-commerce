@@ -14,5 +14,12 @@ declare global {
     message: string;
   }
   
+  interface order{
+    ordersID:number;
+    userId:number;
+    totalAmount:number;
+    status: string;
+    address: string;
+  }
 }
 export {};

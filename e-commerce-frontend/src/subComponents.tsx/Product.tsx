@@ -48,7 +48,7 @@ function Product({product,setModalOpen}:forProductProp) {
   },[toggleWishList])
   
   return (
-    <div className="flex flex-col gap-y-2 shadow-2xl p-2 relative" >
+    <div className="flex flex-col gap-y-2 shadow-2xl p-2 relative transition-transform duration-300 hover:scale-95" >
         <div className='absolute m-2 cursor-pointer ' onClick={()=>{addToWishList()}}>
           {WishList?<img src={favIcon} className='w-10 h-10 '/>
             :<img src={notFavIcon} className='w-10 h-10'/>

@@ -13,7 +13,8 @@ exports.updatePreference = exports.deletePreference = exports.fetchPreferences =
 const prefernces_1 = require("../services/db/prefernces"); // Import service
 //create a new preference
 const createPreference = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productID, userID } = req.body;
+    const userID = req.body.user.identifire;
+    const { productID } = req.body;
     try {
         const result = yield (0, prefernces_1.createPreferenceService)(productID, userID);
         if (!result) {
@@ -28,13 +29,13 @@ const createPreference = (req, res, next) => __awaiter(void 0, void 0, void 0, f
 exports.createPreference = createPreference;
 //fetch prefernces
 const fetchPreferences = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userID } = req.body.user.identifire;
+    const userID = req.body.user.identifire;
     try {
         const preferences = yield (0, prefernces_1.fetchPreferencesService)(userID);
         if (!preferences) {
             return res.status(404).json({ message: "No preferences found for the user" });
         }
-        res.status(200).json({ preferences });
+        res.status(200).json(preferences);
     }
     catch (error) {
         return next({ statusCode: 500, message: "Failed to fetch Preferences, Please try again!" });
@@ -56,7 +57,8 @@ exports.deletePreference = deletePreference;
 //update prefernces
 const updatePreference = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { preferenceID } = req.params;
-    const { productID, userID } = req.body;
+    const userID = req.body.user.identifire;
+    const { productID } = req.body;
     try {
         const result = yield (0, prefernces_1.updatePreferenceService)(Number(preferenceID), productID, userID);
         if (!result) {

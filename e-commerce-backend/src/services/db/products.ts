@@ -66,47 +66,70 @@ export const createNewProduct = async (
 };
 
 
-export const getProductWithCondition = async ({categoryID, name, id, price,}: 
-  {categoryID?: string | number; name?: string; id?: string | number; price?: "low-to-high" | "high-to-low";}) => {
+export const getProductWithCondition = async ({
+  categoryID,
+  name,
+  id,
+  price,
+}: {
+  categoryID?: string | number;
+  name?: string;
+  id?: string | number;
+  price?: "low-to-high" | "high-to-low";
+}, page: number, limit: number) => {
+  // Base query for products
+  let query = `
+    SELECT p.*, c.*, b.*, COUNT(*) OVER() AS totalCount
+    FROM Products p
+    LEFT JOIN Categories c ON p.categoryID = c.categoryID
+    LEFT JOIN Brands b ON p.brandID = b.brandID
+  `;
+  let replacements = [];
+  let conditions = [];
 
-let query = `
-        SELECT p.*, c.*, b.*
-        FROM Products p
-        LEFT JOIN Categories c ON p.categoryID = c.categoryID
-        LEFT JOIN Brands b ON p.brandID = b.brandID
-      `;
-let replacements = [];
-let conditions = [];
-
-if (categoryID) {
-  conditions.push(`p.categoryID = ?`);
-  replacements.push(categoryID);
-}
-
-if (name) {
-  conditions.push(`p.productName LIKE ?`);
-  replacements.push(`%${name}%`);
-}
-
-if (id) {
-  conditions.push(`p.productID = ?`);
-  replacements.push(id);
-}
-
-if (conditions.length > 0) {
-  query += ` WHERE ` + conditions.join(" AND ");
-}
-
-if (price) {
-  if (price === "low-to-high") {
-    query += ` ORDER BY p.productPrice ASC`;
-  } else if (price === "high-to-low") {
-    query += ` ORDER BY p.productPrice DESC`;
+  // Apply conditions for filtering products
+  if (categoryID) {
+    conditions.push(`p.categoryID = ?`);
+    replacements.push(categoryID);
   }
-}
 
-return await sequelize.query(query, {
-  replacements: replacements,
-  type: QueryTypes.SELECT,
-});
+  if (name) {
+    conditions.push(`p.productName LIKE ?`);
+    replacements.push(`%${name}%`);
+  }
+
+  if (id) {
+    conditions.push(`p.productID = ?`);
+    replacements.push(id);
+  }
+
+  // Add conditions to the query if any filters are provided
+  if (conditions.length > 0) {
+    query += ` WHERE ` + conditions.join(" AND ");
+  }
+
+  // Add sorting based on price if provided
+  if (price) {
+    if (price === "low-to-high") {
+      query += ` ORDER BY p.productPrice ASC`;
+    } else if (price === "high-to-low") {
+      query += ` ORDER BY p.productPrice DESC`;
+    }
+  }
+
+  // Pagination logic (LIMIT and OFFSET)
+  query += ` LIMIT ? OFFSET ?`;
+  replacements.push(limit, (page - 1) * limit);
+
+  console.log(query, "query");
+  console.log(replacements, "replacements");
+
+  // Execute the query to fetch products
+  const result = await sequelize.query(query, {
+    replacements: replacements,
+    type: QueryTypes.SELECT,
+  });
+
+  // Extract the totalCount from the first result (since it's the same for all rows)
+ return result;
 };

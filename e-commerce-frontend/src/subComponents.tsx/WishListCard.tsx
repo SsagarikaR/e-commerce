@@ -16,10 +16,12 @@ function WishListCard({item,setToggleWishList}:wishListProp) {
         if(response?.data){
             setToggleWishList(prev=>!prev);
         }
+        
     }
+    // console.log(item.brandThumbnail);
 
   return (
-    <div className="flex w-full border-b border-gray-400 items-center p-2 ">
+    <div className="flex w-full  shadow-lg items-center p-2 ">
     <div className="flex w-4/5 items-center">
       <div className="cursor-pointer" onClick={()=>{openProductDetail();}}>
         <img src={item.productThumbnail} className="w-30 h-30 shadow-xl m-2"/>
@@ -31,7 +33,12 @@ function WishListCard({item,setToggleWishList}:wishListProp) {
             openProductDetail();
            }}>
             {item.productName}</div>
-          <img src={item.brandThmbnail} className="w-6 h-6 border rounded-full"/>
+            <img 
+                            src={item.brandThmbnail} 
+                            alt="Brand" 
+                            className="w-6 h-6 border rounded-full"
+                           
+                        />
         </div>
         <div className="text-lg font-medium text-gray-600">₹{item.productPrice}</div>
       </div>

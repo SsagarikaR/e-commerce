@@ -43,14 +43,16 @@ const updatePreference = (productID, userID, preferenceID) => __awaiter(void 0, 
 });
 exports.updatePreference = updatePreference;
 const fetchPreference = (userID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT p.preferenceID, p.productID, p.userID, pr.productName, pr.productDescription, pr.productPrice, 
-                b.brandName, b.brandThumbnail
+    // console.log(userID,"got2")
+    return yield databse_1.sequelize.query(`SELECT p.preferenceID, p.productID, p.userID, 
+        pr.productName, pr.productDescription,pr.productThumbnail,pr.productPrice, 
+        b.brandName, b.brandThumbnail
          FROM Preferences p
          JOIN Products pr ON pr.productID = p.productID
          JOIN Brands b ON b.brandID = pr.brandID
-         WHERE p.userID = :userID`, // Filter by userID
+         WHERE p.userID = ?`, // Filter by userID
     {
-        replacements: { userID },
+        replacements: [userID],
         type: sequelize_1.QueryTypes.SELECT
     });
 });
