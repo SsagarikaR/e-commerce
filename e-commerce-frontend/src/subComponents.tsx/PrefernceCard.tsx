@@ -11,8 +11,8 @@ function PrefernceCard({item}:{item:prefernce}) {
               className="  object-cover rounded-md" 
             />
             <div className="mt-2 w-full">
-              <h2 className="text-xl font-semibold">{item.productName}</h2>
-              <p className="text-lg font-bold">₹{item.productPrice}</p>
+              <h2 className="text-lg font-semibold">{item.productName}</h2>
+              <p className="text-lg font-semibold">₹{item.productPrice}</p>
             </div>
         </div></Link>
   )

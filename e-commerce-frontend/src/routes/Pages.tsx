@@ -2,7 +2,7 @@ import {Routes,Route,Navigate} from "react-router-dom";
 import Signup from "../components/Signup";
 import Signin from "../components/Signin";
 // import Categories from "../components/Categories";
-import Landing from "../components/Landing";
+// import Landing from "../components/Landing";
 import Cookies from "js-cookie";
 import Products from "../components/Products";
 import AdminDashboard from "../components/AdminDashboard";
@@ -37,7 +37,10 @@ function Pages() {
           </Routes>:
           <Routes> 
             <Route path="*" element={<Navigate to="/" replace/>}/> 
-            <Route path="/" element={<Landing/>}/>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/categories" element={<Home/>}/>
+            <Route path="/products" element={<Products/>}/>
+            <Route path="/product/:id" element={<ProductDetailPage/>}/>
             <Route path="/signup" element={<Signup/>}/>
             <Route path="/signin" element={<Signin/>}/>
           </Routes>

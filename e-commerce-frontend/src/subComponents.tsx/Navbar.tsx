@@ -8,6 +8,8 @@ import favIcon from "../assets/fav.png";
 import { Link, useNavigate } from "react-router-dom";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { useCart } from "../context/cartContext";
+import Cookies from "js-cookie";
+import { SIGN_IN_BTN } from "../constants/btnConst";
 
 function Navbar() {
   const { cart } = useCart();
@@ -15,6 +17,7 @@ function Navbar() {
   const [search, setSearch] = useState<string>();
   const [categories, setCategories] = useState<forCategories[]>();
   const navigate = useNavigate();
+  const cookie=Cookies.get("token");
 
   // Search products based on the name
   const searchProduct = async () => {
@@ -111,7 +114,7 @@ function Navbar() {
         </div>
       </Link>
 
-      {user && (
+      {cookie ?(user && (
         <div className="relative group">
           <div className="flex cursor-pointer">
             <img src={profileIcon} className="w-8 h-8" />
@@ -119,23 +122,29 @@ function Navbar() {
           </div>
 
           {/* Dropdown content */}
-          <div className="absolute left-0 hidden group-hover:block text-lg group-focus-within:block bg-gray-400 w-35 text-center text-black p-2 rounded shadow-lg">
+          <div className="absolute left-0 hidden group-hover:block text-lg group-focus-within:block bg-white w-35 text-center text-black p-2 shadow-lg">
             <Link
               to={user.role === "Admin" ? "/dashboard" : "#"}
-              className="block p-1"
+              className="block p-2 hover:bg-gray-300"
             >
               <img src={profileIcon} className="w-7 h-7 m-auto" />
             </Link>
-            <Link to="/wishlist" className=" py-1 flex gap-x-1 items-center justify-center">
+            <Link to="/wishlist" className=" py-2 flex gap-x-1 items-center justify-center hover:bg-gray-300">
               <img src={favIcon} className="w-4 h-4 " />
               <div>Wishlist</div>
             </Link>
-            <Link to="#" className="block p-1 underline">
+            <Link to="/orders" className="py-2 hover:bg-gray-300">
+              <div className="hover:bg-gray-300">Orders</div>
+            </Link>
+            <Link to="#" className="block p-1 underline py-2 hover:bg-gray-300" onClick={()=>{Cookies.remove("token")}}>
               Log out
             </Link>
           </div>
         </div>
-      )}
+      )):
+      <Link to="/signin">
+        <div className="bg-blue-400 p-2 rounded-sm md:px-6 md:text-lg text-sm">{SIGN_IN_BTN}</div>
+      </Link>}
     </div>
   );
 }

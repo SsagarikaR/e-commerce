@@ -62,7 +62,7 @@ const getOrders = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     const query = `
       SELECT orderID, userId, totalAmount, status, address
       FROM Orders
-      WHERE userId = :userID AND status = 'Pending'
+      WHERE userId = :userID 
     `;
     const result = yield databse_1.sequelize.query(query, {
         replacements: { userID },
@@ -73,14 +73,14 @@ const getOrders = (userID) => __awaiter(void 0, void 0, void 0, function* () {
 // Second: Get order items for each order (OrderItem[] type)
 const getOrderItems = (orderIDs) => __awaiter(void 0, void 0, void 0, function* () {
     const query = `
-      SELECT oi.orderId, oi.productId, oi.quantity, oi.price, p.productName, p.productThumbnail, p.productPrice, b.brandName
-      FROM OrderItems oi
-      JOIN Products p ON oi.productId = p.productID
-      JOIN Brands b ON p.brandID = b.brandID
-      WHERE oi.orderId IN (:orderIDs)
-    `;
+    SELECT oi.orderId, oi.productId, oi.quantity, oi.price, p.productName, p.productThumbnail, p.productPrice, b.brandName
+    FROM OrderItems oi
+    JOIN Products p ON oi.productId = p.productID
+    JOIN Brands b ON p.brandID = b.brandID
+    WHERE oi.orderId IN (?)
+  `;
     const result = yield databse_1.sequelize.query(query, {
-        replacements: { orderIDs },
+        replacements: [orderIDs],
         type: sequelize_1.QueryTypes.SELECT,
     });
     return result;
@@ -88,7 +88,9 @@ const getOrderItems = (orderIDs) => __awaiter(void 0, void 0, void 0, function* 
 // Combine order and items (OrderDetail[] type)
 const getUserOrderDetails = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield getOrders(userID);
+    console.log(orders);
     const orderIDs = orders.map((order) => order.orderID);
+    console.log(orderIDs, "order id");
     const orderItems = yield getOrderItems(orderIDs);
     // Combine the results
     const orderDetails = orders.map((order) => (Object.assign(Object.assign({}, order), { items: orderItems.filter((item) => item.orderId === order.orderID) })));

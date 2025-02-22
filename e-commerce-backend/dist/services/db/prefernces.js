@@ -8,9 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePreferenceService = exports.updatePreferenceService = exports.fetchPreferencesService = exports.createPreferenceService = void 0;
 const prefernces_1 = require("../../respository/prefernces");
+const node_cache_1 = __importDefault(require("node-cache"));
+const cache = new node_cache_1.default({ stdTTL: 3600, checkperiod: 600 });
 // Service function for creating a preference
 const createPreferenceService = (productID, userID) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -33,10 +38,17 @@ exports.createPreferenceService = createPreferenceService;
 const fetchPreferencesService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(userID, "got3");
     try {
+        const cacheKey = `preferences:${userID}`;
+        const cachedPreferences = cache.get(cacheKey);
+        if (cachedPreferences) {
+            console.log(cachedPreferences, 'Returning cached preferences');
+            return cachedPreferences; // Return cached data
+        }
         const preferences = yield (0, prefernces_1.fetchPreference)(userID);
         if (!preferences || preferences.length === 0) {
             return null; // No preferences found for the user
         }
+        cache.set(cacheKey, preferences);
         return preferences;
     }
     catch (error) {

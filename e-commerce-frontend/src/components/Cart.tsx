@@ -1,3 +1,4 @@
+import Container from "../containers/Container";
 import { useCart } from "../context/cartContext";
 import { useNavigate,Link } from "react-router-dom";
 
@@ -11,6 +12,7 @@ const Cart = () => {
 
     console.log(cart);
     return (
+        <Container>
         <div className="p-5 min-w-screen min-h-screen  bg_color">
             <h2 className="text-4xl font-bold mb-4 text-center text-blue-500">Shopping Cart</h2>
             {cart.length === 0 ? (
@@ -73,6 +75,7 @@ const Cart = () => {
                 </div>
             )}
         </div>
+        </Container>
     );
 };
 

@@ -6,7 +6,7 @@ import {
   selectCatgeoryByID,
   selectCatgeoryByName,
   updateTheCatgeory,
-} from "../services/db/categories";
+} from "../respository/categories";
 
 
 // Controller to create a new category

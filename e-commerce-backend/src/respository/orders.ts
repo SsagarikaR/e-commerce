@@ -68,7 +68,7 @@ export const insertOrderItems = async (
     const query = `
       SELECT orderID, userId, totalAmount, status, address
       FROM Orders
-      WHERE userId = :userID AND status = 'Pending'
+      WHERE userId = :userID 
     `;
     
     const result:order[] = await sequelize.query(query, {
@@ -82,15 +82,15 @@ export const insertOrderItems = async (
   // Second: Get order items for each order (OrderItem[] type)
   const getOrderItems = async (orderIDs: number[]): Promise<orderItem[]> => {
     const query = `
-      SELECT oi.orderId, oi.productId, oi.quantity, oi.price, p.productName, p.productThumbnail, p.productPrice, b.brandName
-      FROM OrderItems oi
-      JOIN Products p ON oi.productId = p.productID
-      JOIN Brands b ON p.brandID = b.brandID
-      WHERE oi.orderId IN (:orderIDs)
-    `;
+    SELECT oi.orderId, oi.productId, oi.quantity, oi.price, p.productName, p.productThumbnail, p.productPrice, b.brandName
+    FROM OrderItems oi
+    JOIN Products p ON oi.productId = p.productID
+    JOIN Brands b ON p.brandID = b.brandID
+    WHERE oi.orderId IN (?)
+  `;
     
     const result:orderItem[] = await sequelize.query(query, {
-      replacements: { orderIDs },
+      replacements: [orderIDs ],
       type: QueryTypes.SELECT,
     });
   
@@ -100,8 +100,9 @@ export const insertOrderItems = async (
   // Combine order and items (OrderDetail[] type)
   export const getUserOrderDetails = async (userID: number): Promise<OrderDetail[]> => {
     const orders = await getOrders(userID);
+    console.log(orders);
     const orderIDs = orders.map((order) => order.orderID);
-  
+    console.log(orderIDs,"order id");
     const orderItems = await getOrderItems(orderIDs);
   
     // Combine the results

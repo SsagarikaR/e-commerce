@@ -21,7 +21,7 @@ function ProductList({data,setEditProduct,setToggleModal,setIsDelete,setDeletePr
                 <tr key={d.productID}>
                   <td className="border border-gray-400 p-2">
                     <div className="flex items-center space-x-2">
-                      <img src={d.ProductThumbnail} className="w-15 h-15 shadow-lg " />
+                      <img src={d.productThumbnail} className="w-15 h-15 shadow-lg " />
                       <span>{d.productName}</span>
                     </div>
                   </td>

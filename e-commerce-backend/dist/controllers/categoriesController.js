@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCategories = exports.updateCategories = exports.getCategories = exports.createCategories = void 0;
-const categories_1 = require("../services/db/categories");
+const categories_1 = require("../respository/categories");
 // Controller to create a new category
 const createCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryName, categoryThumbnail } = req.body;

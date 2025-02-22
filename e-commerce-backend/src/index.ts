@@ -43,12 +43,12 @@ swaggerDocs(app);
     //  await Produtcs.sync({alter:true})
     // await Brands.sync({alter:true});
     // await CartItems.sync({alter:true});
-    // await Admins.sync({force:true});
-    // await WishLists.sync({force:true});
-    // await Reviews.sync({force:true});
-    // await Preferences.sync({force:true})
-    // await Orders.sync({force:true})
-    // await OrderItems.sync({force:true});
+    // await Admins.sync({alter:true});
+    // await WishLists.sync({alter:true});
+    // await Reviews.sync({alter:true});
+    // await Preferences.sync({alter:true})
+    // await Orders.sync({alter:true})
+    // await OrderItems.sync({alter:true});
 })();
 
 //Rate limiting middleware

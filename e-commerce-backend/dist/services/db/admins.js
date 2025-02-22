@@ -9,34 +9,76 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAdminByID = exports.deleteAdminByID = exports.selectAdmin = exports.createNewAdmin = void 0;
-const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const createNewAdmin = (userID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("INSERT INTO Admins  (userID) VALUES (?)", {
-        replacements: [userID],
-        type: sequelize_1.QueryTypes.INSERT
-    });
+exports.updateAdminService = exports.deleteAdminService = exports.selectAdminService = exports.createAdminService = void 0;
+const admins_1 = require("../../respository/admins");
+// Service function to create a new admin
+const createAdminService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Check if the admin already exists
+        const existingAdmin = yield (0, exports.selectAdminService)(userID);
+        if (existingAdmin.length > 0) {
+            return { success: false, message: "This Admin is already registered." };
+        }
+        // Create new admin
+        const [result, metaData] = yield (0, admins_1.createNewAdmin)(userID);
+        if (metaData === 0) {
+            return { success: false, message: "Failed to create admin. Please try again later." };
+        }
+        return { success: true, message: "Admin created successfully" };
+    }
+    catch (error) {
+        console.error("Error creating admin:", error);
+        throw new Error("An error occurred while creating the admin.");
+    }
 });
-exports.createNewAdmin = createNewAdmin;
-const selectAdmin = (userID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Admins Where userID=?", {
-        replacements: [userID],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.createAdminService = createAdminService;
+// Service function to get an admin by userID
+const selectAdminService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return yield (0, admins_1.selectAdmin)(userID);
+    }
+    catch (error) {
+        console.error("Error fetching admin:", error);
+        throw new Error("Error while fetching admin details.");
+    }
 });
-exports.selectAdmin = selectAdmin;
-const deleteAdminByID = (userID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("DELETE FROM Admins WHERE userID = ?", {
-        replacements: [userID],
-        type: sequelize_1.QueryTypes.DELETE
-    });
+exports.selectAdminService = selectAdminService;
+// Service function to delete admin by userID
+const deleteAdminService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Check if the admin exists
+        const admin = yield (0, exports.selectAdminService)(userID);
+        if (admin.length === 0) {
+            return { success: false, message: "Admin not found" };
+        }
+        // Delete the admin
+        const result = yield (0, admins_1.deleteAdminByID)(userID);
+        return { success: true, message: "Admin deleted successfully" };
+    }
+    catch (error) {
+        console.error("Error deleting admin:", error);
+        throw new Error("An error occurred while deleting the admin.");
+    }
 });
-exports.deleteAdminByID = deleteAdminByID;
-const updateAdminByID = (userID, newUserID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("UPDATE Admins SET userID = ? WHERE userID = ?", {
-        replacements: [newUserID, userID],
-        type: sequelize_1.QueryTypes.UPDATE
-    });
+exports.deleteAdminService = deleteAdminService;
+// Service function to update admin by userID
+const updateAdminService = (userID, newUserID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Check if the admin exists
+        const admin = yield (0, exports.selectAdminService)(userID);
+        if (admin.length === 0) {
+            return { success: false, message: "Admin not found" };
+        }
+        // Update the admin
+        const result = yield (0, admins_1.updateAdminByID)(userID, newUserID);
+        if (result[0] === 0) {
+            return { success: false, message: "Failed to update admin" };
+        }
+        return { success: true, message: "Admin updated successfully" };
+    }
+    catch (error) {
+        console.error("Error updating admin:", error);
+        throw new Error("An error occurred while updating the admin.");
+    }
 });
-exports.updateAdminByID = updateAdminByID;
+exports.updateAdminService = updateAdminService;

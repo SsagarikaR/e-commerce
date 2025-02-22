@@ -1,4 +1,4 @@
-import { sequelize } from "../../config/databse";
+import { sequelize } from "../config/databse";
 import { QueryTypes } from "sequelize";
 
 export const selectCatgeoryByName=async(categoryName:string)=>{

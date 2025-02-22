@@ -21,7 +21,7 @@ export const Orders = sequelize.define("Orders", {
   },
   status: 
   { 
-    type: DataTypes.ENUM('Pending', 'Success', 'Cancel'),
+    type: DataTypes.ENUM('Pending', 'Success', 'Cancelled'),
     defaultValue: 'Pending' 
   },
   address: 

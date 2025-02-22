@@ -1,8 +1,9 @@
 import { insertPrefernce, selectPrefernceByProductANDUser,
-    fetchPreference,updatePreference, 
-    deletePreference} from "../../respository/prefernces";
+        fetchPreference,updatePreference, 
+        deletePreference} from "../../respository/prefernces";
+import NodeCache from 'node-cache';
 
-
+const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
 
 // Service function for creating a preference
 export const createPreferenceService = async (productID:number, userID:number) => {
@@ -29,13 +30,24 @@ export const createPreferenceService = async (productID:number, userID:number) =
 export const fetchPreferencesService = async (userID:number) => {
     console.log(userID,"got3")
     try {
+      const cacheKey = `preferences:${userID}`;
+
+      const cachedPreferences = cache.get(cacheKey);
+      if (cachedPreferences) {
+        console.log(cachedPreferences,'Returning cached preferences');
+        return cachedPreferences;  // Return cached data
+      }
+
       const preferences = await fetchPreference(userID);
       if (!preferences || preferences.length === 0) {
         return null; // No preferences found for the user
       }
+
+      cache.set(cacheKey, preferences);
       return preferences;
-    } catch (error) {
-        console.error(error);
+
+    }catch (error) {
+      console.error(error);
       throw new Error("Error while selecting prefernces. Please try again!");
     }
 };

@@ -57,7 +57,7 @@ function Product({product,setModalOpen}:forProductProp) {
         <div className='gap-y-2 flex flex-col' onClick={()=>{openProductDetail();}}>{/**open products detail page on clicking over a product card */}
           <img src={product.productThumbnail} className='cursor-pointer h-90 w-90' />
           <div className='flex items-center justify-center gap-x-2'>
-            <div className="text-center text-lg font-semibold text-gray-700 cursor-pointer">{product.productName}</div>
+            <div className="text-center text-md  font-semibold text-gray-700 cursor-pointer">{product.productName}</div>
             <img
             src={product.brandThumbnail}
             alt={product.brandName}
@@ -68,7 +68,7 @@ function Product({product,setModalOpen}:forProductProp) {
           <div className="flex items-center justify-center gap-2 mt-2">
         </div>
         </div>
-        <button className="btn_color w-full p-2  rounded rounded-lg cursor-pointer"
+        <button className="btn_color w-full p-2 rounded-lg cursor-pointer"
         onClick={() =>{
            addToCart(product.productID); 
            setModalOpen(true)}}

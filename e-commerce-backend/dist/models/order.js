@@ -19,7 +19,7 @@ exports.Orders = databse_1.sequelize.define("Orders", {
         allowNull: false
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM('Pending', 'Success', 'Cancel'),
+        type: sequelize_1.DataTypes.ENUM('Pending', 'Success', 'Cancelled'),
         defaultValue: 'Pending'
     },
     address: {

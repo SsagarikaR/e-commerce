@@ -50,7 +50,7 @@ const fetchPreference = (userID) => __awaiter(void 0, void 0, void 0, function* 
          FROM Preferences p
          JOIN Products pr ON pr.productID = p.productID
          JOIN Brands b ON b.brandID = pr.brandID
-         WHERE p.userID = ?`, // Filter by userID
+         WHERE p.userID = ? LIMIT 8`, // Filter by userID
     {
         replacements: [userID],
         type: sequelize_1.QueryTypes.SELECT
