@@ -39,6 +39,8 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 // import { WishLists } from "./models/wishList";
 // import { Reviews } from "./models/Review";
 // import { Preferences } from "./models/preference";
+// import { Orders } from "./models/order";
+// import { OrderItems } from "./models/orderItem";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
@@ -55,6 +57,8 @@ app.use((0, cors_1.default)());
     // await WishLists.sync({force:true});
     // await Reviews.sync({force:true});
     // await Preferences.sync({force:true})
+    // await Orders.sync({force:true})
+    // await OrderItems.sync({force:true});
 }))();
 //Rate limiting middleware
 const limiter = (0, express_rate_limit_1.default)({

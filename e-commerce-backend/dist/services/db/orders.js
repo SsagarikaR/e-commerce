@@ -43,7 +43,9 @@ exports.createOrderService = createOrderService;
 const fetchOrdersWithProductAndBrand = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Fetch the orders along with products and brands
-        const orders = yield (0, orders_1.selectOrdersWithProductAndBrand)(userID);
+        // const orders = await selectOrdersWithProductAndBrand(userID);
+        const orders = yield (0, orders_1.getUserOrderDetails)(userID);
+        console.log(orders);
         return orders;
     }
     catch (error) {

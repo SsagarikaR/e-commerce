@@ -96,15 +96,25 @@ declare global {
     brandThumbnail: string;
   }
 
+  interface orderDetails {
+    orderID: number;
+    userId: number;
+    totalAmount: number;
+    status: string;
+    address: string;
+    items: product[];
+  }
+
   interface product extends forCategories,forBrand{
     productName: string;
     productPrice: number;
     productID: number;
-    ProductThumbnail: string;
+    productThumbnail: string;
     productDescription: string;
     stock:number;
     rating:number;
     totalCount:number;
+    quantity?:number
   }
 
   interface forCartItem {

@@ -4,7 +4,7 @@ exports.Orders = void 0;
 const sequelize_1 = require("sequelize");
 const databse_1 = require("../config/databse");
 exports.Orders = databse_1.sequelize.define("Orders", {
-    ordersID: {
+    orderID: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         autoIncrement: true,
@@ -23,7 +23,7 @@ exports.Orders = databse_1.sequelize.define("Orders", {
         defaultValue: 'Pending'
     },
     address: {
-        type: sequelize_1.DataTypes.STRING, // Store the address as a string
+        type: sequelize_1.DataTypes.STRING,
         allowNull: false
     }
 }, {

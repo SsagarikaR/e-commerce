@@ -7,7 +7,8 @@ import { insertOrder,
     updateOrderStatusQuery,
     deleteOrderQuery ,
     updateOrderAddressQuery,
-    getOrderStatusByIdQuery} from '../../respository/orders';
+    getOrderStatusByIdQuery,
+    getUserOrderDetails} from '../../respository/orders';
 
 export const createOrderService = async (userID: number, totalAmount: number, items: Array<any>, address: string) => {
   const t = await sequelize.transaction();
@@ -48,8 +49,9 @@ export const createOrderService = async (userID: number, totalAmount: number, it
 export const fetchOrdersWithProductAndBrand = async (userID: number) => {
   try {
     // Fetch the orders along with products and brands
-    const orders = await selectOrdersWithProductAndBrand(userID);
-    
+    // const orders = await selectOrdersWithProductAndBrand(userID);
+    const orders = await getUserOrderDetails(userID);
+    console.log(orders);
     return orders;
   } catch (error) {
     console.error('Error fetching orders with product and brand details:', error);

@@ -20,7 +20,7 @@ exports.Produtcs = databse_1.sequelize.define("Products", {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false
     },
-    ProductThumbnail: {
+    productThumbnail: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false
     },

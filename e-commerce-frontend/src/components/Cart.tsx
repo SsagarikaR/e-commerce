@@ -1,6 +1,5 @@
 import { useCart } from "../context/cartContext";
-import { useNavigate } from "react-router-dom";
-import payPalIcon from "../assets/paypal.png";
+import { useNavigate,Link } from "react-router-dom";
 
 const Cart = () => {
     const { cart, updateQuantity, removeFromCart } = useCart();
@@ -65,10 +64,11 @@ const Cart = () => {
                         <div className="bg-gray-900 h-15 w-full rounded-lg flex items-center ">
                             <div className=" text-lg md:text-xl font-semibold text-white p-5 text-center [word-spacing:5px]">Total Price= ₹{cart[cart.length-1].totalPrice}</div>
                         </div>
-                        <div className="w-full bg-orange-400 h-15 rounded-xl text-lg md:text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer">
-                            <button >Pay with</button>
-                            <img src={payPalIcon} className="w-18 h-18"/>
-                        </div>
+                        <Link to="/checkout">
+                            <div className="w-full bg-orange-400 h-15 rounded-xl text-lg md:text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer">
+                               <button >Buy Now</button>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             )}

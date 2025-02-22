@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrderStatusByIdQuery = exports.updateOrderAddressQuery = exports.updateOrderStatusQuery = exports.deleteOrderQuery = exports.selectOrdersWithProductAndBrand = exports.selectOrderByUserID = exports.insertOrderItems = exports.insertOrder = void 0;
+exports.getOrderStatusByIdQuery = exports.updateOrderAddressQuery = exports.updateOrderStatusQuery = exports.deleteOrderQuery = exports.selectOrdersWithProductAndBrand = exports.getUserOrderDetails = exports.selectOrderByUserID = exports.insertOrderItems = exports.insertOrder = void 0;
 const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const insertOrder = (userID, totalAmount, address, t) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,6 +57,44 @@ const selectOrderByUserID = (userID, t) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.selectOrderByUserID = selectOrderByUserID;
+// First: Get orders (Order[] type)
+const getOrders = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = `
+      SELECT orderID, userId, totalAmount, status, address
+      FROM Orders
+      WHERE userId = :userID AND status = 'Pending'
+    `;
+    const result = yield databse_1.sequelize.query(query, {
+        replacements: { userID },
+        type: sequelize_1.QueryTypes.SELECT,
+    });
+    return result;
+});
+// Second: Get order items for each order (OrderItem[] type)
+const getOrderItems = (orderIDs) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = `
+      SELECT oi.orderId, oi.productId, oi.quantity, oi.price, p.productName, p.productThumbnail, p.productPrice, b.brandName
+      FROM OrderItems oi
+      JOIN Products p ON oi.productId = p.productID
+      JOIN Brands b ON p.brandID = b.brandID
+      WHERE oi.orderId IN (:orderIDs)
+    `;
+    const result = yield databse_1.sequelize.query(query, {
+        replacements: { orderIDs },
+        type: sequelize_1.QueryTypes.SELECT,
+    });
+    return result;
+});
+// Combine order and items (OrderDetail[] type)
+const getUserOrderDetails = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    const orders = yield getOrders(userID);
+    const orderIDs = orders.map((order) => order.orderID);
+    const orderItems = yield getOrderItems(orderIDs);
+    // Combine the results
+    const orderDetails = orders.map((order) => (Object.assign(Object.assign({}, order), { items: orderItems.filter((item) => item.orderId === order.orderID) })));
+    return orderDetails;
+});
+exports.getUserOrderDetails = getUserOrderDetails;
 const selectOrdersWithProductAndBrand = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = `
@@ -86,6 +124,7 @@ const selectOrdersWithProductAndBrand = (userID) => __awaiter(void 0, void 0, vo
             replacements: { userID },
             type: sequelize_1.QueryTypes.SELECT,
         });
+        console.log(result, "result");
         return result;
     }
     catch (error) {

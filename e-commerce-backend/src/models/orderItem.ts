@@ -5,7 +5,7 @@ import {Orders} from "./order";
 export const OrderItems = sequelize.define("OrderItems", {
     orderItemID: 
     { 
-      type: DataTypes.INET, 
+      type: DataTypes.INTEGER, 
       allowNull:false,
       autoIncrement:true,
       primaryKey: true 

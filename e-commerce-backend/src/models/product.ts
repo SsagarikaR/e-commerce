@@ -18,7 +18,7 @@ export const Produtcs=sequelize.define("Products",{
         type:DataTypes.TEXT,
         allowNull:false
     },
-    ProductThumbnail:{
+    productThumbnail:{
         type:DataTypes.TEXT,
         allowNull:false
     },

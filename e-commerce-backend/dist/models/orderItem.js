@@ -6,7 +6,7 @@ const databse_1 = require("../config/databse");
 const order_1 = require("./order");
 exports.OrderItems = databse_1.sequelize.define("OrderItems", {
     orderItemID: {
-        type: sequelize_1.DataTypes.INET,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true

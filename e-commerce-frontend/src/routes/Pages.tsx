@@ -10,6 +10,8 @@ import Cart from "../components/Cart";
 import ProductDetailPage from "../components/ProductDetailPage";
 import WishList from "../components/WishList";
 import Home from "../components/Home";
+import MakeOrderPage from "../components/MakeOrder";
+import OrderDetailsPage from "../components/OrderDetailsPage";
 
 function Pages() {
   // console.log(document.cookie);
@@ -29,6 +31,9 @@ function Pages() {
             <Route path="/signup" element={<Signup/>}/>
             <Route path="/signin" element={<Signin/>}/>
             <Route path="/wishlist" element={<WishList/>}/>
+            <Route path="/checkout/:id" element={<MakeOrderPage/>}/>
+            <Route path="/checkout" element={<MakeOrderPage/>}/>
+            <Route path="/orders" element={<OrderDetailsPage/>}/>
           </Routes>:
           <Routes> 
             <Route path="*" element={<Navigate to="/" replace/>}/> 

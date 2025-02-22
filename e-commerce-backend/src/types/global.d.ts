@@ -14,12 +14,30 @@ declare global {
     message: string;
   }
   
-  interface order{
-    ordersID:number;
-    userId:number;
-    totalAmount:number;
+
+
+  interface order {
+    orderID: number;
+    userId: number;
+    totalAmount: number;
     status: string;
     address: string;
   }
+  
+  interface orderItem {
+    orderId: number;
+    productId: number;
+    quantity: number;
+    price: number;
+    productName: string;
+    productThumbnail: string;
+    productPrice: number;
+    brandName: string;
+  }
+  
+  interface OrderDetail extends Order {
+    items: OrderItem[];
+  }
+  
 }
 export {};

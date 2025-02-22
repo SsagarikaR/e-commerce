@@ -40,7 +40,7 @@ const fetchUserOrders = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: 'No orders found for this user.' });
         }
-        res.status(200).json({ orders });
+        res.status(200).json(orders);
     }
     catch (error) {
         return next({

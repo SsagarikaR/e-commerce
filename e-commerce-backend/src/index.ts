@@ -26,6 +26,8 @@ import rateLimit from "express-rate-limit";
 // import { WishLists } from "./models/wishList";
 // import { Reviews } from "./models/Review";
 // import { Preferences } from "./models/preference";
+// import { Orders } from "./models/order";
+// import { OrderItems } from "./models/orderItem";
 
 const app=express();
 const port=3000
@@ -45,6 +47,8 @@ swaggerDocs(app);
     // await WishLists.sync({force:true});
     // await Reviews.sync({force:true});
     // await Preferences.sync({force:true})
+    // await Orders.sync({force:true})
+    // await OrderItems.sync({force:true});
 })();
 
 //Rate limiting middleware

@@ -45,7 +45,7 @@ export const insertOrderItems = async (
   };
   
 
-  export const selectOrderByUserID = async (userID: number, t: any) => {
+ export const selectOrderByUserID = async (userID: number, t: any) => {
     try {
       return await sequelize.query(
         `SELECT * FROM Orders WHERE userId = :userID AND status = 'Pending'`,
@@ -63,7 +63,55 @@ export const insertOrderItems = async (
   
   
 
+  // First: Get orders (Order[] type)
+ const getOrders = async (userID: number): Promise<order[]> => {
+    const query = `
+      SELECT orderID, userId, totalAmount, status, address
+      FROM Orders
+      WHERE userId = :userID AND status = 'Pending'
+    `;
+    
+    const result:order[] = await sequelize.query(query, {
+      replacements: { userID },
+      type: QueryTypes.SELECT,
+    });
   
+    return result;
+  };
+  
+  // Second: Get order items for each order (OrderItem[] type)
+  const getOrderItems = async (orderIDs: number[]): Promise<orderItem[]> => {
+    const query = `
+      SELECT oi.orderId, oi.productId, oi.quantity, oi.price, p.productName, p.productThumbnail, p.productPrice, b.brandName
+      FROM OrderItems oi
+      JOIN Products p ON oi.productId = p.productID
+      JOIN Brands b ON p.brandID = b.brandID
+      WHERE oi.orderId IN (:orderIDs)
+    `;
+    
+    const result:orderItem[] = await sequelize.query(query, {
+      replacements: { orderIDs },
+      type: QueryTypes.SELECT,
+    });
+  
+    return result;
+  };
+  
+  // Combine order and items (OrderDetail[] type)
+  export const getUserOrderDetails = async (userID: number): Promise<OrderDetail[]> => {
+    const orders = await getOrders(userID);
+    const orderIDs = orders.map((order) => order.orderID);
+  
+    const orderItems = await getOrderItems(orderIDs);
+  
+    // Combine the results
+    const orderDetails: OrderDetail[] = orders.map((order) => ({
+      ...order,
+      items: orderItems.filter((item) => item.orderId === order.orderID),
+    }));
+  
+    return orderDetails;
+  };
   
   export const selectOrdersWithProductAndBrand = async (userID: number) => {
     try {
@@ -95,6 +143,7 @@ export const insertOrderItems = async (
         replacements: { userID },
         type: QueryTypes.SELECT,
       });
+      console.log(result,"result")
   
       return result;
     } catch (error) {
@@ -157,6 +206,7 @@ export const insertOrderItems = async (
     throw new Error('Error while updating product address');
   }
 };
+
 
 // Query to fetch order status
 export const getOrderStatusByIdQuery = async (orderId: number) => {

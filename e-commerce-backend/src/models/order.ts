@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/databse";
 
 export const Orders = sequelize.define("Orders", {
-  ordersID:
+  orderID:
    { 
     type: DataTypes.INTEGER, 
     allowNull: false,
@@ -26,7 +26,7 @@ export const Orders = sequelize.define("Orders", {
   },
   address: 
   { 
-    type: DataTypes.STRING, // Store the address as a string
+    type: DataTypes.STRING, 
     allowNull: false
   }
 },{

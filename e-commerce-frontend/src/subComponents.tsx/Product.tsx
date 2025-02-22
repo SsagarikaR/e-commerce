@@ -55,7 +55,7 @@ function Product({product,setModalOpen}:forProductProp) {
           }
         </div>
         <div className='gap-y-2 flex flex-col' onClick={()=>{openProductDetail();}}>{/**open products detail page on clicking over a product card */}
-          <img src={product.ProductThumbnail} className='cursor-pointer h-90 w-90' />
+          <img src={product.productThumbnail} className='cursor-pointer h-90 w-90' />
           <div className='flex items-center justify-center gap-x-2'>
             <div className="text-center text-lg font-semibold text-gray-700 cursor-pointer">{product.productName}</div>
             <img
