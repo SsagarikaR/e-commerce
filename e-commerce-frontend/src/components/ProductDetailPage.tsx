@@ -74,7 +74,8 @@ function ProductDetailPage() {
             <div className="flex items-center justify-center ">
                 {/* Render product details if product is available */}
                 {product ? (
-                    <div className="flex p-20 gap-10 flex-col md:flex-row ">
+                    <div className="flex p-20 gap-10 flex-col lg:flex-row ">
+                        <div className="mx-auto">
                         <div className='absolute m-2 cursor-pointer ' onClick={()=>{addToWishList()}}>
                             {
                                 WishList?<img src={favIcon} className='w-10 h-10 '/>
@@ -84,13 +85,14 @@ function ProductDetailPage() {
                         <div className="">
                             <img
                                 src={product[0].productThumbnail}
-                                className="shadow-[0_0_15px_5px_rgba(0,0,0,0.3)] w-150 h-150 md:w-100  md:h-100 2xl:w-150 2xl:h-150 "
+                                className="shadow-[0_0_15px_5px_rgba(0,0,0,0.3)] w-80 h-80 sm:w-100 sm:h-100 md:w-150  md:h-150 xl:w-150 xl:h-150 "
                             />
                         </div>
-                        <div className=" -150 md:w-100 lg:w-150 text-gray-700 gap-y-9 flex flex-col ">
+                        </div>
+                        <div className=" w-80  sm:w-100  md:w-150 lg:w-150 xl:150  text-gray-700 gap-y-9 flex flex-col  ">
                             <div className="flex gap-y-4 flex-col ">
                                 <div className="flex gap-x-3">
-                                    <div className="text-4xl font-semibold">{product[0].productName}</div>
+                                    <div className="text-3xl font-semibold">{product[0].productName}</div>
                                     <img
                                         src={product[0].brandThumbnail}
                                         className="w-10 h-10 rounded-full border "
@@ -98,12 +100,12 @@ function ProductDetailPage() {
                                 </div>
                                 <div className="text-2xl font-normal">₹{product[0].productPrice}</div>
                                 {/* To create divider line */}
-                                <div className=" border-b  w-150 md:w-100 lg:w-150"></div>
+                                <div className=" border-b  w-80  sm:w-100 md:w-150 lg:w-100 xl:150"></div>
                             </div>
                             <div className="text-justify text-lg">{product[0].productDescription}</div>
                             <div className="flex flex-col gap-y-2">
                                 <button
-                                    className="bg-blue-400 hover:bg-blue-500 text-black p-3 text-xl font-semibold rounded-lg w-100 mx-auto"
+                                    className="bg-blue-400 hover:bg-blue-500 text-black p-3 text-xl font-semibold rounded-lg w-80 sm:w-100 mx-auto"
                                     onClick={() => {
                                         addToCart(product[0].productID);  // Add the product to the cart
                                         setModalOpen(true);  // Open the cart modal
@@ -112,7 +114,7 @@ function ProductDetailPage() {
                                     {ADD_TO_CART_BTN}  {/* Button text from constant */}
                                 </button>
                                 <Link to={`/checkout/${id}`}>
-                                <div className="w-100 bg-orange-400   p-3  h-14 rounded-xl text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer mx-auto">
+                                <div className="w-80 sm:w-100 bg-orange-400   p-3  h-14 rounded-xl text-2xl font-semibold hover:bg-orange-500 flex justify-center items-center gap-x-2 cursor-pointer mx-auto">
                                     <button >Buy Now</button>
                                 </div></Link>
                             </div>

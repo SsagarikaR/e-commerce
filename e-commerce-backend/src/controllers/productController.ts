@@ -1,48 +1,72 @@
-import { Request,Response,NextFunction } from "express";
-import { selectProductWithAllMatch ,createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID,updateProducts} from "../services/db/products";
+import { Request, Response, NextFunction } from "express";
+import {
+  createProductService,
+  getProductsService,
+  deleteProductService,
+  updateProductService,
+} from "../services/db/products";
+import NodeCache from "node-cache";
 
+// Create a cache instance (TTL of 1 hour)
+const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
 
+// Controller to create a product
+export const createProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    productName,
+    productDescription,
+    productThumbnail,
+    productPrice,
+    categoryID,
+    brandID,
+    stock,
+  } = req.body;
 
-//  controller to create a product
-export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
-    const { productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock } = req.body;
-  
-    try {
-      if (!productName || !productDescription || !productThumbnail || !productPrice || !categoryID || !brandID || !stock) {
-        return next({ statusCode: 400, message: "Please enter all the required fields." });
-      }
-
-      const isProductExist = await selectProductWithAllMatch(productName, productDescription, productPrice, categoryID, brandID);
-      if (isProductExist.length > 0) {
-        return next({ statusCode: 403, message: "This product already exists." });
-      }
-  
-      const [result, metaData] = await createNewProduct(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
-      if (metaData > 0) {
-        return res.status(202).json({ message: "Successfully added the product." });
-      } else {
-        return next({ statusCode: 409, message: "Error in adding a new product." });
-      }
-    } catch (error) {
-      console.log(error);
-      return next({ statusCode: 500, message: "An error occurred while creating products" });
+  try {
+    const result = await createProductService(
+      productName,
+      productDescription,
+      productThumbnail,
+      productPrice,
+      categoryID,
+      brandID,
+      stock
+    );
+    return res.status(202).json(result);
+  } catch (error) {
+    if (error instanceof Error) {
+      // Now TypeScript knows 'error' is an instance of Error
+      return next({ statusCode: 500, message: error.message });
     }
-  };
-  
 
+    // If error isn't an instance of Error, you can handle it here
+    return next({ statusCode: 500, message: "An unknown error occurred." });
+  }
+};
 
-  // controller to fetch all product (by name,price,categoryID,productID or all products)
+// Controller to fetch products (by filters or all)
 export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
   const { name, price, categoryID, id, page = 1, limit = 8 } = req.query;
 
-  // Convert query parameters to expected types
   const currentPage = Number(page);
   const itemsPerPage = Number(limit);
 
-  console.log("Query Parameters:", req.query);
+  // Generate a unique cache key based on the query parameters
+  const cacheKey = `products:${name}:${price}:${categoryID}:${id}:${currentPage}:${itemsPerPage}`;
 
   try {
-    // Construct the filters to be passed to the service based on query parameters
+    // First, check if data is in the cache
+    const cachedProducts = cache.get(cacheKey);
+    if (cachedProducts) {
+      console.log('Returning cached products');
+      return res.status(200).json(cachedProducts);  // Return cached data
+    }
+
+    // Define filters for the database query
     const filters = {
       categoryID: categoryID ? String(categoryID) : undefined,
       name: name ? String(name) : undefined,
@@ -50,62 +74,78 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
       price: price === "low-to-high" || price === "high-to-low" ? (price as "low-to-high" | "high-to-low") : undefined,
     };
 
-    // Fetch products based on filters and pagination
-    const products = await getProductWithCondition(filters, currentPage, itemsPerPage);
+    // Fetch products from the service (database)
+    const products = await getProductsService(filters, currentPage, itemsPerPage);
 
-    if (products.length === 0) {
-      return next({ statusCode: 404, message: "No products found" });
-    }
+    // Store the fetched products in the cache for future requests
+    cache.set(cacheKey, products);
 
+    // Return the fetched products
     return res.status(200).json(products);
+
   } catch (error) {
-    console.error("Error", error);
-    return next({ statusCode: 500, message: "An error occurred while fetching products" });
+    if (error instanceof Error) {
+      return next({ statusCode: 500, message: error.message });
+    }
+    return next({ statusCode: 500, message: "An unknown error occurred." });
   }
 };
 
 
-  
+// Controller to delete a product
+export const deleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { productID } = req.body;
 
-
-//controller to delete a product
-export const deleteProducts = async (req: Request, res: Response, next: NextFunction) => {
-    const { productID } = req.body;
-    try {
-      const isProductExist = await selectByProductID(productID);
-      if (isProductExist.length === 0) {
-        return next({ statusCode: 404, message: "This product doesn't exist" });
-      }
-  
-      const deleteProduct = await deleteByProductID(productID);
-      return res.status(200).json({ message: "Successfully deleted the product" });
-
-    } catch (error) {
-      console.log(error);
-      return next({ statusCode: 500, message: "An error occurred while deleting products" });
+  try {
+    const result = await deleteProductService(productID);
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Error) {
+      // Now TypeScript knows 'error' is an instance of Error
+      return next({ statusCode: 500, message: error.message });
     }
-  };
 
+    // If error isn't an instance of Error, you can handle it here
+    return next({ statusCode: 500, message: "An unknown error occurred." });
+  }
+};
 
+// Controller to update a product
+export const updateProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    productID,
+    productName,
+    productDescription,
+    productThumbnail,
+    productPrice,
+    categoryID,
+  } = req.body;
 
-
-
-  // controller to update a product
-  export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
-    const { productID, productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
-  
-    try {
-      const isProductExist = await selectByProductID(productID);
-      if (isProductExist.length === 0) {
-          return next({ statusCode: 404, message: "This product doesn't exist" });
-      }
-
-      const updatedProduct = await updateProducts(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
-      return res.status(200).json({ message: "Successfully updated the product." });
-      
-    } catch (error) {
-      console.log(error,"error")
-      return next({ statusCode: 500, message: "An error occurred while updating products" });
+  try {
+    const result = await updateProductService(
+      productName,
+      productDescription,
+      productThumbnail,
+      productPrice,
+      categoryID,
+      productID
+    );
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Error) {
+      // Now TypeScript knows 'error' is an instance of Error
+      return next({ statusCode: 500, message: error.message });
     }
-  };
-  
+
+    // If error isn't an instance of Error, you can handle it here
+    return next({ statusCode: 500, message: "An unknown error occurred." });
+  }
+};

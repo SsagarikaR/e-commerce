@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectByProductID } from "../services/db/products";
+import { selectByProductID } from "../respository/products";
 import {addProductToWishList,
         selectByUserAndProduct ,
         getWishListByUserID,

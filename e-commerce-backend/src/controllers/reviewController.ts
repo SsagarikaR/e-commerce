@@ -1,117 +1,114 @@
-import { Request,Response,NextFunction } from "express";
-import { selectByProductID } from "../services/db/products";
-import { selectReviewByProductAndUser,
-         addNewReview,
-         selectReviewOfProduct,
-         selectByReviewID,
-         deleteReview,updateReview} from "../services/db/reviews";
+import { Request, Response, NextFunction } from "express";
+import { 
+  addReviewService, 
+  getReviewsOfProductService, 
+  updateReviewService, 
+  deleteReviewService 
+} from "../services/db/reviews";
 
-//add a new review
-export const addReview=async(req:Request,res:Response,next:NextFunction)=>{
-    const userID=req.body.user.identifire
-    const {productID,rating,description}=req.body;
-    console.log(productID,rating,description)
-    try{
+// Controller to add a new review
+export const addReview = async (req: Request, res: Response, next: NextFunction) => {
+  const userID = req.body.user.identifire;
+  const { productID, rating, description } = req.body;
 
-        if (!userID) {
-            return next({ statusCode: 400, message: "User not authenticated or missing." });
-        }
+  if (!userID) {
+    return next({ statusCode: 400, message: "User not authenticated or missing." });
+  }
 
-        if(!productID || !(rating>=0 &&rating<=5) || !description){
-            return next({statusCode:409,message:"Please enter all the require fields."})
-        }
-        const isAlreadyExist=await selectReviewByProductAndUser(userID,productID)
-        if(isAlreadyExist.length>0){
-           return next({statusCode:403,message:"You have already added review for this product."})
-        }
+  if (!productID || !(rating >= 0 && rating <= 5) || !description) {
+    return next({ statusCode: 409, message: "Please enter all the required fields." });
+  }
 
-        const [result,metaData]=await addNewReview(userID,productID,rating,description);
-        if(metaData>0){
-           return res.status(201).json({message:"Thank you for adding review."})
-        }
-        else{
-            return next({statusCode:409,message:"Error in adding review, Please try again!"});
-        }
-        
-    }catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+  try {
+    const { success, message } = await addReviewService(userID, productID, rating, description);
+    if (!success) {
+      return next({ statusCode: 403, message });
     }
-}
+
+    return res.status(201).json({ message });
+  } catch (error) {
+    console.error("Error adding review:", error);
+    return next({ statusCode: 500, message: "An error occurred while adding the review." });
+  }
+};
 
 
-export const getReviewOfProduct=async(req:Request,res:Response,next:NextFunction)=>{
-    const {id}=req.params;
-    try{
-        if(!id ){
-            return next({statusCode:409,message:"Please enter the product id to fetch reviews for this product."})
-        }
 
-        const isProductExist=await selectByProductID(Number(id));
-        if(isProductExist.length===0){
-            return next({statusCode:404,message:"This product doesn't exist."})
-        }
 
-        const review=await selectReviewOfProduct(Number(id))
-        if(review.length===0){
-           return next({statusCode:403,message:"No review found."})
-        }
-        else{
-            return res.status(200).json(review)
-        }
-        
-    }catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+
+
+// Controller to get reviews for a product
+export const getReviewsOfProduct = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return next({ statusCode: 409, message: "Please enter the product id to fetch reviews for this product." });
+  }
+
+  try {
+    const { success, reviews, message } = await getReviewsOfProductService(Number(id));
+    if (!success) {
+      return next({ statusCode: 404, message });
     }
-}
 
-export const updateYourReview=async(req:Request,res:Response,next:NextFunction)=>{
-    const userID=req.body.user.identifire
-    const {reviewID,rating,description}=req.body;
-    try{
-        
-        if(!reviewID ){
-            return next({statusCode:409,message:"Please enter the reviews id to fetch reviews for this product."})
-        }
+    return res.status(200).json(reviews);
+  } catch (error) {
+    console.error("Error getting reviews:", error);
+    return next({ statusCode: 500, message: "An error occurred while fetching reviews." });
+  }
+};
 
-        if(!rating || !description){
-            return next({statusCode:404,message:"No review  exist for this review ID."})
-        }
 
-        const isReviewExist=await selectByReviewID(reviewID);
-        if(isReviewExist.length===0){
-            return next({statusCode:404,message:"No review  exist for this review ID."})
-        }
 
-        await updateReview(userID,reviewID,rating,description)
-        return res.status(200).json({message:"Review updated successfully"})
-        
-    }catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+
+
+
+// Controller to update a review
+export const updateReview = async (req: Request, res: Response, next: NextFunction) => {
+  const userID = req.body.user.identifire;
+  const { reviewID, rating, description } = req.body;
+
+  if (!reviewID || !rating || !description) {
+    return next({ statusCode: 400, message: "Please enter review ID, rating, and description." });
+  }
+
+  try {
+    const { success, message } = await updateReviewService(userID, reviewID, rating, description);
+    if (!success) {
+      return next({ statusCode: 404, message });
     }
-}
+
+    return res.status(200).json({ message });
+  } catch (error) {
+    console.error("Error updating review:", error);
+    return next({ statusCode: 500, message: "An error occurred while updating the review." });
+  }
+};
 
 
-export const deleteYourReview=async(req:Request,res:Response,next:NextFunction)=>{
-    const userID=req.body.user.identifire
-    const {reviewID}=req.body;
-    try{
-        if(!reviewID ){
-            return next({statusCode:409,message:"Please enter the reviews id to fetch reviews for this product."})
-        }
 
-        const isReviewExist=await selectByReviewID(reviewID);
-        if(isReviewExist.length===0){
-            return next({statusCode:404,message:"No review  exist for this review ID."})
-        }
-        
-        await deleteReview(userID,reviewID);
 
-        return res.status(200).json({message:"Review deleted succesfully"})
-    }catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+
+
+
+// Controller to delete a review
+export const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
+  const userID = req.body.user.identifire;
+  const { reviewID } = req.body;
+
+  if (!reviewID) {
+    return next({ statusCode: 400, message: "Please provide a review ID to delete." });
+  }
+
+  try {
+    const { success, message } = await deleteReviewService(userID, reviewID);
+    if (!success) {
+      return next({ statusCode: 404, message });
     }
-}
+
+    return res.status(200).json({ message });
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    return next({ statusCode: 500, message: "An error occurred while deleting the review." });
+  }
+};

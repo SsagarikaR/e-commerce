@@ -20,7 +20,7 @@ function Preferences() {
       {preferences && preferences.length > 0 && (
         <div>
           <h1 className="text-2xl font-bold mb-4 md:text-start text-center">Recommended Items</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {preferences.map((item) => (
               <PrefernceCard
                 key={item.preferenceID}

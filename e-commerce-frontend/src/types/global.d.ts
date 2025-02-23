@@ -162,12 +162,14 @@ declare global {
     setListChange: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
-  interface forProductListProp {
+  interface productListProp {
     data: forProductbyName[];
     setDeleteProductID:(value:number)=>void
     setEditProduct: (value: forProductbyName) => void;
     setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
     setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
+    currentPage:number 
+    setCurrentPage:React.Dispatch<React.SetStateAction<number>>;
   }
 
   interface forCategoriesProp {

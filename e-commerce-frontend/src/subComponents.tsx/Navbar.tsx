@@ -6,7 +6,6 @@ import profileIcon from "../assets/account.png";
 import cartIcon from "../assets/cart.png";
 import favIcon from "../assets/fav.png";
 import { Link, useNavigate } from "react-router-dom";
-import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { useCart } from "../context/cartContext";
 import Cookies from "js-cookie";
 import { SIGN_IN_BTN } from "../constants/btnConst";
@@ -15,18 +14,12 @@ function Navbar() {
   const { cart } = useCart();
   const [user, setUser] = useState<user | undefined>();
   const [search, setSearch] = useState<string>();
-  const [categories, setCategories] = useState<forCategories[]>();
   const navigate = useNavigate();
   const cookie=Cookies.get("token");
 
   // Search products based on the name
   const searchProduct = async () => {
     navigate(`/products?name=${search}`);
-  };
-
-  // Navigate to the category's page
-  const handleCategoryChange = (category: string) => {
-    navigate(`/categories?name=${category}`);
   };
 
   // Fetch user details
@@ -38,17 +31,9 @@ function Navbar() {
     }
   };
 
-  //Fetch available categories
-  const getCategories = async () => {
-    const response = await makeUnAuthorizedGetRequest("/categories");
-    if (response && response.data) {
-      setCategories(response.data);
-    }
-  };
 
   // Use effect to fetch data when the component is mounted
   useEffect(() => {
-    getCategories();
     getUser();
   }, []);
 
@@ -63,8 +48,16 @@ function Navbar() {
         </div>
       </div>
 
+      <div className="flex items-center justify-center gap-x-1">
+        <Link to="/">
+        <div className=" hidden lg:inline-block sm:hidden">
+          Categories
+        </div>
+        </Link>
+      </div>
+
       {/* Dropdown for Categories */}
-      <div className="hidden md:inline-block">
+      {/* <div className="hidden md:inline-block">
         <select
           className="outline-none"
           onChange={(e) => {
@@ -86,7 +79,7 @@ function Navbar() {
               </option>
             ))}
         </select>
-      </div>
+      </div> */}
 
       {/* Search bar */}
       <div className="border-2 h-10 border-gray-500 rounded-lg flex items-center px-8  sm:p-2">

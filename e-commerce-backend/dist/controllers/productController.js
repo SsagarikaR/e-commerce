@@ -8,93 +8,99 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProduct = exports.deleteProducts = exports.getProducts = exports.createProduct = void 0;
+exports.updateProduct = exports.deleteProduct = exports.getProducts = exports.createProduct = void 0;
 const products_1 = require("../services/db/products");
-//  controller to create a product
+const node_cache_1 = __importDefault(require("node-cache"));
+// Create a cache instance (TTL of 1 hour)
+const cache = new node_cache_1.default({ stdTTL: 3600, checkperiod: 600 });
+// Controller to create a product
 const createProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock } = req.body;
+    const { productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock, } = req.body;
     try {
-        if (!productName || !productDescription || !productThumbnail || !productPrice || !categoryID || !brandID || !stock) {
-            return next({ statusCode: 400, message: "Please enter all the required fields." });
-        }
-        const isProductExist = yield (0, products_1.selectProductWithAllMatch)(productName, productDescription, productPrice, categoryID, brandID);
-        if (isProductExist.length > 0) {
-            return next({ statusCode: 403, message: "This product already exists." });
-        }
-        const [result, metaData] = yield (0, products_1.createNewProduct)(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
-        if (metaData > 0) {
-            return res.status(202).json({ message: "Successfully added the product." });
-        }
-        else {
-            return next({ statusCode: 409, message: "Error in adding a new product." });
-        }
+        const result = yield (0, products_1.createProductService)(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
+        return res.status(202).json(result);
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "An error occurred while creating products" });
+        if (error instanceof Error) {
+            // Now TypeScript knows 'error' is an instance of Error
+            return next({ statusCode: 500, message: error.message });
+        }
+        // If error isn't an instance of Error, you can handle it here
+        return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });
 exports.createProduct = createProduct;
-// controller to fetch all product (by name,price,categoryID,productID or all products)
+// Controller to fetch products (by filters or all)
 const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, price, categoryID, id, page = 1, limit = 8 } = req.query;
-    // Convert query parameters to expected types
     const currentPage = Number(page);
     const itemsPerPage = Number(limit);
-    console.log("Query Parameters:", req.query);
+    // Generate a unique cache key based on the query parameters
+    const cacheKey = `products:${name}:${price}:${categoryID}:${id}:${currentPage}:${itemsPerPage}`;
     try {
-        // Construct the filters to be passed to the service based on query parameters
+        // First, check if data is in the cache
+        const cachedProducts = cache.get(cacheKey);
+        if (cachedProducts) {
+            console.log('Returning cached products');
+            return res.status(200).json(cachedProducts); // Return cached data
+        }
+        // Define filters for the database query
         const filters = {
             categoryID: categoryID ? String(categoryID) : undefined,
             name: name ? String(name) : undefined,
             id: id ? Number(id) : undefined,
             price: price === "low-to-high" || price === "high-to-low" ? price : undefined,
         };
-        // Fetch products based on filters and pagination
-        const products = yield (0, products_1.getProductWithCondition)(filters, currentPage, itemsPerPage);
-        if (products.length === 0) {
-            return next({ statusCode: 404, message: "No products found" });
-        }
+        // Fetch products from the service (database)
+        const products = yield (0, products_1.getProductsService)(filters, currentPage, itemsPerPage);
+        // Store the fetched products in the cache for future requests
+        cache.set(cacheKey, products);
+        // Return the fetched products
         return res.status(200).json(products);
     }
     catch (error) {
-        console.error("Error", error);
-        return next({ statusCode: 500, message: "An error occurred while fetching products" });
+        if (error instanceof Error) {
+            return next({ statusCode: 500, message: error.message });
+        }
+        return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });
 exports.getProducts = getProducts;
-//controller to delete a product
-const deleteProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+// Controller to delete a product
+const deleteProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID } = req.body;
     try {
-        const isProductExist = yield (0, products_1.selectByProductID)(productID);
-        if (isProductExist.length === 0) {
-            return next({ statusCode: 404, message: "This product doesn't exist" });
-        }
-        const deleteProduct = yield (0, products_1.deleteByProductID)(productID);
-        return res.status(200).json({ message: "Successfully deleted the product" });
+        const result = yield (0, products_1.deleteProductService)(productID);
+        return res.status(200).json(result);
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "An error occurred while deleting products" });
+        if (error instanceof Error) {
+            // Now TypeScript knows 'error' is an instance of Error
+            return next({ statusCode: 500, message: error.message });
+        }
+        // If error isn't an instance of Error, you can handle it here
+        return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });
-exports.deleteProducts = deleteProducts;
-// controller to update a product
+exports.deleteProduct = deleteProduct;
+// Controller to update a product
 const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productID, productName, productDescription, productThumbnail, productPrice, categoryID } = req.body;
+    const { productID, productName, productDescription, productThumbnail, productPrice, categoryID, } = req.body;
     try {
-        const isProductExist = yield (0, products_1.selectByProductID)(productID);
-        if (isProductExist.length === 0) {
-            return next({ statusCode: 404, message: "This product doesn't exist" });
-        }
-        const updatedProduct = yield (0, products_1.updateProducts)(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
-        return res.status(200).json({ message: "Successfully updated the product." });
+        const result = yield (0, products_1.updateProductService)(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
+        return res.status(200).json(result);
     }
     catch (error) {
-        console.log(error, "error");
-        return next({ statusCode: 500, message: "An error occurred while updating products" });
+        if (error instanceof Error) {
+            // Now TypeScript knows 'error' is an instance of Error
+            return next({ statusCode: 500, message: error.message });
+        }
+        // If error isn't an instance of Error, you can handle it here
+        return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });
 exports.updateProduct = updateProduct;

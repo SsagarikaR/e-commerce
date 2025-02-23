@@ -1,6 +1,6 @@
 import { Router,Request,Response, NextFunction } from "express";
 import { checkToken, isAdmin } from "../middlewear/authorization";
-import { addReview, deleteYourReview, getReviewOfProduct, updateYourReview } from "../controllers/reviewController";
+import { addReview,deleteReview, getReviewsOfProduct, updateReview } from "../controllers/reviewController";
 import { Reviews } from "models/Review";
 
 const router=Router();
@@ -11,15 +11,15 @@ router.post("/",checkToken,async(req:Request,res:Response,next:NextFunction)=>{
 
 
 router.get("/:id",async(req:Request,res:Response,next:NextFunction)=>{
-    getReviewOfProduct(req,res,next);
+    getReviewsOfProduct(req,res,next);
 });
 
 router.patch("/",async(req:Request,res:Response,next:NextFunction)=>{
-    updateYourReview(req,res,next);
+   updateReview(req,res,next);
 });
 
 router.delete("/",async(req:Request,res:Response,next:NextFunction)=>{
-   deleteYourReview(req,res,next);
+ deleteReview(req,res,next);
 });
 
 export default router;

@@ -9,103 +9,87 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteYourReview = exports.updateYourReview = exports.getReviewOfProduct = exports.addReview = void 0;
-const products_1 = require("../services/db/products");
+exports.deleteReview = exports.updateReview = exports.getReviewsOfProduct = exports.addReview = void 0;
 const reviews_1 = require("../services/db/reviews");
-//add a new review
+// Controller to add a new review
 const addReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userID = req.body.user.identifire;
     const { productID, rating, description } = req.body;
-    console.log(productID, rating, description);
+    if (!userID) {
+        return next({ statusCode: 400, message: "User not authenticated or missing." });
+    }
+    if (!productID || !(rating >= 0 && rating <= 5) || !description) {
+        return next({ statusCode: 409, message: "Please enter all the required fields." });
+    }
     try {
-        if (!userID) {
-            return next({ statusCode: 400, message: "User not authenticated or missing." });
+        const { success, message } = yield (0, reviews_1.addReviewService)(userID, productID, rating, description);
+        if (!success) {
+            return next({ statusCode: 403, message });
         }
-        if (!productID || !(rating >= 0 && rating <= 5) || !description) {
-            return next({ statusCode: 409, message: "Please enter all the require fields." });
-        }
-        const isAlreadyExist = yield (0, reviews_1.selectReviewByProductAndUser)(userID, productID);
-        if (isAlreadyExist.length > 0) {
-            return next({ statusCode: 403, message: "You have already added review for this product." });
-        }
-        const [result, metaData] = yield (0, reviews_1.addNewReview)(userID, productID, rating, description);
-        if (metaData > 0) {
-            return res.status(201).json({ message: "Thank you for adding review." });
-        }
-        else {
-            return next({ statusCode: 409, message: "Error in adding review, Please try again!" });
-        }
+        return res.status(201).json({ message });
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+        console.error("Error adding review:", error);
+        return next({ statusCode: 500, message: "An error occurred while adding the review." });
     }
 });
 exports.addReview = addReview;
-const getReviewOfProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+// Controller to get reviews for a product
+const getReviewsOfProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    if (!id) {
+        return next({ statusCode: 409, message: "Please enter the product id to fetch reviews for this product." });
+    }
     try {
-        if (!id) {
-            return next({ statusCode: 409, message: "Please enter the product id to fetch reviews for this product." });
+        const { success, reviews, message } = yield (0, reviews_1.getReviewsOfProductService)(Number(id));
+        if (!success) {
+            return next({ statusCode: 404, message });
         }
-        const isProductExist = yield (0, products_1.selectByProductID)(Number(id));
-        if (isProductExist.length === 0) {
-            return next({ statusCode: 404, message: "This product doesn't exist." });
-        }
-        const review = yield (0, reviews_1.selectReviewOfProduct)(Number(id));
-        if (review.length === 0) {
-            return next({ statusCode: 403, message: "No review found." });
-        }
-        else {
-            return res.status(200).json(review);
-        }
+        return res.status(200).json(reviews);
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+        console.error("Error getting reviews:", error);
+        return next({ statusCode: 500, message: "An error occurred while fetching reviews." });
     }
 });
-exports.getReviewOfProduct = getReviewOfProduct;
-const updateYourReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getReviewsOfProduct = getReviewsOfProduct;
+// Controller to update a review
+const updateReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userID = req.body.user.identifire;
     const { reviewID, rating, description } = req.body;
+    if (!reviewID || !rating || !description) {
+        return next({ statusCode: 400, message: "Please enter review ID, rating, and description." });
+    }
     try {
-        if (!reviewID) {
-            return next({ statusCode: 409, message: "Please enter the reviews id to fetch reviews for this product." });
+        const { success, message } = yield (0, reviews_1.updateReviewService)(userID, reviewID, rating, description);
+        if (!success) {
+            return next({ statusCode: 404, message });
         }
-        if (!rating || !description) {
-            return next({ statusCode: 404, message: "No review  exist for this review ID." });
-        }
-        const isReviewExist = yield (0, reviews_1.selectByReviewID)(reviewID);
-        if (isReviewExist.length === 0) {
-            return next({ statusCode: 404, message: "No review  exist for this review ID." });
-        }
-        yield (0, reviews_1.updateReview)(userID, reviewID, rating, description);
-        return res.status(200).json({ message: "Review updated successfully" });
+        return res.status(200).json({ message });
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+        console.error("Error updating review:", error);
+        return next({ statusCode: 500, message: "An error occurred while updating the review." });
     }
 });
-exports.updateYourReview = updateYourReview;
-const deleteYourReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.updateReview = updateReview;
+// Controller to delete a review
+const deleteReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userID = req.body.user.identifire;
     const { reviewID } = req.body;
+    if (!reviewID) {
+        return next({ statusCode: 400, message: "Please provide a review ID to delete." });
+    }
     try {
-        if (!reviewID) {
-            return next({ statusCode: 409, message: "Please enter the reviews id to fetch reviews for this product." });
+        const { success, message } = yield (0, reviews_1.deleteReviewService)(userID, reviewID);
+        if (!success) {
+            return next({ statusCode: 404, message });
         }
-        const isReviewExist = yield (0, reviews_1.selectByReviewID)(reviewID);
-        if (isReviewExist.length === 0) {
-            return next({ statusCode: 404, message: "No review  exist for this review ID." });
-        }
-        yield (0, reviews_1.deleteReview)(userID, reviewID);
-        return res.status(200).json({ message: "Review deleted succesfully" });
+        return res.status(200).json({ message });
     }
     catch (error) {
-        console.log(error);
-        return next({ statusCode: 500, message: "Error in adding review, Please try again!" });
+        console.error("Error deleting review:", error);
+        return next({ statusCode: 500, message: "An error occurred while deleting the review." });
     }
 });
-exports.deleteYourReview = deleteYourReview;
+exports.deleteReview = deleteReview;

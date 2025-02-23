@@ -30,14 +30,14 @@ export const createNewCategory=async(categoryName:string,categoryThumbnail:strin
     })
 }
 
-export const selectCatgeoryByID=async(categoryID:string)=>{
+export const selectCatgeoryByID=async(categoryID:number)=>{
     return await sequelize.query('SELECT * FROM Categories WHERE categoryID=?',{
         replacements:[categoryID],
         type:QueryTypes.SELECT
     })
 }
 
-export const deleteCatgeory=async(categoryID:string)=>{
+export const deleteCatgeory=async(categoryID:number)=>{
     return await sequelize.query('DELETE FROM Categories WHERE categoryID=?',{
         replacements:[categoryID],
         type:QueryTypes.DELETE

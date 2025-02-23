@@ -8,100 +8,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProductWithCondition = exports.createNewProduct = exports.selectByProductID = exports.deleteByProductID = exports.updateProducts = exports.selectProductWithAllMatch = void 0;
-const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const selectProductWithAllMatch = (productName, productDescription, productPrice, categoryID, brandID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=? AND brandID=?", {
-        replacements: [productName, productDescription, productPrice, categoryID, brandID],
-        type: sequelize_1.QueryTypes.SELECT,
-    });
-});
-exports.selectProductWithAllMatch = selectProductWithAllMatch;
-const updateProducts = (productName, productDescription, productThumbnail, productPrice, categoryID, productID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('UPDATE Products SET productName=? ,productDescription=? ,productThumbnail=? ,productPrice=? ,categoryID=? WHERE productID=?', {
-        replacements: [productName, productDescription, productThumbnail, productPrice, categoryID, productID],
-        type: sequelize_1.QueryTypes.UPDATE
-    });
-});
-exports.updateProducts = updateProducts;
-const deleteByProductID = (productID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('DELETE FROM Products WHERE productID=?', {
-        replacements: [productID],
-        type: sequelize_1.QueryTypes.DELETE
-    });
-});
-exports.deleteByProductID = deleteByProductID;
-const selectByProductID = (productID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('SELECT * FROM Products WHERE productID=?', {
-        replacements: [productID],
-        type: sequelize_1.QueryTypes.SELECT
-    });
-});
-exports.selectByProductID = selectByProductID;
-const createNewProduct = (productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID,brandID,stock) VALUES (?,?,?,?,?,?,?)", {
-        replacements: [
-            productName,
-            productDescription,
-            productThumbnail,
-            productPrice,
-            categoryID,
-            brandID,
-            stock
-        ],
-        type: sequelize_1.QueryTypes.INSERT,
-    });
-});
-exports.createNewProduct = createNewProduct;
-const getProductWithCondition = (_a, page_1, limit_1) => __awaiter(void 0, [_a, page_1, limit_1], void 0, function* ({ categoryID, name, id, price, }, page, limit) {
-    // Base query for products
-    let query = `
-    SELECT p.*, c.*, b.*, COUNT(*) OVER() AS totalCount
-    FROM Products p
-    LEFT JOIN Categories c ON p.categoryID = c.categoryID
-    LEFT JOIN Brands b ON p.brandID = b.brandID
-  `;
-    let replacements = [];
-    let conditions = [];
-    // Apply conditions for filtering products
-    if (categoryID) {
-        conditions.push(`p.categoryID = ?`);
-        replacements.push(categoryID);
+exports.updateProductService = exports.deleteProductService = exports.getProductsService = exports.createProductService = void 0;
+const products_1 = require("../../respository/products");
+const node_cache_1 = __importDefault(require("node-cache"));
+const cache = new node_cache_1.default({ stdTTL: 3600, checkperiod: 600 });
+// Service to create a new product
+const createProductService = (productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock) => __awaiter(void 0, void 0, void 0, function* () {
+    // Check if product already exists
+    const isProductExist = yield (0, products_1.selectProductWithAllMatch)(productName, productDescription, productPrice, categoryID, brandID);
+    if (isProductExist.length > 0) {
+        throw new Error("This product already exists.");
     }
-    if (name) {
-        conditions.push(`p.productName LIKE ?`);
-        replacements.push(`%${name}%`);
+    const [result, metaData] = yield (0, products_1.createNewProduct)(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
+    if (metaData > 0) {
+        return { success: true, message: "Successfully added the product." };
     }
-    if (id) {
-        conditions.push(`p.productID = ?`);
-        replacements.push(id);
+    else {
+        throw new Error("Error in adding a new product.");
     }
-    // Add conditions to the query if any filters are provided
-    if (conditions.length > 0) {
-        query += ` WHERE ` + conditions.join(" AND ");
-    }
-    // Add sorting based on price if provided
-    if (price) {
-        if (price === "low-to-high") {
-            query += ` ORDER BY p.productPrice ASC`;
-        }
-        else if (price === "high-to-low") {
-            query += ` ORDER BY p.productPrice DESC`;
-        }
-    }
-    // Pagination logic (LIMIT and OFFSET)
-    query += ` LIMIT ? OFFSET ?`;
-    replacements.push(limit, (page - 1) * limit);
-    console.log(query, "query");
-    console.log(replacements, "replacements");
-    // Execute the query to fetch products
-    const result = yield databse_1.sequelize.query(query, {
-        replacements: replacements,
-        type: sequelize_1.QueryTypes.SELECT,
-    });
-    // Extract the totalCount from the first result (since it's the same for all rows)
-    return result;
 });
-exports.getProductWithCondition = getProductWithCondition;
+exports.createProductService = createProductService;
+// Service to fetch products with condition (filters), including caching logic
+const getProductsService = (filters, page, limit) => __awaiter(void 0, void 0, void 0, function* () {
+    // Generate a unique cache key based on filters, page, and limit
+    const cacheKey = `products:${JSON.stringify(filters)}:page:${page}:limit:${limit}`;
+    const cachedProducts = cache.get(cacheKey);
+    if (cachedProducts) {
+        // console.log('Returning cached products',cachedProducts);
+        return cachedProducts;
+    }
+    const products = yield (0, products_1.getProductWithCondition)(filters, page, limit);
+    if (products.length === 0) {
+        throw new Error("No products found.");
+    }
+    // Store the fetched products in the cache for future requests
+    cache.set(cacheKey, products);
+    return products;
+});
+exports.getProductsService = getProductsService;
+// Service to delete a product
+const deleteProductService = (productID) => __awaiter(void 0, void 0, void 0, function* () {
+    const isProductExist = yield (0, products_1.selectByProductID)(productID);
+    if (isProductExist.length === 0) {
+        throw new Error("This product doesn't exist.");
+    }
+    yield (0, products_1.deleteByProductID)(productID);
+    return { success: true, message: "Successfully deleted the product" };
+});
+exports.deleteProductService = deleteProductService;
+// Service to update a product
+const updateProductService = (productName, productDescription, productThumbnail, productPrice, categoryID, productID) => __awaiter(void 0, void 0, void 0, function* () {
+    const isProductExist = yield (0, products_1.selectByProductID)(productID);
+    if (isProductExist.length === 0) {
+        throw new Error("This product doesn't exist.");
+    }
+    yield (0, products_1.updateProducts)(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
+    return { success: true, message: "Successfully updated the product." };
+});
+exports.updateProductService = updateProductService;

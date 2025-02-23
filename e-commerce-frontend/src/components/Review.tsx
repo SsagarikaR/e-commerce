@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { useState, useEffect } from "react";
 import { makeUnAuthorizedGetRequest } from "../services/unAuthorizedRequest";
 import { makeAuthorizedPostRequest } from "../services/authorizedRequests";
+import useToast from "../utils/useToast";
 
 function Review({ productID, rating }: ratingProp) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +15,7 @@ function Review({ productID, rating }: ratingProp) {
     rating: 0,
     description: "",
   });
+  const {error,success}=useToast;
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -61,6 +63,8 @@ function Review({ productID, rating }: ratingProp) {
     return stars;
   };
 
+
+
   const fetchReviews = async (productID: number) => {
     const response = await makeUnAuthorizedGetRequest(`/reviews/${productID}`);
     console.log(response);
@@ -69,9 +73,13 @@ function Review({ productID, rating }: ratingProp) {
     }
   };
 
+
+
   useEffect(() => {
     fetchReviews(productID);
   }, [productID]);
+
+
 
   const handleAddReview = async () => {
     try {
@@ -81,12 +89,13 @@ function Review({ productID, rating }: ratingProp) {
       });
       console.log(response);
       if (response?.data) {
-        alert(response.data.message);
+        success("Thank you for adding review")
         fetchReviews(productID);
+        setIsModalOpen(false);
       }
-    } catch (error) {
-      console.log(error);
-      alert(error);
+    } catch (err) {
+      console.log(err);
+      error("Error in adding new review. Please try again");
     }
   };
 
@@ -115,12 +124,12 @@ function Review({ productID, rating }: ratingProp) {
               className="flex justify-between items-center py-4 shadow-lg p-6"
             >
               <div className=" flex flex-col gap-y-4">
-                <div className="flex items-center justify-center gap-x-2">
-                  <div className="flex items-center justify-center gap-x-1 bg-blue-300 rounded-xl border border-gray-400  p-1 ">
-                    <div className="text-lg font-medium">{review.rating}</div>
+                <div className="flex items-center gap-x-2">
+                  <div className={`flex items-center justify-center gap-x-1 rounded-xl border border-gray-400  p-1 ${review.rating>2?"bg-green-500":"  bg-red-500"}`}>
+                    <div className="text-lg font-medium ">{review.rating}</div>
                     <img src={star} className="w-5 h-5 col-white" />
                   </div>
-                  <div className="flex">
+                  <div className="flex ">
                     <img src={profile} className="w-6 h-6" />
                     <div>{review.name}</div>
                   </div>

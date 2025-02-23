@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateCartItemQuantity = exports.deleteCartItem = exports.getCartItems = exports.addCartItem = void 0;
-const products_1 = require("../services/db/products");
+const products_1 = require("../respository/products");
 const carts_1 = require("../services/db/carts");
 //  Controller to add an item to the user's cart
 const addCartItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

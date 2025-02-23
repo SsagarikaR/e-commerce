@@ -1,135 +1,110 @@
-import { sequelize } from "../../config/databse";
-import { QueryTypes } from "sequelize";
+import { selectProductWithAllMatch, createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID, updateProducts } from "../../respository/products";
+import NodeCache from 'node-cache';
 
-export const selectProductWithAllMatch = async (
-  productName: string,
-  productDescription: string,
-  productPrice: number,
-  categoryID: number,
-  brandID:number
-) => {
-  return await sequelize.query(
-    "SELECT * FROM Products WHERE productName=? AND productDescription=?  AND productPrice=? AND categoryID=? AND brandID=?",
-    {
-      replacements: [productName, productDescription, productPrice, categoryID,brandID],
-      type: QueryTypes.SELECT,
-    }
-  );
-};
+const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
 
-export const updateProducts=async(productName:string,productDescription:string,productThumbnail:string,productPrice:number,categoryID:number,productID:number)=>{
-    return await sequelize.query('UPDATE Products SET productName=? ,productDescription=? ,productThumbnail=? ,productPrice=? ,categoryID=? WHERE productID=?',{
-        replacements:[productName,productDescription,productThumbnail,productPrice,categoryID,productID],
-        type:QueryTypes.UPDATE
-    })
-}
-export const deleteByProductID=async(productID:number)=>{
-    return await sequelize.query('DELETE FROM Products WHERE productID=?',{
-        replacements:[productID],
-        type:QueryTypes.DELETE
-    });
-}
 
-export const selectByProductID=async(productID:number)=>{
-    return await sequelize.query('SELECT * FROM Products WHERE productID=?',
-        {
-            replacements:[productID],
-            type:QueryTypes.SELECT
-        }
-    )
-}
-
-export const createNewProduct = async (
+// Service to create a new product
+export const createProductService = async (
   productName: string,
   productDescription: string,
   productThumbnail: string,
   productPrice: number,
   categoryID: number,
   brandID: number,
-  stock:number
+  stock: number
 ) => {
-  return await sequelize.query(
-    "INSERT INTO Products (productName,productDescription,productThumbnail,productPrice,categoryID,brandID,stock) VALUES (?,?,?,?,?,?,?)",
-    {
-      replacements: [
-        productName,
-        productDescription,
-        productThumbnail,
-        productPrice,
-        categoryID,
-        brandID,
-        stock
-      ],
-      type: QueryTypes.INSERT,
-    }
+  // Check if product already exists
+  const isProductExist = await selectProductWithAllMatch(productName, productDescription, productPrice, categoryID, brandID);
+  if (isProductExist.length > 0) {
+    throw new Error("This product already exists.");
+  }
+
+  const [result, metaData] = await createNewProduct(
+    productName,
+    productDescription,
+    productThumbnail,
+    productPrice,
+    categoryID,
+    brandID,
+    stock
   );
+
+  if (metaData > 0) {
+    return { success: true, message: "Successfully added the product." };
+  } else {
+    throw new Error("Error in adding a new product.");
+  }
 };
 
 
-export const getProductWithCondition = async ({
-  categoryID,
-  name,
-  id,
-  price,
-}: {
-  categoryID?: string | number;
-  name?: string;
-  id?: string | number;
-  price?: "low-to-high" | "high-to-low";
-}, page: number, limit: number) => {
-  // Base query for products
-  let query = `
-    SELECT p.*, c.*, b.*, COUNT(*) OVER() AS totalCount
-    FROM Products p
-    LEFT JOIN Categories c ON p.categoryID = c.categoryID
-    LEFT JOIN Brands b ON p.brandID = b.brandID
-  `;
-  let replacements = [];
-  let conditions = [];
 
-  // Apply conditions for filtering products
-  if (categoryID) {
-    conditions.push(`p.categoryID = ?`);
-    replacements.push(categoryID);
+
+
+
+// Service to fetch products with condition (filters), including caching logic
+export const getProductsService = async (
+  filters: { categoryID?: string | number, name?: string, id?: string | number, price?: "low-to-high" | "high-to-low" },
+  page: number,
+  limit: number
+) => {
+  // Generate a unique cache key based on filters, page, and limit
+  const cacheKey = `products:${JSON.stringify(filters)}:page:${page}:limit:${limit}`;
+  
+  const cachedProducts = cache.get(cacheKey);
+  if (cachedProducts) {
+    // console.log('Returning cached products',cachedProducts);
+    return cachedProducts;
   }
 
-  if (name) {
-    conditions.push(`p.productName LIKE ?`);
-    replacements.push(`%${name}%`);
+  const products = await getProductWithCondition(filters, page, limit);
+  if (products.length === 0) {
+    throw new Error("No products found.");
   }
 
-  if (id) {
-    conditions.push(`p.productID = ?`);
-    replacements.push(id);
+  // Store the fetched products in the cache for future requests
+  cache.set(cacheKey, products);
+  
+  return products;
+};
+
+
+
+
+
+
+
+// Service to delete a product
+export const deleteProductService = async (productID: number) => {
+  const isProductExist = await selectByProductID(productID);
+  if (isProductExist.length === 0) {
+    throw new Error("This product doesn't exist.");
   }
 
-  // Add conditions to the query if any filters are provided
-  if (conditions.length > 0) {
-    query += ` WHERE ` + conditions.join(" AND ");
+  await deleteByProductID(productID);
+  return { success: true, message: "Successfully deleted the product" };
+};
+
+
+
+
+
+
+
+// Service to update a product
+export const updateProductService = async (
+  productName: string,
+  productDescription: string,
+  productThumbnail: string,
+  productPrice: number,
+  categoryID: number,
+  productID: number
+) => {
+  const isProductExist = await selectByProductID(productID);
+  if (isProductExist.length === 0) {
+    throw new Error("This product doesn't exist.");
   }
 
-  // Add sorting based on price if provided
-  if (price) {
-    if (price === "low-to-high") {
-      query += ` ORDER BY p.productPrice ASC`;
-    } else if (price === "high-to-low") {
-      query += ` ORDER BY p.productPrice DESC`;
-    }
-  }
-
-  // Pagination logic (LIMIT and OFFSET)
-  query += ` LIMIT ? OFFSET ?`;
-  replacements.push(limit, (page - 1) * limit);
-
-  console.log(query, "query");
-  console.log(replacements, "replacements");
-
-  // Execute the query to fetch products
-  const result = await sequelize.query(query, {
-    replacements: replacements,
-    type: QueryTypes.SELECT,
-  });
-
-  // Extract the totalCount from the first result (since it's the same for all rows)
- return result;
+  await updateProducts(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
+  return { success: true, message: "Successfully updated the product." };
 };

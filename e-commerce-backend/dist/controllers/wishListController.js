@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteWishListItem = exports.getWishListItemById = exports.getWishListItems = exports.addToWishList = void 0;
-const products_1 = require("../services/db/products");
+const products_1 = require("../respository/products");
 const wishLists_1 = require("../services/db/wishLists");
 //  Controller to add an item to the user's wishlist
 const addToWishList = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

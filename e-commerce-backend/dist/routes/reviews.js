@@ -17,12 +17,12 @@ router.post("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 
     (0, reviewController_1.addReview)(req, res, next);
 }));
 router.get("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, reviewController_1.getReviewOfProduct)(req, res, next);
+    (0, reviewController_1.getReviewsOfProduct)(req, res, next);
 }));
 router.patch("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, reviewController_1.updateYourReview)(req, res, next);
+    (0, reviewController_1.updateReview)(req, res, next);
 }));
 router.delete("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, reviewController_1.deleteYourReview)(req, res, next);
+    (0, reviewController_1.deleteReview)(req, res, next);
 }));
 exports.default = router;

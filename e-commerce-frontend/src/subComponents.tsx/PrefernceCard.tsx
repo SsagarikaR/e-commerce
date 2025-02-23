@@ -8,9 +8,9 @@ function PrefernceCard({item}:{item:prefernce}) {
             <img 
               src={item.productThumbnail} 
               alt={item.productName} 
-              className="  object-cover rounded-md" 
+              className="  object-cover h-75 w-75 rounded-md" 
             />
-            <div className="mt-2 w-full">
+            <div className="mt-2 ">
               <h2 className="text-lg font-semibold">{item.productName}</h2>
               <p className="text-lg font-semibold">₹{item.productPrice}</p>
             </div>
