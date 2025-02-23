@@ -30,7 +30,7 @@ function Input({ field, id, type, value, setValue, error, setError }: InputProps
         type={type}
         placeholder={`Enter your ${field}`}
       />
-      {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
+      {error && <div className={` ${type==="password"?"":"absolute"} pl-5 text-red-500 text-sm mt-1`}>{error}</div>}
     </div>
   );
 }

@@ -22,6 +22,7 @@ function Pages() {
         {
           token ?
           <Routes>
+            <Route path="*" element={<Navigate to="/" replace/>}/>
             <Route path="/" element={<Home/>}/>
             <Route path="/categories" element={<Home/>}/>
             <Route path="/products" element={<Products/>}/>
@@ -36,7 +37,7 @@ function Pages() {
             <Route path="/orders" element={<OrderDetailsPage/>}/>
           </Routes>:
           <Routes> 
-            <Route path="*" element={<Navigate to="/" replace/>}/> 
+            <Route path="*" element={<Navigate to="/signin" replace/>}/> 
             <Route path="/" element={<Home/>}/>
             <Route path="/categories" element={<Home/>}/>
             <Route path="/products" element={<Products/>}/>

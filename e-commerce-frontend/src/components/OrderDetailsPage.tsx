@@ -114,11 +114,13 @@ const OrderDetailsPage = () => {
                   {/* Address Section */}
                   <div className="mt-6 flex gap-x-4 items-center">
                     <p className="text-md text-gray-600">Address: {order.address}</p>
+                    {order.status !== 'Cancelled' && (
                     <img
                       src={editIcon}
                       className="text-blue-500 hover:underline w-5 h-5 cursor-pointer"
                       onClick={() => handleEditAddress(order.orderID, order.address)}
                     />
+                  )}
                   </div>
 
                   {/* Action Buttons */}

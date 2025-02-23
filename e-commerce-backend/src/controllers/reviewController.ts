@@ -12,7 +12,7 @@ export const addReview = async (req: Request, res: Response, next: NextFunction)
   const { productID, rating, description } = req.body;
 
   if (!userID) {
-    return next({ statusCode: 400, message: "User not authenticated or missing." });
+    return next({ statusCode: 401, message: "User not authenticated or missing." });
   }
 
   if (!productID || !(rating >= 0 && rating <= 5) || !description) {
@@ -68,6 +68,10 @@ export const updateReview = async (req: Request, res: Response, next: NextFuncti
   const userID = req.body.user.identifire;
   const { reviewID, rating, description } = req.body;
 
+  if (!userID) {
+    return next({ statusCode: 401, message: "User not authenticated or missing." });
+  }
+  
   if (!reviewID || !rating || !description) {
     return next({ statusCode: 400, message: "Please enter review ID, rating, and description." });
   }

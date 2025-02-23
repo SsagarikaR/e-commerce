@@ -8,13 +8,47 @@ export const selectReviewByProductAndUser=async(userID:number,productID:number)=
     })
 }
 
-export const addNewReview=async(userID:number,productID:number,rating:number,description:string)=>{
-    return await sequelize.query(`INSERT INTO Reviews (userID,productID,rating,description) VALUES 
-        (?,?,?,?)`,{
-            replacements:[userID,productID,rating,description],
-            type:QueryTypes.INSERT
-        })
-}
+export const addNewReview=async (userID: number, productID: number, rating: number, description: string, t: any) => {
+    const result = await sequelize.query(
+      `INSERT INTO Reviews (userID, productID, rating, description) 
+      VALUES (:userID, :productID, :rating, :description)`,
+      {
+        replacements: { userID, productID, rating, description },
+        type: QueryTypes.INSERT,
+        transaction: t,
+      }
+    );
+    return result;
+  };
+
+
+export const calculateAverageRating = async (productID: number, t: any) => {
+    const result:{avgRating:number}[] = await sequelize.query(
+      `SELECT AVG(rating) as avgRating FROM Reviews WHERE productID = :productID`,
+      {
+        replacements: { productID },
+        type: QueryTypes.SELECT,
+        transaction: t,
+      }
+    );
+    return result[0]?.avgRating || 0; // If no reviews, return 0
+  };
+
+  
+
+  export const updateProductRating = async (productID: number, avgRating: number, t: any) => {
+    const result = await sequelize.query(
+      `UPDATE Products SET rating = :rating WHERE productID = :productID`,
+      {
+        replacements: { rating: Math.ceil(avgRating), productID },
+        type: QueryTypes.UPDATE,
+        transaction: t,
+      }
+    );
+    return result;
+  };
+  
+
 
 export const selectByReviewID=async(reviewID:number)=>{
     return await sequelize.query("SELECT * FROM Reviews WHERE reviewID=?",{
@@ -46,3 +80,6 @@ export const updateReview=async(userID:number,reviewID:number,rating:number,desc
         type:QueryTypes.UPDATE
     })
 }
+
+
+

@@ -11,7 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const authorization_1 = require("../middlewear/authorization");
+const authentication_1 = require("../middlewear/authentication");
 const userController_1 = require("../controllers/userController");
+const validateUserData_1 = require("../middlewear/validationHelper/validateUserData");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -44,7 +46,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.get("/users", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/users", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, userController_1.getAllUser)(req, res, next);
 }));
 /**
@@ -65,7 +67,7 @@ router.get("/users", authorization_1.checkToken, authorization_1.isAdmin, (req, 
  *       500:
  *         description: Server error
  */
-router.get("/user", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/user", authentication_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, userController_1.getUserByID)(req, res, next);
 }));
 /**
@@ -96,7 +98,7 @@ router.get("/user", authorization_1.checkToken, (req, res, next) => __awaiter(vo
  *       500:
  *         description: Server error
  */
-router.delete("/users", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/users", authentication_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, userController_1.deleteUser)(req, res, next);
 }));
 /**
@@ -130,7 +132,7 @@ router.delete("/users", authorization_1.checkToken, (req, res, next) => __awaite
  *       500:
  *         description: Server error
  */
-router.patch("/users", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.patch("/users", authentication_1.checkToken, validateUserData_1.validateUpdatePassword, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, userController_1.updateUserPassword)(req, res, next);
 }));
 exports.default = router;

@@ -1,6 +1,8 @@
 import { Router,Request,Response, NextFunction } from "express";
-import { checkToken, isAdmin } from "../middlewear/authorization";
+import { isAdmin } from "../middlewear/authorization";
+import { checkToken } from "../middlewear/authentication";
 import { deleteUser, getAllUser, updateUserPassword ,getUserByID} from "../controllers/userController";
+import { validateUpdatePassword } from "../middlewear/validationHelper/validateUserData";
 const router=Router();
 
 /**
@@ -125,7 +127,7 @@ router.delete("/users", checkToken, async (req: Request, res: Response,next:Next
  *       500:
  *         description: Server error
  */
-router.patch("/users", checkToken, async (req: Request, res: Response,next:NextFunction) => {
+router.patch("/users", checkToken,validateUpdatePassword, async (req: Request, res: Response,next:NextFunction) => {
     updateUserPassword(req, res,next);
 });
 

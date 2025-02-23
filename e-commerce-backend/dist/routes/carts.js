@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cartController_1 = require("../controllers/cartController"); // Import the controller functions
-const authorization_1 = require("../middlewear/authorization");
+const authentication_1 = require("../middlewear/authentication");
 const router = express_1.default.Router();
 /**
  * @swagger
@@ -60,7 +60,7 @@ const router = express_1.default.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", authentication_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, cartController_1.addCartItem)(req, res, next);
 }));
 /**
@@ -77,7 +77,7 @@ router.post("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 
  *       500:
  *         description: Server error
  */
-router.get("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", authentication_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, cartController_1.getCartItems)(req, res, next);
 }));
 /**
@@ -106,7 +106,7 @@ router.get("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 0
  *       500:
  *         description: Server error
  */
-router.delete("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/", authentication_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, cartController_1.deleteCartItem)(req, res, next);
 }));
 /**
@@ -137,7 +137,7 @@ router.delete("/", authorization_1.checkToken, (req, res, next) => __awaiter(voi
  *       500:
  *         description: Server error
  */
-router.patch("/", authorization_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.patch("/", authentication_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, cartController_1.updateCartItemQuantity)(req, res, next);
 }));
 exports.default = router;

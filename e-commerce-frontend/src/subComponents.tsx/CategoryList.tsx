@@ -2,7 +2,7 @@ import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
 import { CATEGORY_LIST_HEADINGS } from "../constants/adminListTablesConst";
 
-function CategoryList({data,setDeleteCatgeoryID,setEditCategory,setToggleModal,setIsDelete}:forCategoriesProp) {
+function CategoryList({data,setDeleteCatgeoryID,setEditCategory,setToggleModal,setIsDelete}:categoriesProp) {
 
   return (
     <table className="w-full border-collapse border border-gray-400 text-lg text-gray-700">

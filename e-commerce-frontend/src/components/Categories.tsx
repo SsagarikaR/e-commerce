@@ -6,7 +6,7 @@ import { makeAuthorizedGetRequest } from '../services/authorizedRequests';
 
 
 function Categories() {
-  const [categories,setCategories]=useState<forCategories[]|undefined>();
+  const [categories,setCategories]=useState<categories[]|undefined>();
   const [searchParams] = useSearchParams(); 
   const categoryName = searchParams.get("name"); 
 

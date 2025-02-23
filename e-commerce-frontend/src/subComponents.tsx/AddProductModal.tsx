@@ -4,98 +4,118 @@ import crossIcon from "../assets/cross.png";
 import { makeAuthorizedPatchRequest, makeAuthorizedPostRequest } from "../services/authorizedRequests";
 import CloudinaryImageUpload from "../services/CloudinaryImageUpload";
 import ModalInput from "./ModalInput";
+import { validateInput } from "../utils/validations/validateInputs"; // import validateInput
+import useToast from "../utils/useToast"; // import useToast for success/error messages
 
 function AddProductModal({
   setToggleModal,
   setListChange,
   editProduct
-}: forProductModalProp) {
+}: productModalProp) {
   const [productName, setProductName] = useState(editProduct?.productName || "");
   const [productDescription, setProductDescription] = useState(editProduct?.productDescription || "");
   const [productThumbnail, setProductThumbnail] = useState(editProduct?.ProductThumbnail || "");
-  const [stock,setStock]=useState(editProduct?.stock || " ")
-  const [uploadedFileName, setUploadedFileName] = useState(""); 
+  const [stock, setStock] = useState(editProduct?.stock || "");
+  const [uploadedFileName, setUploadedFileName] = useState("");
   const [productPrice, setProductPrice] = useState(editProduct?.productPrice.toString() || "");
   const [categoryID, setCategoryID] = useState(editProduct?.categoryID || "");
-  const [categories, setCategories] = useState<forCategories[]>();
+  const [categories, setCategories] = useState<categories[]>();
   const [brandID, setBrandID] = useState(editProduct?.brandID || "");
-  const [brands,setBrands]=useState<forBrand[]>();
-  console.log(uploadedFileName);
+  const [brands, setBrands] = useState<brand[]>();
 
-   // data to send in the parameter on making api call
+  const { success, error } = useToast;
+
+  // Error states
+  const [productNameError, setProductNameError] = useState<string>("");
+  const [productPriceError, setProductPriceError] = useState<string>("");
+  const [stockError, setStockError] = useState<string>("");
+
+  // Data to send in the API call
   const data = {
     productName: productName,
     productDescription: productDescription,
     productThumbnail: productThumbnail,
     productPrice: productPrice,
-    stock:stock,
-    brandID:brandID,
+    stock: stock,
+    brandID: brandID,
     categoryID: categoryID,
   };
 
-  
-  //Input text fields of the form fields
-  const fields=[
+  const fields = [
     {
-      id:"product_name",
-      value:productName,
-      setValue:setProductName,
-      field:"product name"
+      id: "product_name",
+      value: productName,
+      setValue: setProductName,
+      field: "Product Name",
+      error: productNameError,
+      setError: setProductNameError,
     },
     {
-      id:"product_price",
-      value:productPrice,
-      setValue:setProductPrice,
-      field:"product price"
+      id: "product_price",
+      value: productPrice,
+      setValue: setProductPrice,
+      field: "Product Price",
+      error: productPriceError,
+      setError: setProductPriceError,
     },
     {
-      id:"stock",
-      value:stock,
-      setValue:setStock,
-      field:"stock"
-    }
-  ]
+      id: "stock",
+      value: stock,
+      setValue: setStock,
+      field: "Stock",
+      error: stockError,
+      setError: setStockError,
+    },
+  ];
 
-  /**
-   * fetch categories to show the category list to add in the products category
-   */
-  const getCatgeories = async () => {
+  // Fetch categories to show the category list
+  const getCategories = async () => {
     const response = await makeUnAuthorizedGetRequest("/categories");
     setCategories(response?.data);
   };
 
-  /**
-   * fetch brands to show the brands list to add in the products brand
-   */
-  const getBrands=async () =>{
+  // Fetch brands to show the brand list
+  const getBrands = async () => {
     const response = await makeUnAuthorizedGetRequest("/brands");
     setBrands(response?.data);
-  }
+  };
 
-  /**
-   * handle submit
-   */
+  // Handle form submission
   const handleSubmit = async () => {
     let response;
     if (editProduct) {
-      // If productData exists, update the product
-      response = await makeAuthorizedPatchRequest(`/products`, {productID:editProduct.productID,...data});
+      // If editProduct exists, update the product
+      response = await makeAuthorizedPatchRequest(`/products`, { productID: editProduct.productID, ...data });
     } else {
       // Otherwise, add a new product
       response = await makeAuthorizedPostRequest("/products", data);
     }
-    console.log(response);
+
     if (response?.data) {
-      console.log("list changed")
-      setListChange(prev=>!prev);
+      setListChange((prev) => !prev);
       setToggleModal(false);
+      success("Success.");
+    } else {
+      error("Something went wrong. Please try again.");
     }
   };
 
+  // Check for validation errors
+  const checkError = (): boolean => {
+    let isValid = true;
+
+    // Validate fields
+    isValid = validateInput("product_name", productName, setProductNameError) && isValid;
+    isValid = validateInput("product_price", productPrice, setProductPriceError) && isValid;
+    isValid = validateInput("stock", stock, setStockError) && isValid;
+
+    return isValid;
+  };
+
   useEffect(() => {
-    getCatgeories();
+    getCategories();
     getBrands();
-  },[]);
+  }, []);
 
   return (
     <div className="fixed p-6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white z-10 w-200">
@@ -112,16 +132,17 @@ function AddProductModal({
         Add a new product
       </div>
       <div className="text-lg text-gray-600 p-2 flex flex-col gap-6">
-        {
-          fields.map((field)=>(
-             <ModalInput 
-              id={field.id}
-              value={field.value}
-              setValue={field.setValue}
-              field={field.field}
-             />
-          ))
-        }
+        {fields.map((field) => (
+          <ModalInput
+            key={field.id}
+            id={field.id}
+            value={field.value}
+            setValue={field.setValue}
+            field={field.field}
+            error={field.error}
+            setError={field.setError}
+          />
+        ))}
         <div className="flex ">
           <label htmlFor="product_description" className="font-semibold text-xl w-70 ">
             Enter product description
@@ -140,9 +161,9 @@ function AddProductModal({
             Select product thumbnail
           </label>
           <div>
-           <CloudinaryImageUpload seturl={setProductThumbnail} setName={setUploadedFileName} />
-           <div>{uploadedFileName}</div>
-           </div>
+            <CloudinaryImageUpload seturl={setProductThumbnail} setName={setUploadedFileName} />
+            <div>{uploadedFileName}</div>
+          </div>
         </div>
         <div className="flex">
           <label className="font-semibold text-xl w-70">Select category</label>
@@ -153,12 +174,12 @@ function AddProductModal({
             }}
           >
             <option disabled selected>
-              --Select catgeory--
+              --Select category--
             </option>
             {categories &&
-              categories.map((catgeory) => (
-                <option value={catgeory.categoryID}>
-                  {catgeory.categoryName}
+              categories.map((category) => (
+                <option value={category.categoryID}>
+                  {category.categoryName}
                 </option>
               ))}
           </select>
@@ -168,7 +189,7 @@ function AddProductModal({
           <select
             className=" border p-2  outline-none w-91"
             onChange={(e) => {
-             setBrandID(e.target.value);
+              setBrandID(e.target.value);
             }}
           >
             <option disabled selected>
@@ -191,9 +212,16 @@ function AddProductModal({
           >
             Cancel
           </button>
-          <button className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer" 
-            onClick={()=>{ handleSubmit(); }}>
-            {editProduct ? "Update" : "Add"} 
+          <button
+            className="w-50 shadow-lg bg-blue-500 p-2 text-black text-2xl font-semibold cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              if (checkError()) {
+                handleSubmit();
+              }
+            }}
+          >
+            {editProduct ? "Update" : "Add"}
           </button>
         </div>
       </div>

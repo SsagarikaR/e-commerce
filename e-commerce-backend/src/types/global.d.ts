@@ -1,5 +1,5 @@
 declare global {
-  interface forUser {
+  interface user {
     userID: number;
     name: string;
     email: string;

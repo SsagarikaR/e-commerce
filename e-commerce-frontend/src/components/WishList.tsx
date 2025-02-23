@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { makeAuthorizedGetRequest } from "../services/authorizedRequests"
 import WishListCard from "../subComponents.tsx/WishListCard";
+import Container from "../containers/Container";
 
 function WishList() {
   const [wishlist,setWishList]=useState<wishListDetails[]|undefined>()
@@ -19,9 +20,10 @@ function WishList() {
   },[toggleWishList]);
 
   return (
-    <div className="w-screen flex h-screen justify-center bg_color">
+    <Container>
+    <div className="w-screen flex h-screen justify-center ">
       <div className="flex flex-col   w-3/5 items-center h-full gap-2">
-        <div className="w-full p-2 text-xl font-medium text-gray-700">My WishList({wishlist?.length || 0})</div>
+        <div className="w-full p-2 text-xl font-medium text-gray-700 dark:text-white">My WishList({wishlist?.length || 0})</div>
         {
           wishlist&& wishlist?.length>0?
           (
@@ -37,6 +39,7 @@ function WishList() {
         }
       </div>
     </div>
+    </Container>
   )
 }
 

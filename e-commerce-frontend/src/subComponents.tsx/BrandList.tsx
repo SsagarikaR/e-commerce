@@ -8,7 +8,7 @@ function BrandList({
   setEditBrand,
   setToggleModal,
   setIsDelete,
-}: forBrandListProp) {
+}: brandListProp) {
   return (
     <div>
       <table className="w-full border-collapse border border-gray-400 text-lg text-gray-700">

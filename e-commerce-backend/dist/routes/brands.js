@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const authorization_1 = require("../middlewear/authorization");
+const authentication_1 = require("../middlewear/authentication");
 const brandControllers_1 = require("../controllers/brandControllers");
 const router = (0, express_1.Router)();
 /**
@@ -48,7 +49,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.post("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.post("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
     (0, brandControllers_1.createBrands)(req, res, next);
 });
 /**
@@ -98,7 +99,7 @@ router.get("/", (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.patch("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
     (0, brandControllers_1.updateBrands)(req, res, next);
 });
 /**
@@ -127,7 +128,7 @@ router.patch("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res
  *       500:
  *         description: Server error
  */
-router.delete("/", authorization_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
     (0, brandControllers_1.deleteBrands)(req, res, next);
 });
 exports.default = router;

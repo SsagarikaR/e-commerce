@@ -76,11 +76,11 @@ function Products() {
             </select>
           </div>
         </div>
-        <div className="">
+        <div className="flex w-full justify-center items-center">
           {products && products.length > 0 ? (
-            <div className="flex flex-col p-5">
-              <div className="overflow-y-auto max-h-300">
-                <div className="grid grid-cols-4 gap-10">
+            <div className="flex flex-col p-5 ">
+              <div className="flex ">
+                <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10">
                   {products?.map((product) => {
                     return (
                       <Product

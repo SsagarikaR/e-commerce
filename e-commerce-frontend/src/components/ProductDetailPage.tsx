@@ -20,11 +20,13 @@ function ProductDetailPage() {
     
     //  Function to fetch product data based on the product id
     const fetchData = async () => {
-        // Send GET request to fetch the product details by id
         const response = await makeUnAuthorizedGetRequest(`/products?id=${id}`);
+        console.log(response,"response");
         if (response?.data) {
-            setProduct(response.data);  // Update the state with the fetched product details
+            console.log(product,"product")
+            setProduct(response.data); 
         }
+       
     };
 
     //check whether product is in the wish list
@@ -58,16 +60,13 @@ function ProductDetailPage() {
         console.log(response,"product added to recomendation");
       }
     
-    useEffect(()=>{
-      fetchWishList();
-    },[toggleWishList])
-
     
     //  Effect hook to fetch data whenever the product id changes (from the URL)
     useEffect(() => {
+        fetchWishList();
         fetchData();
         addToPrefernces();
-    }, []);
+    }, [toggleWishList]);
 
     return (
         <Container>
@@ -89,7 +88,7 @@ function ProductDetailPage() {
                             />
                         </div>
                         </div>
-                        <div className=" w-80  sm:w-100  md:w-150 lg:w-150 xl:150  text-gray-700 gap-y-9 flex flex-col  ">
+                        <div className=" w-80  sm:w-100  md:w-150 lg:w-150 xl:150 dark:text-white  text-gray-700 gap-y-9 flex flex-col  ">
                             <div className="flex gap-y-4 flex-col ">
                                 <div className="flex gap-x-3">
                                     <div className="text-3xl font-semibold">{product[0].productName}</div>

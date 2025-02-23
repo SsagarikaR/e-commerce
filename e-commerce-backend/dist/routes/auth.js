@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const validateUserData_1 = require("../middlewear/validationHelper/validateUserData");
 const authController_1 = require("../controllers/authController");
 const express_1 = require("express");
 const router = (0, express_1.Router)();
@@ -50,7 +51,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Internal server error
  */
-router.post("/signup", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/signup", validateUserData_1.validateSignUpData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, authController_1.createUser)(req, res, next);
 }));
 /**
@@ -85,7 +86,7 @@ router.post("/signup", (req, res, next) => __awaiter(void 0, void 0, void 0, fun
  *       500:
  *         description: Internal server error
  */
-router.post("/login", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/login", validateUserData_1.validateSignInData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, authController_1.getUser)(req, res, next);
 }));
 exports.default = router;

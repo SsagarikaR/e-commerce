@@ -6,7 +6,7 @@ export const selectPrefernceByProductANDUser=async(productID:number,userID:numbe
     return await sequelize.query(
         `SELECT * FROM Preferences WHERE productID = :productID AND userID = :userID`,
         {
-          replacements: { productID, userID },
+          replacements: { productID:productID, userID:userID },
           type:QueryTypes.SELECT,
         }
       );

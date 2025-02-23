@@ -11,20 +11,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteReviewService = exports.updateReviewService = exports.getReviewsOfProductService = exports.addReviewService = void 0;
 const reviews_1 = require("../../respository/reviews");
+const databse_1 = require("../../config/databse");
 // Service function to add a new review
 const addReviewService = (userID, productID, rating, description) => __awaiter(void 0, void 0, void 0, function* () {
+    const t = yield databse_1.sequelize.transaction();
     try {
+        // 1. Check if the user already reviewed the product
         const isAlreadyExist = yield (0, reviews_1.selectReviewByProductAndUser)(userID, productID);
         if (isAlreadyExist.length > 0) {
             return { success: false, message: "You have already added a review for this product." };
         }
-        const [result, metaData] = yield (0, reviews_1.addNewReview)(userID, productID, rating, description);
-        if (metaData === 0) {
-            return { success: false, message: "Error in adding review, Please try again!" };
-        }
+        // 2. Add the new review (inside transaction)
+        yield (0, reviews_1.addNewReview)(userID, productID, rating, description, t);
+        // 3. Calculate the new average rating for the product
+        const avgRating = yield (0, reviews_1.calculateAverageRating)(productID, t);
+        console.log(avgRating, "avg");
+        // 4. Update product's rating with the new average (inside transaction)
+        yield (0, reviews_1.updateProductRating)(productID, avgRating, t);
+        // Commit the transaction if everything went well
+        yield t.commit();
         return { success: true, message: "Thank you for adding a review!" };
     }
     catch (error) {
+        // If any error occurs, rollback the transaction
+        yield t.rollback();
         console.error("Error adding review:", error);
         throw new Error("An error occurred while adding the review.");
     }

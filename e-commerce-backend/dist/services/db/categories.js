@@ -8,14 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCategoryService = exports.updateCategoryService = exports.getCategoriesService = exports.createCategoryService = void 0;
 const categories_1 = require("../../respository/categories");
-const node_cache_1 = __importDefault(require("node-cache"));
-const cache = new node_cache_1.default({ stdTTL: 3600, checkperiod: 600 });
+const cacheHelper_1 = require("../../helpers/cacheHelper");
 // Service to create a new category
 const createCategoryService = (categoryName, categoryThumbnail) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -27,6 +23,8 @@ const createCategoryService = (categoryName, categoryThumbnail) => __awaiter(voi
         // Create the new category
         const [result, metaData] = yield (0, categories_1.createNewCategory)(categoryName, categoryThumbnail);
         if (metaData !== 0) {
+            // Invalidate cache for all categories to ensure the list is updated
+            (0, cacheHelper_1.invalidateCache)('categories:all');
             return { success: true, message: "Successfully added a new category." };
         }
         else {
@@ -45,7 +43,7 @@ const getCategoriesService = (name) => __awaiter(void 0, void 0, void 0, functio
         // Define a cache key based on the provided category name (if any)
         const cacheKey = name ? `category:${name}` : 'categories:all';
         // Check if categories are cached
-        const cachedCategories = cache.get(cacheKey);
+        const cachedCategories = (0, cacheHelper_1.getCache)(cacheKey);
         if (cachedCategories) {
             console.log('Returning cached categories');
             return { success: true, categories: cachedCategories }; // Return cached data
@@ -57,7 +55,7 @@ const getCategoriesService = (name) => __awaiter(void 0, void 0, void 0, functio
                 return { success: false, message: `No category with name ${name} found.` };
             }
             // Store the fetched category in the cache
-            cache.set(cacheKey, category);
+            (0, cacheHelper_1.setCache)(cacheKey, category);
             return { success: true, categories: category };
         }
         // Fetch all categories if no name is provided
@@ -66,7 +64,7 @@ const getCategoriesService = (name) => __awaiter(void 0, void 0, void 0, functio
             return { success: false, message: "No categories found." };
         }
         // Store the fetched categories in the cache
-        cache.set(cacheKey, categories);
+        (0, cacheHelper_1.setCache)(cacheKey, categories);
         return { success: true, categories };
     }
     catch (error) {
@@ -84,6 +82,9 @@ const updateCategoryService = (categoryID, categoryName, categoryThumbnail) => _
         }
         // Update the category
         yield (0, categories_1.updateTheCatgeory)(categoryName, categoryThumbnail, categoryID);
+        // Invalidate cache for all categories since an update occurred
+        (0, cacheHelper_1.invalidateCache)('categories:all');
+        (0, cacheHelper_1.invalidateCache)(`category:${categoryName}`); // Invalidate cache for specific category name if needed
         return { success: true, message: "Successfully updated the category." };
     }
     catch (error) {
@@ -101,6 +102,8 @@ const deleteCategoryService = (categoryID) => __awaiter(void 0, void 0, void 0, 
         }
         // Delete the category
         yield (0, categories_1.deleteCatgeory)(categoryID);
+        // Invalidate cache for all categories after deletion
+        (0, cacheHelper_1.invalidateCache)('categories:all');
         return { success: true, message: "Successfully deleted the category." };
     }
     catch (error) {

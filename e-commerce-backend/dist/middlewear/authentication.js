@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = void 0;
+exports.checkToken = exports.generateToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require('dotenv').config();
 const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,3 +27,24 @@ const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.generateToken = generateToken;
+const checkToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer')) {
+        return next({ statusCode: 401, message: "Authentication required." });
+    }
+    console.log(authHeader, "authHeader");
+    const token = authHeader.split(' ')[1];
+    try {
+        if (process.env.JWT) {
+            const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT);
+            req.body.user = decoded;
+            console.log(req.body);
+            next();
+        }
+    }
+    catch (error) {
+        console.log(error, "error");
+        res.status(401).json({ error: "Unauthorized" });
+    }
+};
+exports.checkToken = checkToken;

@@ -1,89 +1,138 @@
-import { sequelize } from "../../config/databse";
-import { QueryTypes } from "sequelize";
+import bcrypt from "bcrypt";
+import {
+    selectUserByName,
+    selectUserByEmail,
+    createNewUser,
+    deleteUserByID,
+    selectUserByID,
+    updateUsersPassword,
+    selectAllUsers
+} from "../../respository/users";
+
+// Service to create a new user
+export const createUserService = async (
+    name: string,
+    email: string,
+    contactNo: string,
+    password: string
+) => {
+    const existingUserByName = await selectUserByName(name);
+    if (existingUserByName.length > 0) {
+        return { success: false, message: "Username already taken" };
+    }
+
+    const existingUserByEmail = await selectUserByEmail(email);
+    if (existingUserByEmail.length > 0) {
+        return { success: false, message: "Email already registered" };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const [result, metaData] = await createNewUser(name, email, contactNo, hashedPassword);
+
+    if (metaData === 0) {
+        return { success: false, message: "Error creating user" };
+    }
+
+    return { success: true, result };
+};
 
 
-export const selectAllUsers=async()=>{
-    return await sequelize.query(
-        `SELECT Users.*,
-            CASE 
-                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
-                ELSE 'User' 
-            END AS role
-        FROM Users
-        LEFT JOIN Admins ON Users.userID = Admins.userID`,
-        {
-            type:QueryTypes.SELECT
+
+
+// Service to get a user by email and password
+export const getUserService = async (email: string, password: string) => {
+    const users:user[] = await selectUserByEmail(email);
+
+    if (users.length === 0) {
+        return { success: false, message: "User not found" };
+    }
+
+    if(users[0].password){
+        const isPasswordValid = await bcrypt.compare(password, users[0].password);
+        if (!isPasswordValid) {
+            return { success: false, message: "Invalid password" };
         }
-    )
-}
+        const user=users[0]
+        delete user.password;
+        return { success: true, user };
+    }
+   
+};
 
-export const selectUserByID=async(id:number):Promise<forUser[]>=>{
-    return await sequelize.query(
-        `SELECT Users.*, 
-            CASE 
-                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
-                ELSE 'User' 
-            END AS role
-        FROM Users
-        LEFT JOIN Admins ON Users.userID = Admins.userID
-        WHERE Users.userID = ?`,
-        {
-            replacements:[id],
-            type:QueryTypes.SELECT
+
+
+
+// Service to delete a user by their ID
+export const deleteUserService = async (id: number) => {
+    const user = await selectUserByID(id);
+
+    if (user.length === 0) {
+        return { success: false, message: "User not found" };
+    }
+
+    await deleteUserByID(id);
+    return { success: true, message: "User deleted successfully" };
+};
+
+
+
+
+// Service to update the user's password
+export const updatePasswordService = async (
+    userID: number,
+    oldPassword: string,
+    newPassword: string
+) => {
+    const user = await selectUserByID(userID);
+
+    if (user.length === 0) {
+        return { success: false, message: "User not found" };
+    }
+
+    if(user[0].password){
+        const isPasswordValid = await bcrypt.compare(oldPassword, user[0].password);
+        if (!isPasswordValid) {
+            return { success: false, message: "Invalid old password" };
         }
-    );
-}
+    }
+   
 
-export const selectUserByName=async(name:string)=>{
-    return await sequelize.query(`SELECT * FROM Users WHERE name=? `,
-        {
-            replacements:[name],
-            type:QueryTypes.SELECT
-        }
-    );
-}
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await updateUsersPassword(hashedPassword);
+
+    return { success: true, message: "Password updated successfully" };
+};
 
 
-export const selectUserByEmail = async(email:string):Promise<forUser[]>=>{
-    return await sequelize.query(`SELECT * FROM Users WHERE email=?`,
-        {
-            replacements:[email],
-            type:QueryTypes.SELECT
-        }
-    );
-}
 
-export const createNewUser=async(name:string,email:string,contactNo:string,hashedPassword:string)=>{
-    return await sequelize.query(`INSERT INTO Users (name,email,contactNo,role,password) VALUES
-                (?,?,?,?,?)`,{
-                    replacements:[name,email,contactNo,hashedPassword],
-                    type:QueryTypes.INSERT
-                })
-}
 
-export const selectUserByNameOREmail=async(name:string,email:string):Promise<forUser[]>=>{
-    return await sequelize.query(`SELECT * FROM Users WHERE name=? AND  email=?  `,
-                {
-                    replacements:[name,email],
-                    type:QueryTypes.SELECT
-                }
-            );
-}
+export const getAllUsersService = async () => {
+    try {
+      const users = await selectAllUsers();
+      if (users.length === 0) {
+        return { success: false, message: "No users found" };
+      }
+      return { success: true, users };
+    } catch (error) {
+      throw new Error("An error occurred while fetching users");
+    }
+  };
+  
 
-export const deleteUserByID=async(id:number)=>{
-    return await sequelize.query('DELETE FROM Users WHERE userID=?',
-        {
-            replacements:[id],
-            type:QueryTypes.DELETE
-        }
-    )
-}
 
-export const updateUsersPassword=async (hashedPassword:string)=>{
-    return await sequelize.query('UPDATE Users SET password=?',
-        {
-            replacements:[hashedPassword],
-            type:QueryTypes.UPDATE
-        }
-    )
-}
+
+  // Service function to retrieve a user by their ID
+  export const getUserByIDService = async (id: number) => {
+    try {
+      const users = await selectUserByID(id);
+      if (users.length === 0) {
+        return { success: false, message: "User not found" };
+      }
+  
+      // Delete the password field before returning
+      delete users[0].password;
+      return { success: true, user: users[0] };
+    } catch (error) {
+      throw new Error("An error occurred while fetching the user by ID");
+    }
+  };

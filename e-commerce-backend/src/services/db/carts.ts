@@ -1,86 +1,72 @@
-import { sequelize } from "../../config/databse";
-import { QueryTypes } from "sequelize";
-
-export const selectFromCartByUserANDProduct=async(userID:number,productID:number)=>{
-    return await sequelize.query(
-        "SELECT * FROM CartItems WHERE userID = ? AND productID = ?",
-        {
-          replacements: [userID, productID],
-          type: QueryTypes.SELECT,
-        }
-      );
+import {
+    selectFromCartByUserANDProduct,
+    addNewCartItem,
+    getCartByUserID,
+    selectFromCartItemCartID,
+    deleteFromCart,
+    updateCartItemsQuantity,
+    updateQuantityIfAlreadyExist,
+  } from "../../respository/carts";
   
-}
-
-export const updateQuantityIfAlreadyExist=async(userID:number, productID:number)=>{
-    return await sequelize.query(
-        "UPDATE CartItems SET quantity = quantity + 1 WHERE userID = :userID AND productID = :productID",
-        {
-          replacements: { userID, productID },
-          type: QueryTypes.UPDATE,
-        }
-      );
-}
-
-export const  addNewCartItem=async(userID:number, productID:number, quantity:number)=>{
-    return await  sequelize.query(
-        "INSERT INTO CartItems (userID, productID, quantity) VALUES (:userID, :productID, :quantity)",
-        {
-          replacements: { userID, productID, quantity: quantity || 1 },
-          type: QueryTypes.INSERT,
-        }
-      );
-}
-
-export const getCartByUserID=async(userID:number)=>{
-    return await sequelize.query(
-          `
-            SELECT ci.cartItemID, ci.quantity, p.productID, p.productName, p.productDescription, p.productThumbnail, p.productPrice, c.categoryName,br.brandID,br.brandThumbnail,
-            (SELECT SUM(ci2.quantity * p2.productPrice) 
-            FROM CartItems ci2 
-            JOIN Products p2 ON ci2.productID = p2.productID 
-            WHERE ci2.userID = ?) AS totalPrice
-            FROM CartItems ci
-            JOIN Products p ON ci.productID = p.productID
-            JOIN Categories c ON p.categoryID = c.categoryID
-            JOIN Brands br ON br.brandID = p.brandID
-            WHERE ci.userID = ? 
-          `,
-          {
-            replacements: [userID, userID],
-            type: QueryTypes.SELECT,
-          }
-        );
-}
-
-export const selectFromCartItemCartID=async(cartItemID:number)=>{
-    return await sequelize.query(
-      "SELECT * FROM CartItems WHERE cartItemID = ?",
-      {
-        replacements: [cartItemID],
-        type: QueryTypes.SELECT,
+  // Service to add an item to the cart
+  export const addCartItemService = async (userID: number, productID: number, quantity: number) => {
+    try {
+      // Check if the product already exists in the cart
+      const existingCartItem = await selectFromCartByUserANDProduct(userID, productID);
+      if (existingCartItem.length > 0) {
+        await updateQuantityIfAlreadyExist(userID, productID);
+        return { success: true, message: "Product quantity updated in cart" };
       }
-    );
-
-}
-
-export const deleteFromCart=async(cartItemID:number)=>{
-    return await sequelize.query(
-      "DELETE FROM CartItems WHERE cartItemID = :cartItemID",
-      {
-        replacements: { cartItemID },
-        type: QueryTypes.DELETE,
+  
+      // Add new item to the cart
+      const result = await addNewCartItem(userID, productID, quantity);
+      return { success: true, message: "Product added to cart", cartItemID: result[0] };
+    } catch (error) {
+      console.error(error);
+      throw new Error("An error occurred while adding the item to the cart");
+    }
+  };
+  
+  // Service to get all cart items by user
+  export const getCartItemsService = async (userID: number) => {
+    try {
+      const cartItems = await getCartByUserID(userID);
+      return { success: true, cartItems };
+    } catch (error) {
+      console.error(error);
+      throw new Error("An error occurred while fetching the cart items");
+    }
+  };
+  
+  // Service to delete an item from the cart
+  export const deleteCartItemService = async (cartItemID: number) => {
+    try {
+      const cartItem = await selectFromCartItemCartID(cartItemID);
+      if (cartItem.length === 0) {
+        return { success: false, message: "Cart item not found" };
       }
-    );
-}
-
-export const updateCartItemsQuantity=async(quantity:number,cartItemID:number)=>{
-  console.log(quantity);
-    return await sequelize.query(
-      "UPDATE CartItems SET quantity =? WHERE cartItemID =?",
-      {
-        replacements: [ quantity, cartItemID ],
-        type: QueryTypes.UPDATE,
+  
+      await deleteFromCart(cartItemID);
+      return { success: true, message: "Cart item deleted successfully" };
+    } catch (error) {
+      console.error(error);
+      throw new Error("An error occurred while deleting the cart item");
+    }
+  };
+  
+  // Service to update the quantity of an item in the cart
+  export const updateCartItemQuantityService = async (quantity: number, cartItemID: number) => {
+    try {
+      const cartItem = await selectFromCartItemCartID(cartItemID);
+      if (cartItem.length === 0) {
+        return { success: false, message: "Cart item not found" };
       }
-    );
-}
+  
+      await updateCartItemsQuantity(quantity, cartItemID);
+      return { success: true, message: "Cart item quantity updated successfully" };
+    } catch (error) {
+      console.error(error);
+      throw new Error("An error occurred while updating the cart item quantity");
+    }
+  };
+  

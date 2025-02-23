@@ -1,6 +1,7 @@
 import { adminLogin, createAdmin, deleteAdmin, updateAdmin } from "../controllers/adminController";
 import { NextFunction, Request, Response, Router } from "express";
-import { checkToken, isAdmin } from "../middlewear/authorization";
+import {  isAdmin } from "../middlewear/authorization";
+import { checkToken } from "../middlewear/authentication";
 
 const router = Router();
 

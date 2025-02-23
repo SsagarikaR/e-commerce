@@ -1,6 +1,6 @@
 export default function CloudinaryImageUpload(props: { seturl: (url: string) => void, setName: (name: string) => void }) {
     function handleWidget() {
-        const myWidget: CloudinaryWidget = window.cloudinary.createUploadWidget({
+        const myWidget: cloudinaryWidget = window.cloudinary.createUploadWidget({
             cloudName: 'duujsfghz',
             uploadPreset: 'nweojrbp',
             sources: ['local', 'url', 'camera'],

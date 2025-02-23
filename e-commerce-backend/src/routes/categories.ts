@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { checkToken, isAdmin } from "../middlewear/authorization";
+import {  isAdmin } from "../middlewear/authorization";
+import { checkToken } from "../middlewear/authentication";
 import { createCategories, deleteCategories, getCategories, updateCategories } from "../controllers/categoriesController";
+import { validateCreateCategoryData ,validateUpdateCategoryData} from "../middlewear/validationHelper/validateCategoryData";
 
 const router = Router();
 
@@ -49,7 +51,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.post("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+router.post("/", checkToken, isAdmin,validateCreateCategoryData, async (req: Request, res: Response,next:NextFunction) => {
     createCategories(req, res,next);
 });
 
@@ -136,7 +138,7 @@ router.delete("/", checkToken, isAdmin, async (req: Request, res: Response,next:
  *       500:
  *         description: Server error
  */
-router.patch("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+router.patch("/", checkToken, isAdmin, validateUpdateCategoryData,async (req: Request, res: Response,next:NextFunction) => {
     updateCategories(req, res,next);
 });
 

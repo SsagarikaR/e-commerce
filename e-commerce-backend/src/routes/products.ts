@@ -1,6 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
-import { createProduct, deleteProducts, getProducts, updateProduct } from "../controllers/productController";
-import { checkToken, isAdmin } from "../middlewear/authorization";
+import { createProduct,deleteProduct, getProducts, updateProduct } from "../controllers/productController";
+import { isAdmin } from "../middlewear/authorization";
+import { checkToken } from "../middlewear/authentication";
+import { validateCreateProductData, validateUpdateProductData } from "../middlewear/validationHelper/validateProductData";
+
 
 const router = express.Router();
 
@@ -55,7 +58,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+router.post("/", checkToken, isAdmin,validateCreateProductData, async (req: Request, res: Response,next:NextFunction) => {
     createProduct(req, res,next);
 });
 
@@ -126,7 +129,7 @@ router.get("/", async (req: Request, res: Response,next:NextFunction) => {
  *         description: Server error
  */
 router.delete("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
-   deleteProducts(req, res,next);
+  deleteProduct(req, res,next);
 });
 
 /**
@@ -165,7 +168,7 @@ router.delete("/", checkToken, isAdmin, async (req: Request, res: Response,next:
  *       500:
  *         description: Server error
  */
-router.patch("/", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+router.patch("/", checkToken, isAdmin,validateUpdateProductData, async (req: Request, res: Response,next:NextFunction) => {
    updateProduct(req, res,next);
 });
 

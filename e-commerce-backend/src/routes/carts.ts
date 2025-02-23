@@ -1,6 +1,6 @@
 import express,{NextFunction, Request,Response} from "express";
 import { addCartItem, deleteCartItem, getCartItems, updateCartItemQuantity } from "../controllers/cartController"; // Import the controller functions
-import { checkToken } from "../middlewear/authorization";
+import { checkToken } from "../middlewear/authentication";
 
 const router = express.Router();
 

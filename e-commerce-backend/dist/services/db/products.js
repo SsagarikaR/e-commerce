@@ -8,14 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProductService = exports.deleteProductService = exports.getProductsService = exports.createProductService = void 0;
 const products_1 = require("../../respository/products");
-const node_cache_1 = __importDefault(require("node-cache"));
-const cache = new node_cache_1.default({ stdTTL: 3600, checkperiod: 600 });
+const cacheHelper_1 = require("../../helpers/cacheHelper");
 // Service to create a new product
 const createProductService = (productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock) => __awaiter(void 0, void 0, void 0, function* () {
     // Check if product already exists
@@ -25,6 +21,9 @@ const createProductService = (productName, productDescription, productThumbnail,
     }
     const [result, metaData] = yield (0, products_1.createNewProduct)(productName, productDescription, productThumbnail, productPrice, categoryID, brandID, stock);
     if (metaData > 0) {
+        // After product creation, clear the cache for affected product lists
+        const cacheKey = `products:${JSON.stringify({ categoryID })}:page:1:limit:20`; // Example cache key for the category (you can customize this based on your filtering needs)
+        (0, cacheHelper_1.invalidateCache)(cacheKey); // Invalidate the cache for category and product list
         return { success: true, message: "Successfully added the product." };
     }
     else {
@@ -36,9 +35,9 @@ exports.createProductService = createProductService;
 const getProductsService = (filters, page, limit) => __awaiter(void 0, void 0, void 0, function* () {
     // Generate a unique cache key based on filters, page, and limit
     const cacheKey = `products:${JSON.stringify(filters)}:page:${page}:limit:${limit}`;
-    const cachedProducts = cache.get(cacheKey);
+    const cachedProducts = (0, cacheHelper_1.getCache)(cacheKey);
     if (cachedProducts) {
-        // console.log('Returning cached products',cachedProducts);
+        // Return cached products if available
         return cachedProducts;
     }
     const products = yield (0, products_1.getProductWithCondition)(filters, page, limit);
@@ -46,7 +45,7 @@ const getProductsService = (filters, page, limit) => __awaiter(void 0, void 0, v
         throw new Error("No products found.");
     }
     // Store the fetched products in the cache for future requests
-    cache.set(cacheKey, products);
+    (0, cacheHelper_1.setCache)(cacheKey, products);
     return products;
 });
 exports.getProductsService = getProductsService;
@@ -56,7 +55,11 @@ const deleteProductService = (productID) => __awaiter(void 0, void 0, void 0, fu
     if (isProductExist.length === 0) {
         throw new Error("This product doesn't exist.");
     }
+    // Delete the product from the database
     yield (0, products_1.deleteByProductID)(productID);
+    // After deleting, invalidate the cache for affected product lists
+    const cacheKey = `products:${JSON.stringify({ id: productID })}:page:1:limit:20`; // Customize this to match the cache keys for your filtering
+    (0, cacheHelper_1.invalidateCache)(cacheKey); // Invalidate cache for the specific product list (could be more detailed)
     return { success: true, message: "Successfully deleted the product" };
 });
 exports.deleteProductService = deleteProductService;
@@ -66,7 +69,11 @@ const updateProductService = (productName, productDescription, productThumbnail,
     if (isProductExist.length === 0) {
         throw new Error("This product doesn't exist.");
     }
+    // Update the product details in the database
     yield (0, products_1.updateProducts)(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
+    // After updating, invalidate the cache for affected product lists
+    const cacheKey = `products:${JSON.stringify({ categoryID })}:page:1:limit:20`; // Example cache key for the category
+    (0, cacheHelper_1.invalidateCache)(cacheKey); // Invalidate cache for the category or any other applicable product filters
     return { success: true, message: "Successfully updated the product." };
 });
 exports.updateProductService = updateProductService;

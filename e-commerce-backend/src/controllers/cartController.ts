@@ -1,105 +1,75 @@
 import { Request, Response, NextFunction } from "express";
-import { selectByProductID } from "../respository/products";
 import {
-  updateQuantityIfAlreadyExist,
-  addNewCartItem,
-  getCartByUserID,
-  selectFromCartItemCartID,
-  deleteFromCart,
-  selectFromCartByUserANDProduct,
-  updateCartItemsQuantity,
+  addCartItemService,
+  getCartItemsService,
+  deleteCartItemService,
+  updateCartItemQuantityService,
 } from "../services/db/carts";
 
- 
-//  Controller to add an item to the user's cart
+// Controller to add an item to the user's cart
 export const addCartItem = async (req: Request, res: Response, next: NextFunction) => {
   const { productID, quantity } = req.body;
   const userID = req.body.user.identifire;
 
   try {
-    const [product] = await selectByProductID(productID);
-    if (!product) {
-      return next({ statusCode: 404, message: "Product not found" });
+    const result = await addCartItemService(userID, productID, quantity);
+    if (result.success) {
+      return res.status(200).json({ message: result.message, cartItemID: result.cartItemID });
+    } else {
+      return next({ statusCode: 400, message: result.message });
     }
-
-    const [existingCartItem] = await selectFromCartByUserANDProduct(userID, productID);
-    if (existingCartItem)
-    {
-      await updateQuantityIfAlreadyExist(userID, productID);
-      return res.status(200).json({ message: "Product quantity updated in cart" });
-    }
-
-    const [newCartItem] = await addNewCartItem(userID, productID, quantity);
-    return res.status(201).json({
-      message: "Product added to cart",
-      cartItemID: newCartItem,
-    });
   } catch (error) {
     console.error(error);
-    return next({ statusCode: 500, message: "Server error, please try again" });
+    return next({ statusCode: 500, message: "An error occurred while adding the item to the cart" });
   }
 };
 
 
 
 
-  // Controller to fetch all items in the user's cart
+// Controller to get all items in the user's cart
 export const getCartItems = async (req: Request, res: Response, next: NextFunction) => {
   const userID = req.body.user.identifire;
 
   try {
-    const cartItems = await getCartByUserID(userID);
-    return res.status(200).json(cartItems);
+    const result = await getCartItemsService(userID);
+    return res.status(200).json(result.cartItems);
   } catch (error) {
-    console.log(error, "error");
-    return next({ statusCode: 500, message: "Please try again after sometime!" });
+    console.error(error);
+    return next({ statusCode: 500, message: "An error occurred while fetching the cart items" });
   }
 };
 
-
-
-
-
-  // Controller to delete an item from the user's cart
-export const deleteCartItem = async (req: Request, res: Response, next: NextFunction) => {
+// Controller to delete an item from the user's cart
+export const deleteCartItem= async (req: Request, res: Response, next: NextFunction) => {
   const { cartItemID } = req.body;
 
   try {
-    const cartItem = await selectFromCartItemCartID(cartItemID);
-    if (cartItem.length === 0) {
-      return next({ statusCode: 404, message: "Cart item not found" });
+    const result = await deleteCartItemService(cartItemID);
+    if (result.success) {
+      return res.status(200).json({ message: result.message });
+    } else {
+      return next({ statusCode: 404, message: result.message });
     }
-
-    await deleteFromCart(cartItemID);
-    return res.status(200).json({ message: "Cart item deleted successfully" });
-
   } catch (error) {
     console.error(error);
-    return next({ statusCode: 500, message: "Server error, please try again" });
+    return next({ statusCode: 500, message: "An error occurred while deleting the cart item" });
   }
 };
 
-
-
-
- 
-  //  Controller to update the quantity of an item in the user's cart
+// Controller to update the quantity of an item in the user's cart
 export const updateCartItemQuantity = async (req: Request, res: Response, next: NextFunction) => {
   const { quantity, cartItemID } = req.body;
-  console.log(req.body);
 
   try {
-    const [cartItem] = await selectFromCartItemCartID(cartItemID);
-    if (!cartItem) {
-      return next({ statusCode: 404, message: "Cart item not found" });
+    const result = await updateCartItemQuantityService(quantity, cartItemID);
+    if (result.success) {
+      return res.status(200).json({ message: result.message });
+    } else {
+      return next({ statusCode: 404, message: result.message });
     }
-
-    await updateCartItemsQuantity(quantity, cartItemID);
-    return res.status(200).json({
-      message: "Cart item quantity updated successfully",
-    });
   } catch (error) {
     console.error(error);
-    return next({ statusCode: 500, message: "Server error, please try again" });
+    return next({ statusCode: 500, message: "An error occurred while updating the cart item quantity" });
   }
 };

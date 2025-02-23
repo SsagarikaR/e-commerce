@@ -1,3 +1,4 @@
+import { validateSignUpData ,validateSignInData} from "../middlewear/validationHelper/validateUserData";
 import { createUser, getUser } from "../controllers/authController";
 import { NextFunction, Request,Response,Router } from "express";
 
@@ -41,7 +42,7 @@ const router=Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/signup",async(req:Request,res:Response,next:NextFunction)=>{
+router.post("/signup",validateSignUpData,async(req:Request,res:Response,next:NextFunction)=>{
     createUser(req,res,next);
 })
 
@@ -78,7 +79,7 @@ router.post("/signup",async(req:Request,res:Response,next:NextFunction)=>{
  *       500:
  *         description: Internal server error
  */
-router.post("/login",async(req:Request,res:Response,next:NextFunction)=>{
+router.post("/login",validateSignInData,async(req:Request,res:Response,next:NextFunction)=>{
     getUser(req,res,next);
 })
 

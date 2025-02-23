@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateReview = exports.deleteReview = exports.selectReviewOfProduct = exports.selectByReviewID = exports.addNewReview = exports.selectReviewByProductAndUser = void 0;
+exports.updateReview = exports.deleteReview = exports.selectReviewOfProduct = exports.selectByReviewID = exports.updateProductRating = exports.calculateAverageRating = exports.addNewReview = exports.selectReviewByProductAndUser = void 0;
 const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const selectReviewByProductAndUser = (userID, productID) => __awaiter(void 0, void 0, void 0, function* () {
@@ -19,14 +19,35 @@ const selectReviewByProductAndUser = (userID, productID) => __awaiter(void 0, vo
     });
 });
 exports.selectReviewByProductAndUser = selectReviewByProductAndUser;
-const addNewReview = (userID, productID, rating, description) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`INSERT INTO Reviews (userID,productID,rating,description) VALUES 
-        (?,?,?,?)`, {
-        replacements: [userID, productID, rating, description],
-        type: sequelize_1.QueryTypes.INSERT
+const addNewReview = (userID, productID, rating, description, t) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield databse_1.sequelize.query(`INSERT INTO Reviews (userID, productID, rating, description) 
+      VALUES (:userID, :productID, :rating, :description)`, {
+        replacements: { userID, productID, rating, description },
+        type: sequelize_1.QueryTypes.INSERT,
+        transaction: t,
     });
+    return result;
 });
 exports.addNewReview = addNewReview;
+const calculateAverageRating = (productID, t) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const result = yield databse_1.sequelize.query(`SELECT AVG(rating) as avgRating FROM Reviews WHERE productID = :productID`, {
+        replacements: { productID },
+        type: sequelize_1.QueryTypes.SELECT,
+        transaction: t,
+    });
+    return ((_a = result[0]) === null || _a === void 0 ? void 0 : _a.avgRating) || 0; // If no reviews, return 0
+});
+exports.calculateAverageRating = calculateAverageRating;
+const updateProductRating = (productID, avgRating, t) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield databse_1.sequelize.query(`UPDATE Products SET rating = :rating WHERE productID = :productID`, {
+        replacements: { rating: Math.ceil(avgRating), productID },
+        type: sequelize_1.QueryTypes.UPDATE,
+        transaction: t,
+    });
+    return result;
+});
+exports.updateProductRating = updateProductRating;
 const selectByReviewID = (reviewID) => __awaiter(void 0, void 0, void 0, function* () {
     return yield databse_1.sequelize.query("SELECT * FROM Reviews WHERE reviewID=?", {
         replacements: [reviewID],

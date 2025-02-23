@@ -10,44 +10,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateCartItemQuantity = exports.deleteCartItem = exports.getCartItems = exports.addCartItem = void 0;
-const products_1 = require("../respository/products");
 const carts_1 = require("../services/db/carts");
-//  Controller to add an item to the user's cart
+// Controller to add an item to the user's cart
 const addCartItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID, quantity } = req.body;
     const userID = req.body.user.identifire;
     try {
-        const [product] = yield (0, products_1.selectByProductID)(productID);
-        if (!product) {
-            return next({ statusCode: 404, message: "Product not found" });
+        const result = yield (0, carts_1.addCartItemService)(userID, productID, quantity);
+        if (result.success) {
+            return res.status(200).json({ message: result.message, cartItemID: result.cartItemID });
         }
-        const [existingCartItem] = yield (0, carts_1.selectFromCartByUserANDProduct)(userID, productID);
-        if (existingCartItem) {
-            yield (0, carts_1.updateQuantityIfAlreadyExist)(userID, productID);
-            return res.status(200).json({ message: "Product quantity updated in cart" });
+        else {
+            return next({ statusCode: 400, message: result.message });
         }
-        const [newCartItem] = yield (0, carts_1.addNewCartItem)(userID, productID, quantity);
-        return res.status(201).json({
-            message: "Product added to cart",
-            cartItemID: newCartItem,
-        });
     }
     catch (error) {
         console.error(error);
-        return next({ statusCode: 500, message: "Server error, please try again" });
+        return next({ statusCode: 500, message: "An error occurred while adding the item to the cart" });
     }
 });
 exports.addCartItem = addCartItem;
-// Controller to fetch all items in the user's cart
+// Controller to get all items in the user's cart
 const getCartItems = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userID = req.body.user.identifire;
     try {
-        const cartItems = yield (0, carts_1.getCartByUserID)(userID);
-        return res.status(200).json(cartItems);
+        const result = yield (0, carts_1.getCartItemsService)(userID);
+        return res.status(200).json(result.cartItems);
     }
     catch (error) {
-        console.log(error, "error");
-        return next({ statusCode: 500, message: "Please try again after sometime!" });
+        console.error(error);
+        return next({ statusCode: 500, message: "An error occurred while fetching the cart items" });
     }
 });
 exports.getCartItems = getCartItems;
@@ -55,36 +47,35 @@ exports.getCartItems = getCartItems;
 const deleteCartItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { cartItemID } = req.body;
     try {
-        const cartItem = yield (0, carts_1.selectFromCartItemCartID)(cartItemID);
-        if (cartItem.length === 0) {
-            return next({ statusCode: 404, message: "Cart item not found" });
+        const result = yield (0, carts_1.deleteCartItemService)(cartItemID);
+        if (result.success) {
+            return res.status(200).json({ message: result.message });
         }
-        yield (0, carts_1.deleteFromCart)(cartItemID);
-        return res.status(200).json({ message: "Cart item deleted successfully" });
+        else {
+            return next({ statusCode: 404, message: result.message });
+        }
     }
     catch (error) {
         console.error(error);
-        return next({ statusCode: 500, message: "Server error, please try again" });
+        return next({ statusCode: 500, message: "An error occurred while deleting the cart item" });
     }
 });
 exports.deleteCartItem = deleteCartItem;
-//  Controller to update the quantity of an item in the user's cart
+// Controller to update the quantity of an item in the user's cart
 const updateCartItemQuantity = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { quantity, cartItemID } = req.body;
-    console.log(req.body);
     try {
-        const [cartItem] = yield (0, carts_1.selectFromCartItemCartID)(cartItemID);
-        if (!cartItem) {
-            return next({ statusCode: 404, message: "Cart item not found" });
+        const result = yield (0, carts_1.updateCartItemQuantityService)(quantity, cartItemID);
+        if (result.success) {
+            return res.status(200).json({ message: result.message });
         }
-        yield (0, carts_1.updateCartItemsQuantity)(quantity, cartItemID);
-        return res.status(200).json({
-            message: "Cart item quantity updated successfully",
-        });
+        else {
+            return next({ statusCode: 404, message: result.message });
+        }
     }
     catch (error) {
         console.error(error);
-        return next({ statusCode: 500, message: "Server error, please try again" });
+        return next({ statusCode: 500, message: "An error occurred while updating the cart item quantity" });
     }
 });
 exports.updateCartItemQuantity = updateCartItemQuantity;

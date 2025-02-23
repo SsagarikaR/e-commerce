@@ -45,8 +45,9 @@ exports.fetchPreferences = fetchPreferences;
 //delete prefrecnes
 const deletePreference = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { preferenceID } = req.params;
+    const userID = req.body.user.identifire;
     try {
-        const result = yield (0, prefernces_1.deletePreferenceService)(Number(preferenceID));
+        const result = yield (0, prefernces_1.deletePreferenceService)(Number(preferenceID), userID);
         res.status(200).json({ message: "Preference deleted successfully" });
     }
     catch (error) {

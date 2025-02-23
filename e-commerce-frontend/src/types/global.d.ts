@@ -1,6 +1,7 @@
 import React from "react";
 
 declare global {
+
   interface InputProps {
     field: string;
     id: string;
@@ -11,7 +12,7 @@ declare global {
     setError: (value: string) => void;
   }
 
-  interface forValidations {
+  interface validations {
     [key: string]: {
       [key: string]: {
         logic: (val: string) => boolean;
@@ -19,6 +20,8 @@ declare global {
       };
     };
   }
+
+
 
   interface wishList{
     wishListID:number;
@@ -31,7 +34,7 @@ declare global {
     productPrice:string;
     productThumbnail:string;
     brandID:number;
-    brandThmbnail:string
+    brandThumbnail:string
   }
 
   interface prefernce{
@@ -51,14 +54,16 @@ declare global {
     setToggleWishList:React.Dispatch<React.SetStateAction<boolean>>
   }
 
-  interface forModalInputProp{
+  interface modalInputProp{
     id:string;
     value:string|number;
     setValue:(value:string)=>void;
     field:string
+     error:string;
+    setError:  React.Dispatch<React.SetStateAction<string>>;
   }
 
-  interface forProductProp {
+  interface productProp {
     product: product;
     setModalOpen: (value: boolean) => void;
   }
@@ -84,13 +89,13 @@ declare global {
     rating:number;
   }
 
-  interface forCategories {
+  interface categories {
     categoryID: number;
     categoryName: string;
     categoryThumbnail?: string;
   }
 
-  interface forBrand{
+  interface brand{
     brandID: number;
     brandName: string;
     brandThumbnail: string;
@@ -105,7 +110,7 @@ declare global {
     items: product[];
   }
 
-  interface product extends forCategories,forBrand{
+  interface product extends categories,brand{
     productName: string;
     productPrice: number;
     productID: number;
@@ -117,7 +122,7 @@ declare global {
     quantity?:number
   }
 
-  interface forCartItem {
+  interface cartItem {
     cartItemID: number;
     categoryName: string;
     productDescription: string;
@@ -131,7 +136,7 @@ declare global {
     brandThumbnail:string;
   }
 
-  interface forDeleteModalProp{
+  interface deleteModalProp{
     page:string;
     deleteID:number;
     listChange:boolean;
@@ -139,25 +144,26 @@ declare global {
     setIsDelete:React.Dispatch<React.SetStateAction<boolean>>;
   }
 
-  interface forCategoryModalProp {
+  interface categoryModalProp {
     setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
     setListChange: React.Dispatch<React.SetStateAction<boolean>>;
     editCategory: forCategories;
   }
 
-  interface forBrandModalProp {
+  interface brandModalProp {
     setToggleModal:  React.Dispatch<React.SetStateAction<boolean>>;
     setListChange:  React.Dispatch<React.SetStateAction<boolean>>;
     editBrand: forBrand;
+   
   }
 
-  interface forProductModalProp {
+  interface productModalProp {
     setToggleModal: React.Dispatch<React.SetStateAction<boolean>>;
     setListChange: React.Dispatch<React.SetStateAction<boolean>>;
     editProduct: forProductbyName;
   }
 
-  interface forCustomerListProp{
+  interface customerListProp{
     data:forUser[];
     setListChange: React.Dispatch<React.SetStateAction<boolean>>;
   }
@@ -172,7 +178,7 @@ declare global {
     setCurrentPage:React.Dispatch<React.SetStateAction<number>>;
   }
 
-  interface forCategoriesProp {
+  interface categoriesProp {
     data: forCategories[];
     setDeleteCatgeoryID:(value:number)=>void;
     setEditCategory: (value: forCategories) => void;
@@ -180,7 +186,7 @@ declare global {
     setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
-  interface forBrandListProp {
+  interface brandListProp {
     data: forBrand[];
     setDeleteBrandID:(value:number)=>void
     setEditBrand: (value: forBrand) => void;
@@ -188,7 +194,7 @@ declare global {
     setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
-  interface FormData {
+  interface formData {
     full_name: string;
     contact: string;
     password: string;
@@ -199,7 +205,7 @@ declare global {
     page: string;
   }
 
-  interface CartContextType {
+  interface cartContextType {
     cart: forCartItem[];
     addToCart: (productID: number) => void;
     removeFromCart: (cartItemID: number) => void;
@@ -207,13 +213,13 @@ declare global {
     fetchCart: () => void;
   }
 
-  interface CloudinaryWidget {
+  interface cloudinaryWidget {
     open: () => void;
     close: () => void;
   }
 
 
-  interface Cloudinary {
+  interface cloudinary {
     createUploadWidget: (
       options: {
           cloudName: string;

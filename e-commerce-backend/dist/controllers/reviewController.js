@@ -16,7 +16,7 @@ const addReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     const userID = req.body.user.identifire;
     const { productID, rating, description } = req.body;
     if (!userID) {
-        return next({ statusCode: 400, message: "User not authenticated or missing." });
+        return next({ statusCode: 401, message: "User not authenticated or missing." });
     }
     if (!productID || !(rating >= 0 && rating <= 5) || !description) {
         return next({ statusCode: 409, message: "Please enter all the required fields." });
@@ -57,6 +57,9 @@ exports.getReviewsOfProduct = getReviewsOfProduct;
 const updateReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userID = req.body.user.identifire;
     const { reviewID, rating, description } = req.body;
+    if (!userID) {
+        return next({ statusCode: 401, message: "User not authenticated or missing." });
+    }
     if (!reviewID || !rating || !description) {
         return next({ statusCode: 400, message: "Please enter review ID, rating, and description." });
     }

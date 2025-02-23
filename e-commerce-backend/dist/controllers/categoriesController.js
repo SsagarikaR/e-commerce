@@ -15,6 +15,9 @@ const categories_1 = require("../services/db/categories");
 const createCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryName, categoryThumbnail } = req.body;
     try {
+        if (!categoryName || !categoryThumbnail) {
+            return res.status(409).json({ message: "Please enter all the required fields" });
+        }
         // Call service to create a new category
         const result = yield (0, categories_1.createCategoryService)(categoryName, categoryThumbnail);
         if (result.success) {

@@ -6,10 +6,10 @@ import {
     makeAuthorizedDeleteRequest 
 } from "../services/authorizedRequests";
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+const CartContext = createContext<cartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-    const [cart, setCart] = useState<forCartItem[]>([]);
+    const [cart, setCart] = useState<cartItem[]>([]);
 
     const fetchCart = async () => {
         const response = await makeAuthorizedGetRequest(`/cart`);

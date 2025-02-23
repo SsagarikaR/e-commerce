@@ -1,56 +1,59 @@
-import { sequelize } from "../../config/databse";
-import { DataTypes, QueryTypes } from "sequelize";
-
-export const selectByUserAndProduct=async(userID:number,productID:number)=>{
-    return await sequelize.query('SELECT * FROM WishLists WHERE userID=? and productID=?',{
-        replacements:[userID,productID],
-        type:QueryTypes.SELECT
-    })
-}
-
-export const addProductToWishList=async(userID:number,productID:number)=>{
-    return await sequelize.query('Insert INTO WishLists (userID,productID) VALUES (?,?)',{
-        replacements:[userID,productID],
-        type:QueryTypes.INSERT
-    })
-}
-
-
-export const getWishListByUserID = async (userID: number) => {
-    return await sequelize.query(
-      `
-        SELECT 
-          wl.wishListID, 
-          wl.userID,
-          wl.productID, 
-          p.productName, 
-          p.productThumbnail, 
-          p.productPrice,
-          br.brandID,
-          br.brandThumbnail
-        FROM WishLists wl
-        JOIN Products p ON wl.productID = p.productID
-        JOIN Brands br ON p.brandID = br.brandID
-        WHERE wl.userID = ? 
-      `,
-      {
-        replacements: [userID],
-        type: QueryTypes.SELECT,
-      }
-    );
+import {
+    selectByUserAndProduct,
+    addProductToWishList,
+    getWishListByUserID,
+    selectFromWishListByID,
+    deleteFromWishList,
+  } from "../../respository/wishLists";
+  
+  // Service to add a product to the wishlist
+  export const addProductToWishListService = async (userID: number, productID: number) => {
+    const existingItem = await selectByUserAndProduct(userID, productID);
+    if (existingItem.length !== 0) {
+      return { success: false, message: "Product already exists in the wishlist." };
+    }
+    
+    const [result] = await addProductToWishList(userID, productID);
+    if (result) {
+      return { success: true, message: "Product added to wishlist." };
+    }
+    return { success: false, message: "Failed to add product to wishlist." };
   };
   
 
-export const selectFromWishListByID=async(wishListID:number)=>{
-    return await sequelize.query('SELECT * FROM WishLists WHERE WishListID=?',{
-        replacements:[wishListID],
-        type:QueryTypes.SELECT
-    })
-}
 
-export const deleteFromWishList=async(wishListID:number)=>{
-    return await sequelize.query('DELETE FROM WishLists WHERE WishListID=?',{
-        replacements:[wishListID],
-        type:QueryTypes.DELETE
-    })
-}
+
+  // Service to get all wishlist items for a user
+  export const getWishListByUserService = async (userID: number) => {
+    const wishlist = await getWishListByUserID(userID);
+    if (wishlist.length === 0) {
+      return { success: false, message: "No items in wishlist." };
+    }
+    return { success: true, wishlist };
+  };
+  
+
+
+  // Service to get a specific wishlist item by user and product id
+  export const getWishListItemByIDService = async (userID: number, productID: number) => {
+    const wishlistItem = await selectByUserAndProduct(userID,productID);
+    console.log(wishlistItem,"why why")
+    if (wishlistItem.length === 0) {
+      return { success: false, message: "Wishlist item not found." };
+    }
+    return { success: true, wishlistItem };
+  };
+  
+
+
+
+  // Service to remove an item from the wishlist
+  export const deleteFromWishListService = async (wishListID: number) => {
+    const wishlistItem = await selectFromWishListByID(wishListID);
+    if (wishlistItem.length === 0) {
+      return { success: false, message: "Wishlist item not found." };
+    }
+    await deleteFromWishList(wishListID);
+    return { success: true, message: "Product removed from wishlist." };
+  };
+  

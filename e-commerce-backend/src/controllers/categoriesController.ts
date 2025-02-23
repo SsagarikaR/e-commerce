@@ -11,6 +11,9 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
   const { categoryName, categoryThumbnail } = req.body;
 
   try {
+    if(!categoryName || !categoryThumbnail){
+      return res.status(409).json({message:"Please enter all the required fields"});
+    }
     // Call service to create a new category
     const result = await createCategoryService(categoryName, categoryThumbnail);
     if (result.success) {
@@ -70,6 +73,10 @@ export const updateCategories = async (req: Request, res: Response, next: NextFu
     return next({ statusCode: 500, message: "Please try again after some time." });
   }
 };
+
+
+
+
 
 // Controller to delete an existing category
 export const deleteCategories = async (req: Request, res: Response, next: NextFunction) => {

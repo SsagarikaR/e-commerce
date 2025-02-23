@@ -4,9 +4,10 @@ import { ADD_TO_CART_BTN } from '../constants/btnConst';
 import { useEffect, useState } from 'react';
 import favIcon from "../assets/fav.png";
 import notFavIcon from "../assets/nFav.png";
+import Cookies from 'js-cookie';
 import { makeAuthorizedDeleteRequest, makeAuthorizedGetRequest, makeAuthorizedPostRequest } from '../services/authorizedRequests';
 
-function Product({product,setModalOpen}:forProductProp) {
+function Product({product,setModalOpen}:productProp) {
   const [WishList,setWishList]=useState<wishList[]|undefined>();
   const [toggleWishList,setToggleWishList]=useState(false);
   const { addToCart } = useCart();
@@ -22,6 +23,7 @@ function Product({product,setModalOpen}:forProductProp) {
     const response=await makeAuthorizedGetRequest(`/wishlist/${product.productID}`);
     console.log(response,"response");
     if(response?.data){
+      // if()
      setWishList(response.data);
     }
     else{
@@ -43,21 +45,32 @@ function Product({product,setModalOpen}:forProductProp) {
     }
   }
 
+  const handleAddToWishList=async()=>{
+    if(Cookies.get("token"))
+      {
+        addToWishList()
+      }
+      else{
+        navigate("/signin")
+      }
+  }
+
   useEffect(()=>{
     fetchWishList();
   },[toggleWishList])
   
   return (
-    <div className="flex flex-col gap-y-2 shadow-2xl p-2 relative transition-transform duration-300 hover:scale-95" >
-        <div className='absolute m-2 cursor-pointer ' onClick={()=>{addToWishList()}}>
+    <div className="flex flex-col gap-y-2 w-full shadow-2xl p-2 relative transition-transform duration-300 hover:scale-95 mx-auto" >
+        <div className='absolute m-2 cursor-pointer ' 
+        onClick={()=>{handleAddToWishList()}}>
           {WishList?<img src={favIcon} className='w-10 h-10 '/>
             :<img src={notFavIcon} className='w-10 h-10'/>
           }
         </div>
         <div className='gap-y-2 flex flex-col' onClick={()=>{openProductDetail();}}>{/**open products detail page on clicking over a product card */}
-          <img src={product.productThumbnail} className='cursor-pointer h-90 w-90' />
+          <img src={product.productThumbnail} className='cursor-pointer w-70 h-70 lg:h-90 lg:w-90' />
           <div className='flex items-center justify-center gap-x-2'>
-            <div className="text-center text-md  font-semibold text-gray-700 cursor-pointer">{product.productName}</div>
+            <div className="text-center text-md  font-semibold text-gray-700 dark:text-white cursor-pointer">{product.productName}</div>
             <img
             src={product.brandThumbnail}
             alt={product.brandName}

@@ -14,7 +14,7 @@ const databse_1 = require("../config/databse");
 const sequelize_1 = require("sequelize");
 const selectPrefernceByProductANDUser = (productID, userID) => __awaiter(void 0, void 0, void 0, function* () {
     return yield databse_1.sequelize.query(`SELECT * FROM Preferences WHERE productID = :productID AND userID = :userID`, {
-        replacements: { productID, userID },
+        replacements: { productID: productID, userID: userID },
         type: sequelize_1.QueryTypes.SELECT,
     });
 });

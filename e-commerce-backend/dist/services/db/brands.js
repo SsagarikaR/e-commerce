@@ -9,48 +9,93 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBrandByID = exports.updateTheBrand = exports.createNewBrand = exports.findAllBrand = exports.selectBrandByID = exports.findBrandByName = void 0;
-const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const findBrandByName = (brandName) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Brands WHERE brandName =?", {
-        replacements: [brandName],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.deleteBrandService = exports.updateBrandService = exports.getBrandsService = exports.createBrandService = void 0;
+const brands_1 = require("../../respository/brands");
+const cacheHelper_1 = require("../../helpers/cacheHelper");
+// Service to create a new brand
+const createBrandService = (brandName, brandThumbnail) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const isBrandExist = yield (0, brands_1.findBrandByName)(brandName);
+        if (isBrandExist.length !== 0) {
+            return { success: false, message: "This brand already exists" };
+        }
+        const [result, metaData] = yield (0, brands_1.createNewBrand)(brandName, brandThumbnail);
+        if (metaData !== 0) {
+            (0, cacheHelper_1.invalidateCache)("brands:all");
+            return { success: true, message: "Successfully added a new brand." };
+        }
+        else {
+            return { success: false, message: "Error in adding a new brand." };
+        }
+    }
+    catch (error) {
+        console.error("Error in createBrandService:", error);
+        throw new Error("An error occurred while creating the brand");
+    }
 });
-exports.findBrandByName = findBrandByName;
-const selectBrandByID = (brandID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Brands WHERE brandID=?", {
-        replacements: [brandID],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.createBrandService = createBrandService;
+// Service to get brands (by name or all brands)
+const getBrandsService = (name) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const cacheKey = name ? `brand:${name}` : "brands:all";
+        const cachedBrands = (0, cacheHelper_1.getCache)(cacheKey);
+        if (cachedBrands) {
+            console.log("Returning cached brands");
+            return { success: true, brands: cachedBrands };
+        }
+        if (name && typeof name === "string") {
+            const brand = yield (0, brands_1.findBrandByName)(name);
+            if (brand.length === 0) {
+                return { success: false, message: `No brand with name ${name} found.` };
+            }
+            (0, cacheHelper_1.setCache)(cacheKey, brand);
+            return { success: true, brands: brand };
+        }
+        const brands = yield (0, brands_1.findAllBrand)();
+        if (brands.length === 0) {
+            return { success: false, message: "No brands found." };
+        }
+        (0, cacheHelper_1.setCache)(cacheKey, brands);
+        return { success: true, brands };
+    }
+    catch (error) {
+        console.error("Error in getBrandsService:", error);
+        throw new Error("An error occurred while fetching the brands");
+    }
 });
-exports.selectBrandByID = selectBrandByID;
-const findAllBrand = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("SELECT * FROM Brands ", {
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.getBrandsService = getBrandsService;
+// Service to update an existing brand
+const updateBrandService = (brandID, brandName, brandThumbnail) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const isBrandExist = yield (0, brands_1.selectBrandByID)(brandID);
+        if (isBrandExist.length === 0) {
+            return { success: false, message: "Brand not found" };
+        }
+        yield (0, brands_1.updateTheBrand)(brandID, brandName, brandThumbnail);
+        (0, cacheHelper_1.invalidateCache)("brands:all");
+        (0, cacheHelper_1.invalidateCache)(`brand:${brandName}`);
+        return { success: true, message: "Successfully updated the brand." };
+    }
+    catch (error) {
+        console.error("Error in updateBrandService:", error);
+        throw new Error("An error occurred while updating the brand");
+    }
 });
-exports.findAllBrand = findAllBrand;
-const createNewBrand = (brandName, brandThumbnail) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query("Insert into Brands  (brandName,brandThumbnail) VALUES (?,?)", {
-        replacements: [brandName, brandThumbnail],
-        type: sequelize_1.QueryTypes.INSERT
-    });
+exports.updateBrandService = updateBrandService;
+// Service to delete an existing brand
+const deleteBrandService = (brandID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const isBrandExist = yield (0, brands_1.selectBrandByID)(brandID);
+        if (isBrandExist.length === 0) {
+            return { success: false, message: "This brand not found" };
+        }
+        yield (0, brands_1.deleteBrandByID)(brandID);
+        (0, cacheHelper_1.invalidateCache)("brands:all");
+        return { success: true, message: "Successfully deleted the brand." };
+    }
+    catch (error) {
+        console.error("Error in deleteBrandService:", error);
+        throw new Error("An error occurred while deleting the brand");
+    }
 });
-exports.createNewBrand = createNewBrand;
-const updateTheBrand = (brandID, brandName, brandThumbnail) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`UPDATE Brands SET brandThumbnail=? ,brandName=? WHERE  brandID=?`, {
-        replacements: [brandThumbnail, brandName, brandID],
-        type: sequelize_1.QueryTypes.UPDATE
-    });
-});
-exports.updateTheBrand = updateTheBrand;
-const deleteBrandByID = (brandID) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log();
-    return yield databse_1.sequelize.query(`DELETE FROM Brands WHERE brandID=?`, {
-        replacements: [brandID],
-        type: sequelize_1.QueryTypes.DELETE
-    });
-});
-exports.deleteBrandByID = deleteBrandByID;
+exports.deleteBrandService = deleteBrandService;

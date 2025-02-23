@@ -1,6 +1,4 @@
-// src/components/useToast.ts
-
-import { toast } from 'react-toastify';  // Assuming you're using react-toastify or a similar package
+import { toast } from 'react-toastify'; 
 
 const useToast = {
   success: (message: string) => {

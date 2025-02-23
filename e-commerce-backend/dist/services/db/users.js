@@ -8,76 +8,101 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUsersPassword = exports.deleteUserByID = exports.selectUserByNameOREmail = exports.createNewUser = exports.selectUserByEmail = exports.selectUserByName = exports.selectUserByID = exports.selectAllUsers = void 0;
-const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const selectAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT Users.*,
-            CASE 
-                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
-                ELSE 'User' 
-            END AS role
-        FROM Users
-        LEFT JOIN Admins ON Users.userID = Admins.userID`, {
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.getUserByIDService = exports.getAllUsersService = exports.updatePasswordService = exports.deleteUserService = exports.getUserService = exports.createUserService = void 0;
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const users_1 = require("../../respository/users");
+// Service to create a new user
+const createUserService = (name, email, contactNo, password) => __awaiter(void 0, void 0, void 0, function* () {
+    const existingUserByName = yield (0, users_1.selectUserByName)(name);
+    if (existingUserByName.length > 0) {
+        return { success: false, message: "Username already taken" };
+    }
+    const existingUserByEmail = yield (0, users_1.selectUserByEmail)(email);
+    if (existingUserByEmail.length > 0) {
+        return { success: false, message: "Email already registered" };
+    }
+    const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+    const [result, metaData] = yield (0, users_1.createNewUser)(name, email, contactNo, hashedPassword);
+    if (metaData === 0) {
+        return { success: false, message: "Error creating user" };
+    }
+    return { success: true, result };
 });
-exports.selectAllUsers = selectAllUsers;
-const selectUserByID = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT Users.*, 
-            CASE 
-                WHEN Admins.userID IS NOT NULL THEN 'Admin' 
-                ELSE 'User' 
-            END AS role
-        FROM Users
-        LEFT JOIN Admins ON Users.userID = Admins.userID
-        WHERE Users.userID = ?`, {
-        replacements: [id],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.createUserService = createUserService;
+// Service to get a user by email and password
+const getUserService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield (0, users_1.selectUserByEmail)(email);
+    if (users.length === 0) {
+        return { success: false, message: "User not found" };
+    }
+    if (users[0].password) {
+        const isPasswordValid = yield bcrypt_1.default.compare(password, users[0].password);
+        if (!isPasswordValid) {
+            return { success: false, message: "Invalid password" };
+        }
+        const user = users[0];
+        delete user.password;
+        return { success: true, user };
+    }
 });
-exports.selectUserByID = selectUserByID;
-const selectUserByName = (name) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? `, {
-        replacements: [name],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.getUserService = getUserService;
+// Service to delete a user by their ID
+const deleteUserService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield (0, users_1.selectUserByID)(id);
+    if (user.length === 0) {
+        return { success: false, message: "User not found" };
+    }
+    yield (0, users_1.deleteUserByID)(id);
+    return { success: true, message: "User deleted successfully" };
 });
-exports.selectUserByName = selectUserByName;
-const selectUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT * FROM Users WHERE email=?`, {
-        replacements: [email],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.deleteUserService = deleteUserService;
+// Service to update the user's password
+const updatePasswordService = (userID, oldPassword, newPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield (0, users_1.selectUserByID)(userID);
+    if (user.length === 0) {
+        return { success: false, message: "User not found" };
+    }
+    if (user[0].password) {
+        const isPasswordValid = yield bcrypt_1.default.compare(oldPassword, user[0].password);
+        if (!isPasswordValid) {
+            return { success: false, message: "Invalid old password" };
+        }
+    }
+    const hashedPassword = yield bcrypt_1.default.hash(newPassword, 10);
+    yield (0, users_1.updateUsersPassword)(hashedPassword);
+    return { success: true, message: "Password updated successfully" };
 });
-exports.selectUserByEmail = selectUserByEmail;
-const createNewUser = (name, email, contactNo, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`INSERT INTO Users (name,email,contactNo,role,password) VALUES
-                (?,?,?,?,?)`, {
-        replacements: [name, email, contactNo, hashedPassword],
-        type: sequelize_1.QueryTypes.INSERT
-    });
+exports.updatePasswordService = updatePasswordService;
+const getAllUsersService = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield (0, users_1.selectAllUsers)();
+        if (users.length === 0) {
+            return { success: false, message: "No users found" };
+        }
+        return { success: true, users };
+    }
+    catch (error) {
+        throw new Error("An error occurred while fetching users");
+    }
 });
-exports.createNewUser = createNewUser;
-const selectUserByNameOREmail = (name, email) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`SELECT * FROM Users WHERE name=? AND  email=?  `, {
-        replacements: [name, email],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.getAllUsersService = getAllUsersService;
+// Service function to retrieve a user by their ID
+const getUserByIDService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield (0, users_1.selectUserByID)(id);
+        if (users.length === 0) {
+            return { success: false, message: "User not found" };
+        }
+        // Delete the password field before returning
+        delete users[0].password;
+        return { success: true, user: users[0] };
+    }
+    catch (error) {
+        throw new Error("An error occurred while fetching the user by ID");
+    }
 });
-exports.selectUserByNameOREmail = selectUserByNameOREmail;
-const deleteUserByID = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('DELETE FROM Users WHERE userID=?', {
-        replacements: [id],
-        type: sequelize_1.QueryTypes.DELETE
-    });
-});
-exports.deleteUserByID = deleteUserByID;
-const updateUsersPassword = (hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('UPDATE Users SET password=?', {
-        replacements: [hashedPassword],
-        type: sequelize_1.QueryTypes.UPDATE
-    });
-});
-exports.updateUsersPassword = updateUsersPassword;
+exports.getUserByIDService = getUserByIDService;

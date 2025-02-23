@@ -11,7 +11,7 @@ const errorHandler = (
   const message = err.message || 'Something went wrong. Please try again later.';
 
   // Log error details for debugging
-  console.error(`Error: ${message}`, err);
+  // console.error(`Error: ${message}`, err);
 
   // Send response to client
   res.status(statusCode).json({

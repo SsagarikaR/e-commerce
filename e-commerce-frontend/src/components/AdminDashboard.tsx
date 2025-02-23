@@ -15,14 +15,14 @@ import DeleteModal from "../subComponents.tsx/DeleteModal";
 function AdminDashboard() {
   const [page, setPage] = useState("products");
   const [productData, setProductData] = useState<product[]>();
-  const [categoriesData, setCategoriesData] = useState<forCategories[]>();
+  const [categoriesData, setCategoriesData] = useState<categories[]>();
   const [userData, setUserData] = useState<user[]>();
-  const [brandData, setBrandData] = useState<forBrand[]>();
+  const [brandData, setBrandData] = useState<brand[]>();
   const [toggleModal, setToggleModal] = useState(false);
   const [listChange, setListChange] = useState<boolean>(false);
   const [editProduct, setEditProduct] = useState<product>();
-  const [editCategory, setEditCategory] = useState<forCategories>();
-  const [editBrand, setEditBrand] = useState<forBrand>();
+  const [editCategory, setEditCategory] = useState<categories>();
+  const [editBrand, setEditBrand] = useState<brand>();
   const [isDelete, setIsDelete] = useState(false);
   const [deleteProductID, setDeleteProductID] = useState<number>();
   const [deleteCategoryID, setDeleteCategoryID] = useState<number>();
@@ -35,6 +35,7 @@ function AdminDashboard() {
   const getData = async (page: string, currentPage: number) => {
     let response;
     const queryParams = `page=${currentPage}&limit=${itemsPerPage}`;  // Add pagination query params
+    console.log(page);
 
     if (page === "users") {
       // For users only make authorized request
@@ -68,12 +69,12 @@ function AdminDashboard() {
     <div className="min-h-screen flex w-full bg_color">
       <AdminSideBar setPage={setPage} page={page} />
       <div className={`flex flex-col w-full ${(toggleModal || isDelete) && "opacity-25"} overflow-auto`}>
-        <div className="shadow-lg h-20 px-10 items-center flex justify-between fixed w-full bg_color">
+        <div className="shadow-lg h-20 px-10 items-center flex justify-between lg:static fixed w-full bg_color">
           <div className="font-semibold text-3xl xl:p-0 p-4 text-blue-500">{PAGE_TITLES[page as keyof typeof PAGE_TITLES]}</div>
           {(page === "products" || page === "categories" || page === "brands") && (
-            <div className="flex gap-2">
+            <div className="flex ">
               <button
-                className="shadow-xl bg-blue-400 w-40 p-2 text-lg cursor-pointer"
+                className="shadow-xl bg-blue-400 w-40 p-2 text-lg cursor-pointer z-10"
                 onClick={() => {
                     setToggleModal(true);
                     setEditBrand(undefined);
@@ -87,7 +88,7 @@ function AdminDashboard() {
             </div>
           )}
         </div>
-        <div className="flex flex-col mt-25 w-140 sm:w-150 md:w-180 lg:w-260 2xl:w-300 mx-auto px-5 my-2 py-5 bg-white overflow-auto max-h-215">
+        <div className="flex flex-col mt-25 lg:mt-0 w-140 sm:w-150 md:w-180 lg:w-260 2xl:w-300 mx-auto px-5 my-2 py-5 bg-white overflow-auto max-h-215">
           {page === "products" ? (
             <div>
               <div className="text-3xl pb-3 font-semibold text-gray-600 ">{LIST_TITLES.productList}</div>

@@ -43,9 +43,10 @@ export const fetchPreferences = async (req:Request, res:Response,next:NextFuncti
 //delete prefrecnes
 export const deletePreference = async (req:Request, res:Response,next:NextFunction) => {
     const { preferenceID } = req.params;
+    const userID=req.body.user.identifire;
   
     try {
-      const result = await deletePreferenceService(Number(preferenceID));
+      const result = await deletePreferenceService(Number(preferenceID),userID);
   
       res.status(200).json({ message: "Preference deleted successfully" });
 

@@ -1,8 +1,5 @@
 import { selectProductWithAllMatch, createNewProduct, getProductWithCondition, selectByProductID, deleteByProductID, updateProducts } from "../../respository/products";
-import NodeCache from 'node-cache';
-
-const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
-
+import { invalidateCache,getCache,setCache } from "../../helpers/cacheHelper";
 
 // Service to create a new product
 export const createProductService = async (
@@ -31,16 +28,15 @@ export const createProductService = async (
   );
 
   if (metaData > 0) {
+    // After product creation, clear the cache for affected product lists
+    const cacheKey = `products:${JSON.stringify({ categoryID })}:page:1:limit:20`; // Example cache key for the category (you can customize this based on your filtering needs)
+    invalidateCache(cacheKey); // Invalidate the cache for category and product list
+
     return { success: true, message: "Successfully added the product." };
   } else {
     throw new Error("Error in adding a new product.");
   }
 };
-
-
-
-
-
 
 // Service to fetch products with condition (filters), including caching logic
 export const getProductsService = async (
@@ -51,9 +47,9 @@ export const getProductsService = async (
   // Generate a unique cache key based on filters, page, and limit
   const cacheKey = `products:${JSON.stringify(filters)}:page:${page}:limit:${limit}`;
   
-  const cachedProducts = cache.get(cacheKey);
+  const cachedProducts = getCache(cacheKey);
   if (cachedProducts) {
-    // console.log('Returning cached products',cachedProducts);
+    // Return cached products if available
     return cachedProducts;
   }
 
@@ -63,16 +59,10 @@ export const getProductsService = async (
   }
 
   // Store the fetched products in the cache for future requests
-  cache.set(cacheKey, products);
+  setCache(cacheKey, products);
   
   return products;
 };
-
-
-
-
-
-
 
 // Service to delete a product
 export const deleteProductService = async (productID: number) => {
@@ -81,15 +71,15 @@ export const deleteProductService = async (productID: number) => {
     throw new Error("This product doesn't exist.");
   }
 
+  // Delete the product from the database
   await deleteByProductID(productID);
+
+  // After deleting, invalidate the cache for affected product lists
+  const cacheKey = `products:${JSON.stringify({ id: productID })}:page:1:limit:20`; // Customize this to match the cache keys for your filtering
+  invalidateCache(cacheKey); // Invalidate cache for the specific product list (could be more detailed)
+
   return { success: true, message: "Successfully deleted the product" };
 };
-
-
-
-
-
-
 
 // Service to update a product
 export const updateProductService = async (
@@ -105,6 +95,12 @@ export const updateProductService = async (
     throw new Error("This product doesn't exist.");
   }
 
+  // Update the product details in the database
   await updateProducts(productName, productDescription, productThumbnail, productPrice, categoryID, productID);
+
+  // After updating, invalidate the cache for affected product lists
+  const cacheKey = `products:${JSON.stringify({ categoryID })}:page:1:limit:20`; // Example cache key for the category
+  invalidateCache(cacheKey); // Invalidate cache for the category or any other applicable product filters
+
   return { success: true, message: "Successfully updated the product." };
 };

@@ -9,55 +9,47 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFromWishList = exports.selectFromWishListByID = exports.getWishListByUserID = exports.addProductToWishList = exports.selectByUserAndProduct = void 0;
-const databse_1 = require("../../config/databse");
-const sequelize_1 = require("sequelize");
-const selectByUserAndProduct = (userID, productID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('SELECT * FROM WishLists WHERE userID=? and productID=?', {
-        replacements: [userID, productID],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.deleteFromWishListService = exports.getWishListItemByIDService = exports.getWishListByUserService = exports.addProductToWishListService = void 0;
+const wishLists_1 = require("../../respository/wishLists");
+// Service to add a product to the wishlist
+const addProductToWishListService = (userID, productID) => __awaiter(void 0, void 0, void 0, function* () {
+    const existingItem = yield (0, wishLists_1.selectByUserAndProduct)(userID, productID);
+    if (existingItem.length !== 0) {
+        return { success: false, message: "Product already exists in the wishlist." };
+    }
+    const [result] = yield (0, wishLists_1.addProductToWishList)(userID, productID);
+    if (result) {
+        return { success: true, message: "Product added to wishlist." };
+    }
+    return { success: false, message: "Failed to add product to wishlist." };
 });
-exports.selectByUserAndProduct = selectByUserAndProduct;
-const addProductToWishList = (userID, productID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('Insert INTO WishLists (userID,productID) VALUES (?,?)', {
-        replacements: [userID, productID],
-        type: sequelize_1.QueryTypes.INSERT
-    });
+exports.addProductToWishListService = addProductToWishListService;
+// Service to get all wishlist items for a user
+const getWishListByUserService = (userID) => __awaiter(void 0, void 0, void 0, function* () {
+    const wishlist = yield (0, wishLists_1.getWishListByUserID)(userID);
+    if (wishlist.length === 0) {
+        return { success: false, message: "No items in wishlist." };
+    }
+    return { success: true, wishlist };
 });
-exports.addProductToWishList = addProductToWishList;
-const getWishListByUserID = (userID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query(`
-        SELECT 
-          wl.wishListID, 
-          wl.userID,
-          wl.productID, 
-          p.productName, 
-          p.productThumbnail, 
-          p.productPrice,
-          br.brandID,
-          br.brandThumbnail
-        FROM WishLists wl
-        JOIN Products p ON wl.productID = p.productID
-        JOIN Brands br ON p.brandID = br.brandID
-        WHERE wl.userID = ? 
-      `, {
-        replacements: [userID],
-        type: sequelize_1.QueryTypes.SELECT,
-    });
+exports.getWishListByUserService = getWishListByUserService;
+// Service to get a specific wishlist item by user and product id
+const getWishListItemByIDService = (userID, productID) => __awaiter(void 0, void 0, void 0, function* () {
+    const wishlistItem = yield (0, wishLists_1.selectByUserAndProduct)(userID, productID);
+    console.log(wishlistItem, "why why");
+    if (wishlistItem.length === 0) {
+        return { success: false, message: "Wishlist item not found." };
+    }
+    return { success: true, wishlistItem };
 });
-exports.getWishListByUserID = getWishListByUserID;
-const selectFromWishListByID = (wishListID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('SELECT * FROM WishLists WHERE WishListID=?', {
-        replacements: [wishListID],
-        type: sequelize_1.QueryTypes.SELECT
-    });
+exports.getWishListItemByIDService = getWishListItemByIDService;
+// Service to remove an item from the wishlist
+const deleteFromWishListService = (wishListID) => __awaiter(void 0, void 0, void 0, function* () {
+    const wishlistItem = yield (0, wishLists_1.selectFromWishListByID)(wishListID);
+    if (wishlistItem.length === 0) {
+        return { success: false, message: "Wishlist item not found." };
+    }
+    yield (0, wishLists_1.deleteFromWishList)(wishListID);
+    return { success: true, message: "Product removed from wishlist." };
 });
-exports.selectFromWishListByID = selectFromWishListByID;
-const deleteFromWishList = (wishListID) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield databse_1.sequelize.query('DELETE FROM WishLists WHERE WishListID=?', {
-        replacements: [wishListID],
-        type: sequelize_1.QueryTypes.DELETE
-    });
-});
-exports.deleteFromWishList = deleteFromWishList;
+exports.deleteFromWishListService = deleteFromWishListService;
