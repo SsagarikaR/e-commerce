@@ -68,8 +68,8 @@ function AdminDashboard() {
     <div className="min-h-screen flex w-full bg_color">
       <AdminSideBar setPage={setPage} page={page} />
       <div className={`flex flex-col w-full ${(toggleModal || isDelete) && "opacity-25"} overflow-auto`}>
-        <div className="shadow-lg h-20 px-10 items-center flex justify-between">
-          <div className="font-semibold text-3xl text-blue-500">{PAGE_TITLES[page as keyof typeof PAGE_TITLES]}</div>
+        <div className="shadow-lg h-20 px-10 items-center flex justify-between fixed w-full bg_color">
+          <div className="font-semibold text-3xl xl:p-0 p-4 text-blue-500">{PAGE_TITLES[page as keyof typeof PAGE_TITLES]}</div>
           {(page === "products" || page === "categories" || page === "brands") && (
             <div className="flex gap-2">
               <button
@@ -87,10 +87,10 @@ function AdminDashboard() {
             </div>
           )}
         </div>
-        <div className="flex flex-col w-300 mx-auto px-5 my-2 py-5 bg-white overflow-auto max-h-215">
+        <div className="flex flex-col mt-25 w-140 sm:w-150 md:w-180 lg:w-260 2xl:w-300 mx-auto px-5 my-2 py-5 bg-white overflow-auto max-h-215">
           {page === "products" ? (
             <div>
-              <div className="text-3xl pb-3 font-semibold text-gray-600">{LIST_TITLES.productList}</div>
+              <div className="text-3xl pb-3 font-semibold text-gray-600 ">{LIST_TITLES.productList}</div>
               <ProductList
                 data={productData!}
                 setDeleteProductID={setDeleteProductID}
