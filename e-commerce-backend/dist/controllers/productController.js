@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProduct = exports.deleteProduct = exports.getProducts = exports.createProduct = void 0;
 const products_1 = require("../services/db/products");
 const node_cache_1 = __importDefault(require("node-cache"));
-// Create a cache instance (TTL of 1 hour)
 const cache = new node_cache_1.default({ stdTTL: 3600, checkperiod: 600 });
 // Controller to create a product
 const createProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,10 +25,8 @@ const createProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         if (error instanceof Error) {
-            // Now TypeScript knows 'error' is an instance of Error
             return next({ statusCode: 500, message: error.message });
         }
-        // If error isn't an instance of Error, you can handle it here
         return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });
@@ -39,27 +36,21 @@ const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     const { name, price, categoryID, id, page = 1, limit = 8 } = req.query;
     const currentPage = Number(page);
     const itemsPerPage = Number(limit);
-    // Generate a unique cache key based on the query parameters
     const cacheKey = `products:${name}:${price}:${categoryID}:${id}:${currentPage}:${itemsPerPage}`;
     try {
-        // First, check if data is in the cache
         const cachedProducts = cache.get(cacheKey);
         if (cachedProducts) {
             console.log('Returning cached products');
-            return res.status(200).json(cachedProducts); // Return cached data
+            return res.status(200).json(cachedProducts);
         }
-        // Define filters for the database query
         const filters = {
             categoryID: categoryID ? String(categoryID) : undefined,
             name: name ? String(name) : undefined,
             id: id ? Number(id) : undefined,
             price: price === "low-to-high" || price === "high-to-low" ? price : undefined,
         };
-        // Fetch products from the service (database)
         const products = yield (0, products_1.getProductsService)(filters, currentPage, itemsPerPage);
-        // Store the fetched products in the cache for future requests
         cache.set(cacheKey, products);
-        // Return the fetched products
         return res.status(200).json(products);
     }
     catch (error) {
@@ -79,10 +70,8 @@ const deleteProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         if (error instanceof Error) {
-            // Now TypeScript knows 'error' is an instance of Error
             return next({ statusCode: 500, message: error.message });
         }
-        // If error isn't an instance of Error, you can handle it here
         return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });
@@ -96,10 +85,8 @@ const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         if (error instanceof Error) {
-            // Now TypeScript knows 'error' is an instance of Error
             return next({ statusCode: 500, message: error.message });
         }
-        // If error isn't an instance of Error, you can handle it here
         return next({ statusCode: 500, message: "An unknown error occurred." });
     }
 });

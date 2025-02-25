@@ -22,6 +22,9 @@ export const createAdmin = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+
+
+
 // Admin login (find admin by ID)
 export const adminLogin = async (req: Request, res: Response, next: NextFunction) => {
   const adminID = req.body.user.identifire;
@@ -39,6 +42,9 @@ export const adminLogin = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+
+
+
 // Delete admin by userID
 export const deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const { userID } = req.body;
@@ -55,6 +61,9 @@ export const deleteAdmin = async (req: Request, res: Response, next: NextFunctio
     return next({ statusCode: 500, message: "An error occurred while deleting admin" });
   }
 };
+
+
+
 
 // Update admin by userID
 export const updateAdmin = async (req: Request, res: Response, next: NextFunction) => {

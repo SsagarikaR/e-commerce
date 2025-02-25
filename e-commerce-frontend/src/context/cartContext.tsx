@@ -13,7 +13,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchCart = async () => {
         const response = await makeAuthorizedGetRequest(`/cart`);
-        // console.log(response);
+        console.log(response);
         if (response?.data) {
             setCart(response.data);
         }
@@ -21,6 +21,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
+        console.log("use effect hit")
         fetchCart();
     }, []);
 
@@ -29,7 +30,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             productID: productID,
             quantity: 1,
         });
-        // console.log(response);
+        console.log(response);
         if (response?.data) {
             fetchCart();
         }

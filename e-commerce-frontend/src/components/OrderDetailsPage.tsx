@@ -64,19 +64,19 @@ const OrderDetailsPage = () => {
   return (
     <Container>
     <div className="">
-        <div className='container bg_color mx-auto p-6 bg-gray-50 min-h-screen min-w-screen text-center'>
-      <h2 className="text-3xl font-semibold mb-8 text-gray-800">Order Details</h2>
+        <div className='container  mx-auto p-6  min-h-screen min-w-screen text-center'>
+      <h2 className="text-3xl font-semibold mb-8 text-gray-800  dark:text-white">Order Details</h2>
       {loading ? (
-        <div className="text-center text-lg text-gray-600">Loading...</div>
+        <div className="text-center text-lg text-gray-600  dark:text-white">Loading...</div>
       ) : (
         <div className="space-y-8 ">
           {orders.length === 0 ? (
-            <p className="text-lg text-gray-600">No orders found</p>
+            <p className="text-lg text-gray-600 dark:text-white">No orders found</p>
           ) : (
             orders.map((order) => (
               <div
                 key={order.orderID}
-                className={` p-6 rounded-xl w-4/5 m-auto shadow-lg bg-white ${order.status === 'Cancelled' ? 'opacity-80' : 'opacity-100'} `}
+                className={` p-6 rounded-xl w-4/5 mx-auto shadow-lg m-y-2 bg-white ${order.status === 'Cancelled' ? 'opacity-80' : 'opacity-100'} `}
               >
                 <div className={`relative`}>
                   <p className="text-lg text-gray-600 mt-2">
@@ -86,7 +86,7 @@ const OrderDetailsPage = () => {
                   {/* Group Items */}
                   <div className="mt-6 space-y-4">
                     <h4 className="text-xl font-semibold text-gray-800">Items</h4>
-                    <div className="grid grid-cols-1  gap-6">
+                    <div className="grid grid-cols-1  gap-6 ">
                       {order.items && order.items.length > 0 ? (
                         order.items.map((item) => (
                           <div

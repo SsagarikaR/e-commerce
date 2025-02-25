@@ -28,7 +28,7 @@ function CartModal({
         }}
       />
       <div className="grid gap-4 w-4/5 top-10 absolute">
-        {cart.map((item: forCartItem) => (
+        {cart.map((item: cartItem) => (
           <div
             key={item.productID}
             className="shadow-xl p-4 shadow-md flex items-center gap-4"

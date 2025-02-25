@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import {  isAdmin } from "../middlewear/authorization";
+import {  isAdmin } from "../middlewear/isUserAdmin";
 import { checkToken } from "../middlewear/authentication";
 import { createCategories, deleteCategories, getCategories, updateCategories } from "../controllers/categoriesController";
 import { validateCreateCategoryData ,validateUpdateCategoryData} from "../middlewear/validationHelper/validateCategoryData";

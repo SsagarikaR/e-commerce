@@ -30,40 +30,16 @@ const cors_1 = __importDefault(require("cors"));
 const swaggerConfig_1 = __importDefault(require("./config/swaggerConfig"));
 const errorHandler_1 = __importDefault(require("./middlewear/errorHandler"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
-// import { Users } from "./models/users";
-// import { Categories } from "./models/category";
-// import { Produtcs } from "./models/product";
-// import { CartItems } from "./models/cartItem";
-// import { Brands } from "./models/brand";
-// import { Admins } from "./models/admin";
-// import { WishLists } from "./models/wishList";
-// import { Reviews } from "./models/Review";
-// import { Preferences } from "./models/preference";
-// import { Orders } from "./models/order";
-// import { OrderItems } from "./models/orderItem";
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)());
 (0, swaggerConfig_1.default)(app);
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    // await Users.sync({alter:true});
-    // await Categories.sync({alter:true});
-    //  await Produtcs.sync({alter:true})
-    // await Brands.sync({alter:true});
-    // await CartItems.sync({alter:true});
-    // await Admins.sync({alter:true});
-    // await WishLists.sync({alter:true});
-    // await Reviews.sync({alter:true});
-    // await Preferences.sync({alter:true})
-    // await Orders.sync({alter:true})
-    // await OrderItems.sync({alter:true});
-}))();
 //Rate limiting middleware
 const limiter = (0, express_rate_limit_1.default)({
-    windowMs: 15 * 60 * 1000, //15 minutes
-    max: 100, //maximum 100 requests per window
+    windowMs: 15 * 60 * 1000,
+    max: 100,
 });
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("App is listening on port 3000");
@@ -89,3 +65,4 @@ app.listen(port, (error) => {
         console.log("Error occured during server connection: ", error);
     }
 });
+exports.default = app;

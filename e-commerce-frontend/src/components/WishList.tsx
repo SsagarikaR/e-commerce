@@ -23,7 +23,7 @@ function WishList() {
     <Container>
     <div className="w-screen flex h-screen justify-center ">
       <div className="flex flex-col   w-3/5 items-center h-full gap-2">
-        <div className="w-full p-2 text-xl font-medium text-gray-700 dark:text-white">My WishList({wishlist?.length || 0})</div>
+        <div className="w-full p-2 text-xl font-medium text-gray-700 dark:text-white ">My WishList({wishlist?.length || 0})</div>
         {
           wishlist&& wishlist?.length>0?
           (

@@ -12,12 +12,9 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
 
   try {
     // Validate the required fields
-    if (!address || !totalAmount || !items || items.length === 0) {
-      return next({ statusCode: 400, message: "Please provide all required fields (address, totalAmount, items)." });
-    }
+    console.log(req.body)
 
     const result = await createOrderService(userID, totalAmount, items, address);
-
     if (!result) {
       return res.status(400).json({ message: 'Error while creating order. Please try again.' });
     }

@@ -1,5 +1,5 @@
 import { Router,Request,Response, NextFunction } from "express";
-import { isAdmin } from "../middlewear/authorization";
+import { isAdmin } from "../middlewear/isUserAdmin";
 import { checkToken } from "../middlewear/authentication";
 import { deleteUser, getAllUser, updateUserPassword ,getUserByID} from "../controllers/userController";
 import { validateUpdatePassword } from "../middlewear/validationHelper/validateUserData";
@@ -39,6 +39,7 @@ const router=Router();
  *         description: Server error
  */
 router.get("/users", checkToken, isAdmin, async (req: Request, res: Response,next:NextFunction) => {
+    console.log("users hit")
     getAllUser(req, res,next);
 });
 

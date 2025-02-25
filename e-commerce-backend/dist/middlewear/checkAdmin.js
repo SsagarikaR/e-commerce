@@ -19,6 +19,7 @@ const sequelize_1 = require("sequelize");
 dotenv_1.default.config();
 const isAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.body.user.identifire;
+    console.log(id, "route hit");
     try {
         const user = yield databse_1.sequelize.query('SELECT * FROM Admins WHERE userID=?', {
             replacements: [id],

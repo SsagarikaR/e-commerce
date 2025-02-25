@@ -4,14 +4,12 @@ require('dotenv').config()
 
 
 export const generateToken=async(id:number)=>{
-    // console.log(id,"authentication hit",process.env);
     try{
             const token=Jwt.sign(
                 {identifire:id},
-                process.env.JWT as string,
+                process.env.JWT_SECRET_KEY as string,
                 {expiresIn:'7d'}
             )
-            console.log(token,"generated token")
             return token
         
     }
@@ -26,18 +24,15 @@ export const checkToken=(req:Request,res:Response,next:NextFunction)=>{
     if(!authHeader || !authHeader.startsWith('Bearer')){
         return next({statusCode:401,message:"Authentication required."})
     }
-    console.log(authHeader,"authHeader");
     const token=authHeader!.split(' ')[1];
     try{
-        if(process.env.JWT){
-            const decoded=Jwt.verify(token,process.env.JWT)
+        if(process.env.JWT_SECRET_KEY){
+            const decoded=Jwt.verify(token,process.env.JWT_SECRET_KEY)
             req.body.user=decoded;
-            console.log(req.body);
             next();
         }
     }
     catch(error){
-        console.log(error,"error");
         res.status(401).json({error:"Unauthorized"})
     }
 }

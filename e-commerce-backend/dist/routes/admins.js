@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const adminController_1 = require("../controllers/adminController");
 const express_1 = require("express");
-const authorization_1 = require("../middlewear/authorization");
+const isUserAdmin_1 = require("../middlewear/isUserAdmin");
 const authentication_1 = require("../middlewear/authentication");
 const router = (0, express_1.Router)();
 /**
@@ -49,7 +49,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.post("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.post("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => {
     (0, adminController_1.createAdmin)(req, res, next);
 });
 /**
@@ -68,7 +68,7 @@ router.post("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res
  *       500:
  *         description: Server error
  */
-router.get("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.get("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => {
     (0, adminController_1.adminLogin)(req, res, next);
 });
 /**
@@ -94,7 +94,7 @@ router.get("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res,
  *       500:
  *         description: Server error
  */
-router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.delete("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => {
     (0, adminController_1.deleteAdmin)(req, res, next);
 });
 /**
@@ -129,7 +129,7 @@ router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, r
  *       500:
  *         description: Server error
  */
-router.patch("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => {
+router.patch("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => {
     (0, adminController_1.updateAdmin)(req, res, next);
 });
 exports.default = router;

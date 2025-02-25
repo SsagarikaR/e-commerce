@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { createProduct,deleteProduct, getProducts, updateProduct } from "../controllers/productController";
-import { isAdmin } from "../middlewear/authorization";
+import { isAdmin } from "../middlewear/isUserAdmin";
 import { checkToken } from "../middlewear/authentication";
 import { validateCreateProductData, validateUpdateProductData } from "../middlewear/validationHelper/validateProductData";
 

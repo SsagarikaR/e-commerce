@@ -37,7 +37,7 @@ function Navbar() {
   const handleBackwardClick = () => {
     // If the current location is not the homepage, go back to the previous page
     if (location.pathname !== "/") {
-      navigate(-1); // Goes back to the previous page
+      navigate(-1); 
     }
   };
 
@@ -47,7 +47,7 @@ function Navbar() {
   }, []);
 
   return (
-    <div className="flex fixed  dark:bg-gray-600  dark:text-white  from-blue-200  to-gray-400 shadow w-full h-20 lg:gap-x-15  z-10 justify-center md:justify-between lg:px-24  p-0 sm:p-0 md:px-10 text-lg lg:text-2xl md:text-xl font-semibold items-center">
+    <div className="flex fixed  dark:bg-gray-600  dark:text-white  bg-gray-200  shadow w-full h-20 lg:gap-x-15  z-10 justify-center md:justify-between lg:px-24  p-0 sm:p-0 md:px-10 text-lg lg:text-2xl md:text-xl font-semibold items-center">
       <div className="relative group flex lg:hidden">
         <div className="flex cursor-pointer">
           <img src={menuIcon} className="w-8 h-8 mr-10" />
@@ -118,7 +118,7 @@ function Navbar() {
       </div>
 
       {/* Search bar */}
-      <div className="border-2 h-10 border-gray-500 rounded-lg flex items-center px-8  sm:p-2">
+      <div className="border-2 h-10 border-gray-500 dark:border-gray-200 rounded-lg flex items-center px-8  sm:p-2">
         <input
           className="outline-none text-sm md:text-lg font-normal"
           placeholder="Search by product name."

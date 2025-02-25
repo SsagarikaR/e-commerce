@@ -20,7 +20,7 @@ function Container({ children }: { children: ReactNode }) {
     >
       <Navbar />
       <div
-        className="fixed z-20 top-6 left-10 lg:inline-block hidden "
+        className="fixed z-20 top-5 right-10 lg:inline-block hidden "
         onClick={() => {
           setToggleTheme(!toggleTheme);
         }}

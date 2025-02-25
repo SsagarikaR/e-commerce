@@ -127,7 +127,7 @@ function Review({ productID, rating }: ratingProp) {
                 <div className="flex items-center gap-x-2">
                   <div className={`flex items-center justify-center gap-x-1 rounded-xl border border-gray-400  p-1 ${review.rating>2?"bg-green-500":"  bg-red-500"}`}>
                     <div className="text-lg font-medium ">{review.rating}</div>
-                    <img src={star} className="w-5 h-5 col-white" />
+                    <img src={fullStar} className="w-5 h-5 col-white" />
                   </div>
                   <div className="flex ">
                     <img src={profile} className="w-6 h-6" />

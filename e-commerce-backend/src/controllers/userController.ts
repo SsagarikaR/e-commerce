@@ -26,7 +26,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 export const updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
   const { oldPassword, newPassword } = req.body;
   const userID = req.body.user.identifire;
-
+  
   try {
       const result = await updatePasswordService(userID, oldPassword, newPassword);
 
@@ -48,11 +48,11 @@ export const updateUserPassword = async (req: Request, res: Response, next: Next
 export const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await getAllUsersService();
-
+    console.log(result,"result");
     if (!result.success) {
       return next({ statusCode: 404, message: result.message });
     }
-
+    console.log(result,"result")
     return res.status(200).json(result.users);
   } catch (error) {
     console.log(error);

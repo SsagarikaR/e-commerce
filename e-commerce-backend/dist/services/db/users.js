@@ -36,6 +36,7 @@ exports.createUserService = createUserService;
 // Service to get a user by email and password
 const getUserService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield (0, users_1.selectUserByEmail)(email);
+    console.log(users);
     if (users.length === 0) {
         return { success: false, message: "User not found" };
     }
@@ -79,6 +80,7 @@ const updatePasswordService = (userID, oldPassword, newPassword) => __awaiter(vo
 exports.updatePasswordService = updatePasswordService;
 const getAllUsersService = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("users hit");
         const users = yield (0, users_1.selectAllUsers)();
         if (users.length === 0) {
             return { success: false, message: "No users found" };

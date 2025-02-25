@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const authorization_1 = require("../middlewear/authorization");
+const isUserAdmin_1 = require("../middlewear/isUserAdmin");
 const authentication_1 = require("../middlewear/authentication");
 const categoriesController_1 = require("../controllers/categoriesController");
 const validateCategoryData_1 = require("../middlewear/validationHelper/validateCategoryData");
@@ -59,7 +59,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.post("/", authentication_1.checkToken, authorization_1.isAdmin, validateCategoryData_1.validateCreateCategoryData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, validateCategoryData_1.validateCreateCategoryData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, categoriesController_1.createCategories)(req, res, next);
 }));
 /**
@@ -111,7 +111,7 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
  *       500:
  *         description: Server error
  */
-router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, categoriesController_1.deleteCategories)(req, res, next);
 }));
 /**
@@ -142,7 +142,7 @@ router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, r
  *       500:
  *         description: Server error
  */
-router.patch("/", authentication_1.checkToken, authorization_1.isAdmin, validateCategoryData_1.validateUpdateCategoryData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.patch("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, validateCategoryData_1.validateUpdateCategoryData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, categoriesController_1.updateCategories)(req, res, next);
 }));
 exports.default = router;

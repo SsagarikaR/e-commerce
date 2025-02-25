@@ -1,5 +1,4 @@
 import { sequelize } from '../../config/databse';
-import { QueryTypes } from 'sequelize';
 import { insertOrder,
     insertOrderItems, 
     selectOrderByUserID,
@@ -10,28 +9,27 @@ import { insertOrder,
     getOrderStatusByIdQuery,
     getUserOrderDetails} from '../../respository/orders';
 
+
+
+//create a new order   
 export const createOrderService = async (userID: number, totalAmount: number, items: Array<any>, address: string) => {
   const t = await sequelize.transaction();
 
   try {
-    // First, check if the user already has a pending order
     const existingOrder = await selectOrderByUserID(userID, t);
 
     if (existingOrder.length > 0) {
-      return null; // If there is an existing pending order, don't create a new one
+      return null; 
     }
 
-    // Insert the order with the address
     const result = await insertOrder(userID, totalAmount, address, t);
 
-    // Insert the order items if the order is created successfully
     if (result) {
       for (const item of items) {
         await insertOrderItems(result.orderID, item.productId, item.quantity, item.price, t);
       }
     }
 
-    // Commit the transaction
     await t.commit();
     
     return result;
@@ -48,10 +46,7 @@ export const createOrderService = async (userID: number, totalAmount: number, it
 
 export const fetchOrdersWithProductAndBrand = async (userID: number) => {
   try {
-    // Fetch the orders along with products and brands
-    // const orders = await selectOrdersWithProductAndBrand(userID);
     const orders = await getUserOrderDetails(userID);
-    console.log(orders);
     return orders;
   } catch (error) {
     console.error('Error fetching orders with product and brand details:', error);
@@ -72,6 +67,8 @@ export const updateOrderAddressService = async (orderId: number, productId: numb
   };
 
 
+
+
   export const deleteOrderService = async (orderId: number) => {
     try {
       const result = await deleteOrderQuery(orderId);
@@ -82,6 +79,9 @@ export const updateOrderAddressService = async (orderId: number, productId: numb
     }
   };
   
+
+
+
 
   export const updateOrderStatusService = async (orderId: number, status: string) => {
     try {

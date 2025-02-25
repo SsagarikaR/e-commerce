@@ -10,7 +10,7 @@ const Cart = () => {
         navigate(`/product/${productID}`);
     };
 
-    console.log(cart);
+    console.log(cart,"cart");
     return (
         <Container>
         <div className="p-5 min-w-screen min-h-screen  ">

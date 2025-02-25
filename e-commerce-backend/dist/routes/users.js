@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const authorization_1 = require("../middlewear/authorization");
+const isUserAdmin_1 = require("../middlewear/isUserAdmin");
 const authentication_1 = require("../middlewear/authentication");
 const userController_1 = require("../controllers/userController");
 const validateUserData_1 = require("../middlewear/validationHelper/validateUserData");
@@ -46,7 +46,8 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.get("/users", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/users", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("users hit");
     (0, userController_1.getAllUser)(req, res, next);
 }));
 /**

@@ -12,23 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOrderStatusById = exports.updateOrderStatusService = exports.deleteOrderService = exports.updateOrderAddressService = exports.fetchOrdersWithProductAndBrand = exports.createOrderService = void 0;
 const databse_1 = require("../../config/databse");
 const orders_1 = require("../../respository/orders");
+//create a new order   
 const createOrderService = (userID, totalAmount, items, address) => __awaiter(void 0, void 0, void 0, function* () {
     const t = yield databse_1.sequelize.transaction();
     try {
-        // First, check if the user already has a pending order
         const existingOrder = yield (0, orders_1.selectOrderByUserID)(userID, t);
         if (existingOrder.length > 0) {
-            return null; // If there is an existing pending order, don't create a new one
+            return null;
         }
-        // Insert the order with the address
         const result = yield (0, orders_1.insertOrder)(userID, totalAmount, address, t);
-        // Insert the order items if the order is created successfully
         if (result) {
             for (const item of items) {
                 yield (0, orders_1.insertOrderItems)(result.orderID, item.productId, item.quantity, item.price, t);
             }
         }
-        // Commit the transaction
         yield t.commit();
         return result;
     }
@@ -42,10 +39,7 @@ const createOrderService = (userID, totalAmount, items, address) => __awaiter(vo
 exports.createOrderService = createOrderService;
 const fetchOrdersWithProductAndBrand = (userID) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Fetch the orders along with products and brands
-        // const orders = await selectOrdersWithProductAndBrand(userID);
         const orders = yield (0, orders_1.getUserOrderDetails)(userID);
-        console.log(orders);
         return orders;
     }
     catch (error) {

@@ -16,9 +16,7 @@ const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     const { totalAmount, items, address } = req.body;
     try {
         // Validate the required fields
-        if (!address || !totalAmount || !items || items.length === 0) {
-            return next({ statusCode: 400, message: "Please provide all required fields (address, totalAmount, items)." });
-        }
+        console.log(req.body);
         const result = yield (0, orders_1.createOrderService)(userID, totalAmount, items, address);
         if (!result) {
             return res.status(400).json({ message: 'Error while creating order. Please try again.' });

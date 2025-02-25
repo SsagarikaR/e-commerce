@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const productController_1 = require("../controllers/productController");
-const authorization_1 = require("../middlewear/authorization");
+const isUserAdmin_1 = require("../middlewear/isUserAdmin");
 const authentication_1 = require("../middlewear/authentication");
 const validateProductData_1 = require("../middlewear/validationHelper/validateProductData");
 const router = express_1.default.Router();
@@ -68,7 +68,7 @@ const router = express_1.default.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", authentication_1.checkToken, authorization_1.isAdmin, validateProductData_1.validateCreateProductData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, validateProductData_1.validateCreateProductData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, productController_1.createProduct)(req, res, next);
 }));
 /**
@@ -136,7 +136,7 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
  *       500:
  *         description: Server error
  */
-router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, productController_1.deleteProduct)(req, res, next);
 }));
 /**
@@ -175,7 +175,7 @@ router.delete("/", authentication_1.checkToken, authorization_1.isAdmin, (req, r
  *       500:
  *         description: Server error
  */
-router.patch("/", authentication_1.checkToken, authorization_1.isAdmin, validateProductData_1.validateUpdateProductData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.patch("/", authentication_1.checkToken, isUserAdmin_1.isAdmin, validateProductData_1.validateUpdateProductData, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     (0, productController_1.updateProduct)(req, res, next);
 }));
 exports.default = router;

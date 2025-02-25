@@ -48,9 +48,11 @@ exports.updateUserPassword = updateUserPassword;
 const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, users_1.getAllUsersService)();
+        console.log(result, "result");
         if (!result.success) {
             return next({ statusCode: 404, message: result.message });
         }
+        console.log(result, "result");
         return res.status(200).json(result.users);
     }
     catch (error) {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { isAdmin } from "../middlewear/authorization";
+import { isAdmin } from "../middlewear/isUserAdmin";
 import { checkToken } from "../middlewear/authentication";
 import { createBrands, deleteBrands, getBrands, updateBrands } from "../controllers/brandControllers";
 

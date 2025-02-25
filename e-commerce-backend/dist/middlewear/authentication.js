@@ -16,10 +16,8 @@ exports.checkToken = exports.generateToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require('dotenv').config();
 const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(id,"authentication hit",process.env);
     try {
-        const token = jsonwebtoken_1.default.sign({ identifire: id }, process.env.JWT, { expiresIn: '7d' });
-        console.log(token, "generated token");
+        const token = jsonwebtoken_1.default.sign({ identifire: id }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
         return token;
     }
     catch (error) {
@@ -32,18 +30,15 @@ const checkToken = (req, res, next) => {
     if (!authHeader || !authHeader.startsWith('Bearer')) {
         return next({ statusCode: 401, message: "Authentication required." });
     }
-    console.log(authHeader, "authHeader");
     const token = authHeader.split(' ')[1];
     try {
-        if (process.env.JWT) {
-            const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT);
+        if (process.env.JWT_SECRET_KEY) {
+            const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
             req.body.user = decoded;
-            console.log(req.body);
             next();
         }
     }
     catch (error) {
-        console.log(error, "error");
         res.status(401).json({ error: "Unauthorized" });
     }
 };

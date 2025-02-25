@@ -16,26 +16,18 @@ const databse_1 = require("../../config/databse");
 const addReviewService = (userID, productID, rating, description) => __awaiter(void 0, void 0, void 0, function* () {
     const t = yield databse_1.sequelize.transaction();
     try {
-        // 1. Check if the user already reviewed the product
         const isAlreadyExist = yield (0, reviews_1.selectReviewByProductAndUser)(userID, productID);
         if (isAlreadyExist.length > 0) {
             return { success: false, message: "You have already added a review for this product." };
         }
-        // 2. Add the new review (inside transaction)
         yield (0, reviews_1.addNewReview)(userID, productID, rating, description, t);
-        // 3. Calculate the new average rating for the product
         const avgRating = yield (0, reviews_1.calculateAverageRating)(productID, t);
-        console.log(avgRating, "avg");
-        // 4. Update product's rating with the new average (inside transaction)
         yield (0, reviews_1.updateProductRating)(productID, avgRating, t);
-        // Commit the transaction if everything went well
         yield t.commit();
         return { success: true, message: "Thank you for adding a review!" };
     }
     catch (error) {
-        // If any error occurs, rollback the transaction
         yield t.rollback();
-        console.error("Error adding review:", error);
         throw new Error("An error occurred while adding the review.");
     }
 });
@@ -50,7 +42,6 @@ const getReviewsOfProductService = (productID) => __awaiter(void 0, void 0, void
         return { success: true, reviews };
     }
     catch (error) {
-        console.error("Error fetching reviews:", error);
         throw new Error("An error occurred while fetching reviews.");
     }
 });
@@ -66,7 +57,6 @@ const updateReviewService = (userID, reviewID, rating, description) => __awaiter
         return { success: true, message: "Review updated successfully!" };
     }
     catch (error) {
-        console.error("Error updating review:", error);
         throw new Error("An error occurred while updating the review.");
     }
 });
@@ -82,7 +72,6 @@ const deleteReviewService = (userID, reviewID) => __awaiter(void 0, void 0, void
         return { success: true, message: "Review deleted successfully!" };
     }
     catch (error) {
-        console.error("Error deleting review:", error);
         throw new Error("An error occurred while deleting the review.");
     }
 });

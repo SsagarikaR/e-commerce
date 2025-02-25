@@ -42,7 +42,7 @@ export const createUserService = async (
 // Service to get a user by email and password
 export const getUserService = async (email: string, password: string) => {
     const users:user[] = await selectUserByEmail(email);
-
+    console.log(users)
     if (users.length === 0) {
         return { success: false, message: "User not found" };
     }
@@ -108,6 +108,7 @@ export const updatePasswordService = async (
 
 export const getAllUsersService = async () => {
     try {
+        console.log("users hit")
       const users = await selectAllUsers();
       if (users.length === 0) {
         return { success: false, message: "No users found" };
